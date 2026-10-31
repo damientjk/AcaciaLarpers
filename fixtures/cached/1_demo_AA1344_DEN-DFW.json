@@ -1,7 +1,7 @@
 {
-  "run_id": "r-050839",
+  "run_id": "r-94304a",
   "label": null,
-  "created_at": "2026-10-31T13:10:27+08:00",
+  "created_at": "2026-10-31T13:56:58+08:00",
   "sample": false,
   "fake_agents": false,
   "scenario": {
@@ -264,25 +264,25 @@
             "gate_id": "B7",
             "max_class": "widebody",
             "taxi_route": [
-              "F",
-              "C"
+              "C",
+              "E"
             ],
             "taxi_in_min": 10,
             "occupancy": []
           },
           {
             "gate_id": "B9",
-            "max_class": "narrowbody",
+            "max_class": "widebody",
             "taxi_route": [
-              "F",
-              "B"
+              "A",
+              "F"
             ],
-            "taxi_in_min": 13,
+            "taxi_in_min": 10,
             "occupancy": [
               {
-                "start": "2015-01-01T21:50",
-                "end": "2015-01-01T22:47",
-                "occupant": "UA1126"
+                "start": "2015-01-02T00:55",
+                "end": "2015-01-02T01:50",
+                "occupant": "AA484"
               }
             ]
           }
@@ -293,19 +293,19 @@
             "assigned_gate": "B4",
             "shift_start": "2015-01-01T15:46",
             "shift_end": "2015-01-01T22:55",
-            "reassignable": false
+            "reassignable": true
           },
           {
             "crew_id": "CRW-B9",
             "assigned_gate": "B9",
             "shift_start": "2015-01-01T15:46",
-            "shift_end": "2015-01-01T22:44",
-            "reassignable": true
+            "shift_end": "2015-01-01T22:39",
+            "reassignable": false
           }
         ],
         "turnaround_min": 35,
         "gate_buffer_min": 10,
-        "next_departure": "2015-01-01T21:39"
+        "next_departure": "2015-01-01T21:26"
       }
     }
   },
@@ -340,8 +340,8 @@
       "extra_holding_min": 7,
       "gate": "B9",
       "concession": "ATC_EARLIER_SLOT + PILOT_EXTRA_HOLDING",
-      "gate_arrival": "22:37",
-      "gate_release": "23:12"
+      "gate_arrival": "22:34",
+      "gate_release": "23:09"
     },
     {
       "id": "C4",
@@ -366,9 +366,9 @@
       "landing": "22:33",
       "extra_holding_min": 16,
       "gate": "B9",
-      "concession": "PILOT_EXTRA_HOLDING",
-      "gate_arrival": "22:46",
-      "gate_release": "23:21"
+      "concession": "PILOT_EXTRA_HOLDING + GROUND_REASSIGN_CREW",
+      "gate_arrival": "22:43",
+      "gate_release": "23:18"
     }
   ],
   "costs": {
@@ -389,9 +389,9 @@
     "C3": {
       "delay_min": 7.0,
       "holding_fuel_kg": 280.0,
-      "overtime_min": 28.0,
-      "missed_connections": 40,
-      "total_usd": 10985.32
+      "overtime_min": 30.0,
+      "missed_connections": 0,
+      "total_usd": 988.32
     },
     "C4": {
       "delay_min": 16.0,
@@ -607,8 +607,8 @@
           "inputs": {
             "gate": "B7",
             "route": [
-              "F",
-              "C"
+              "C",
+              "E"
             ],
             "closed_taxiways": [],
             "blocked_segments": []
@@ -735,8 +735,8 @@
           "inputs": {
             "gate": "B9",
             "route": [
-              "F",
-              "B"
+              "A",
+              "F"
             ],
             "closed_taxiways": [],
             "blocked_segments": []
@@ -750,7 +750,7 @@
           "inputs": {
             "gate": "B9",
             "aircraft_class": "narrowbody",
-            "gate_max_class": "narrowbody",
+            "gate_max_class": "widebody",
             "class_order": [
               "regional",
               "narrowbody",
@@ -758,7 +758,7 @@
             ]
           },
           "passed": true,
-          "explanation": "Gate B9 (max narrowbody) accepts a narrowbody."
+          "explanation": "Gate B9 (max widebody) accepts a narrowbody."
         },
         {
           "rule_id": "G-2",
@@ -766,19 +766,14 @@
           "inputs": {
             "gate": "B9",
             "occupancy": [
-              "22:37",
-              "23:22"
+              "22:34",
+              "23:19"
             ],
             "buffer_min": 10,
-            "conflicts": [
-              {
-                "occupant": "UA1126",
-                "busy_until_incl_buffer": "22:57"
-              }
-            ]
+            "conflicts": []
           },
-          "passed": false,
-          "explanation": "Gate B9 overlaps 1 other occupant(s): UA1126 until 22:57"
+          "passed": true,
+          "explanation": "Gate B9 free for [22:34, 23:19) including 10 min buffer."
         },
         {
           "rule_id": "G-3",
@@ -787,9 +782,9 @@
             "base_eta": "22:17",
             "landing": "22:24",
             "extra_holding_min": 7,
-            "gate_arrival": "22:37",
-            "gate_release": "23:12",
-            "taxi_in_min": 13,
+            "gate_arrival": "22:34",
+            "gate_release": "23:09",
+            "taxi_in_min": 10,
             "service_min": 35.0,
             "turnaround_min": 35
           },
@@ -801,7 +796,7 @@
           "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
           "inputs": {
             "gate": "B9",
-            "gate_arrival": "22:37",
+            "gate_arrival": "22:34",
             "eligible_crews": [
               "CRW-B9"
             ],
@@ -1003,8 +998,8 @@
           "inputs": {
             "gate": "B7",
             "route": [
-              "F",
-              "C"
+              "C",
+              "E"
             ],
             "closed_taxiways": [],
             "blocked_segments": []
@@ -1131,8 +1126,8 @@
           "inputs": {
             "gate": "B9",
             "route": [
-              "F",
-              "B"
+              "A",
+              "F"
             ],
             "closed_taxiways": [],
             "blocked_segments": []
@@ -1146,7 +1141,7 @@
           "inputs": {
             "gate": "B9",
             "aircraft_class": "narrowbody",
-            "gate_max_class": "narrowbody",
+            "gate_max_class": "widebody",
             "class_order": [
               "regional",
               "narrowbody",
@@ -1154,7 +1149,7 @@
             ]
           },
           "passed": true,
-          "explanation": "Gate B9 (max narrowbody) accepts a narrowbody."
+          "explanation": "Gate B9 (max widebody) accepts a narrowbody."
         },
         {
           "rule_id": "G-2",
@@ -1162,19 +1157,14 @@
           "inputs": {
             "gate": "B9",
             "occupancy": [
-              "22:46",
-              "23:31"
+              "22:43",
+              "23:28"
             ],
             "buffer_min": 10,
-            "conflicts": [
-              {
-                "occupant": "UA1126",
-                "busy_until_incl_buffer": "22:57"
-              }
-            ]
+            "conflicts": []
           },
-          "passed": false,
-          "explanation": "Gate B9 overlaps 1 other occupant(s): UA1126 until 22:57"
+          "passed": true,
+          "explanation": "Gate B9 free for [22:43, 23:28) including 10 min buffer."
         },
         {
           "rule_id": "G-3",
@@ -1183,9 +1173,9 @@
             "base_eta": "22:17",
             "landing": "22:33",
             "extra_holding_min": 16,
-            "gate_arrival": "22:46",
-            "gate_release": "23:21",
-            "taxi_in_min": 13,
+            "gate_arrival": "22:43",
+            "gate_release": "23:18",
+            "taxi_in_min": 10,
             "service_min": 35.0,
             "turnaround_min": 35
           },
@@ -1197,15 +1187,15 @@
           "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
           "inputs": {
             "gate": "B9",
-            "gate_arrival": "22:46",
+            "gate_arrival": "22:43",
             "eligible_crews": [],
             "ineligible": [
               "CRW-B4: assigned to B4, not B9",
-              "CRW-B9: shift 15:46-22:44 does not cover gate arrival 22:46"
+              "CRW-B9: shift 15:46-22:39 does not cover gate arrival 22:43"
             ]
           },
           "passed": false,
-          "explanation": "No crew on shift at gate B9: CRW-B4: assigned to B4, not B9; CRW-B9: shift 15:46-22:44 does not cover gate arrival 22:46. GROUND_REASSIGN_CREW can move a reassignable crew here."
+          "explanation": "No crew on shift at gate B9: CRW-B4: assigned to B4, not B9; CRW-B9: shift 15:46-22:39 does not cover gate arrival 22:43. GROUND_REASSIGN_CREW can move a reassignable crew here."
         }
       ]
     },
@@ -1333,15 +1323,14 @@
           "inputs": {
             "gate": "B4",
             "gate_arrival": "22:39",
-            "eligible_crews": [
-              "CRW-B4"
-            ],
+            "eligible_crews": [],
             "ineligible": [
-              "CRW-B9: assigned to B7, not B4"
+              "CRW-B4: assigned to B7, not B4",
+              "CRW-B9: assigned to B9, not B4"
             ]
           },
-          "passed": true,
-          "explanation": "Crew CRW-B4 is on shift at gate B4 when the aircraft arrives."
+          "passed": false,
+          "explanation": "No crew on shift at gate B4: CRW-B4: assigned to B7, not B4; CRW-B9: assigned to B9, not B4. GROUND_REASSIGN_CREW can move a reassignable crew here."
         }
       ],
       "C2": [
@@ -1400,8 +1389,8 @@
           "inputs": {
             "gate": "B7",
             "route": [
-              "F",
-              "C"
+              "C",
+              "E"
             ],
             "closed_taxiways": [],
             "blocked_segments": []
@@ -1463,14 +1452,14 @@
             "gate": "B7",
             "gate_arrival": "22:34",
             "eligible_crews": [
-              "CRW-B9"
+              "CRW-B4"
             ],
             "ineligible": [
-              "CRW-B4: assigned to B4, not B7"
+              "CRW-B9: assigned to B9, not B7"
             ]
           },
           "passed": true,
-          "explanation": "Crew CRW-B9 (reassigned from B9) is on shift at gate B7 when the aircraft arrives."
+          "explanation": "Crew CRW-B4 (reassigned from B4) is on shift at gate B7 when the aircraft arrives."
         }
       ],
       "C3": [
@@ -1529,8 +1518,8 @@
           "inputs": {
             "gate": "B9",
             "route": [
-              "F",
-              "B"
+              "A",
+              "F"
             ],
             "closed_taxiways": [],
             "blocked_segments": []
@@ -1544,7 +1533,7 @@
           "inputs": {
             "gate": "B9",
             "aircraft_class": "narrowbody",
-            "gate_max_class": "narrowbody",
+            "gate_max_class": "widebody",
             "class_order": [
               "regional",
               "narrowbody",
@@ -1552,7 +1541,7 @@
             ]
           },
           "passed": true,
-          "explanation": "Gate B9 (max narrowbody) accepts a narrowbody."
+          "explanation": "Gate B9 (max widebody) accepts a narrowbody."
         },
         {
           "rule_id": "G-2",
@@ -1560,19 +1549,14 @@
           "inputs": {
             "gate": "B9",
             "occupancy": [
-              "22:37",
-              "23:22"
+              "22:34",
+              "23:19"
             ],
             "buffer_min": 10,
-            "conflicts": [
-              {
-                "occupant": "UA1126",
-                "busy_until_incl_buffer": "22:57"
-              }
-            ]
+            "conflicts": []
           },
-          "passed": false,
-          "explanation": "Gate B9 overlaps 1 other occupant(s): UA1126 until 22:57"
+          "passed": true,
+          "explanation": "Gate B9 free for [22:34, 23:19) including 10 min buffer."
         },
         {
           "rule_id": "G-3",
@@ -1581,9 +1565,9 @@
             "base_eta": "22:17",
             "landing": "22:24",
             "extra_holding_min": 7,
-            "gate_arrival": "22:37",
-            "gate_release": "23:12",
-            "taxi_in_min": 13,
+            "gate_arrival": "22:34",
+            "gate_release": "23:09",
+            "taxi_in_min": 10,
             "service_min": 35.0,
             "turnaround_min": 35
           },
@@ -1595,15 +1579,16 @@
           "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
           "inputs": {
             "gate": "B9",
-            "gate_arrival": "22:37",
-            "eligible_crews": [],
+            "gate_arrival": "22:34",
+            "eligible_crews": [
+              "CRW-B9"
+            ],
             "ineligible": [
-              "CRW-B4: assigned to B4, not B9",
-              "CRW-B9: assigned to B7, not B9"
+              "CRW-B4: assigned to B7, not B9"
             ]
           },
-          "passed": false,
-          "explanation": "No crew on shift at gate B9: CRW-B4: assigned to B4, not B9; CRW-B9: assigned to B7, not B9. GROUND_REASSIGN_CREW can move a reassignable crew here."
+          "passed": true,
+          "explanation": "Crew CRW-B9 is on shift at gate B9 when the aircraft arrives."
         }
       ],
       "C4": [
@@ -1729,15 +1714,14 @@
           "inputs": {
             "gate": "B4",
             "gate_arrival": "22:48",
-            "eligible_crews": [
-              "CRW-B4"
-            ],
+            "eligible_crews": [],
             "ineligible": [
-              "CRW-B9: assigned to B7, not B4"
+              "CRW-B4: assigned to B7, not B4",
+              "CRW-B9: assigned to B9, not B4"
             ]
           },
-          "passed": true,
-          "explanation": "Crew CRW-B4 is on shift at gate B4 when the aircraft arrives."
+          "passed": false,
+          "explanation": "No crew on shift at gate B4: CRW-B4: assigned to B7, not B4; CRW-B9: assigned to B9, not B4. GROUND_REASSIGN_CREW can move a reassignable crew here."
         }
       ],
       "C5": [
@@ -1796,8 +1780,8 @@
           "inputs": {
             "gate": "B7",
             "route": [
-              "F",
-              "C"
+              "C",
+              "E"
             ],
             "closed_taxiways": [],
             "blocked_segments": []
@@ -1859,14 +1843,14 @@
             "gate": "B7",
             "gate_arrival": "22:43",
             "eligible_crews": [
-              "CRW-B9"
+              "CRW-B4"
             ],
             "ineligible": [
-              "CRW-B4: assigned to B4, not B7"
+              "CRW-B9: assigned to B9, not B7"
             ]
           },
           "passed": true,
-          "explanation": "Crew CRW-B9 (reassigned from B9) is on shift at gate B7 when the aircraft arrives."
+          "explanation": "Crew CRW-B4 (reassigned from B4) is on shift at gate B7 when the aircraft arrives."
         }
       ],
       "C6": [
@@ -1925,8 +1909,8 @@
           "inputs": {
             "gate": "B9",
             "route": [
-              "F",
-              "B"
+              "A",
+              "F"
             ],
             "closed_taxiways": [],
             "blocked_segments": []
@@ -1940,7 +1924,7 @@
           "inputs": {
             "gate": "B9",
             "aircraft_class": "narrowbody",
-            "gate_max_class": "narrowbody",
+            "gate_max_class": "widebody",
             "class_order": [
               "regional",
               "narrowbody",
@@ -1948,7 +1932,7 @@
             ]
           },
           "passed": true,
-          "explanation": "Gate B9 (max narrowbody) accepts a narrowbody."
+          "explanation": "Gate B9 (max widebody) accepts a narrowbody."
         },
         {
           "rule_id": "G-2",
@@ -1956,19 +1940,14 @@
           "inputs": {
             "gate": "B9",
             "occupancy": [
-              "22:46",
-              "23:31"
+              "22:43",
+              "23:28"
             ],
             "buffer_min": 10,
-            "conflicts": [
-              {
-                "occupant": "UA1126",
-                "busy_until_incl_buffer": "22:57"
-              }
-            ]
+            "conflicts": []
           },
-          "passed": false,
-          "explanation": "Gate B9 overlaps 1 other occupant(s): UA1126 until 22:57"
+          "passed": true,
+          "explanation": "Gate B9 free for [22:43, 23:28) including 10 min buffer."
         },
         {
           "rule_id": "G-3",
@@ -1977,9 +1956,9 @@
             "base_eta": "22:17",
             "landing": "22:33",
             "extra_holding_min": 16,
-            "gate_arrival": "22:46",
-            "gate_release": "23:21",
-            "taxi_in_min": 13,
+            "gate_arrival": "22:43",
+            "gate_release": "23:18",
+            "taxi_in_min": 10,
             "service_min": 35.0,
             "turnaround_min": 35
           },
@@ -1991,15 +1970,15 @@
           "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
           "inputs": {
             "gate": "B9",
-            "gate_arrival": "22:46",
+            "gate_arrival": "22:43",
             "eligible_crews": [],
             "ineligible": [
-              "CRW-B4: assigned to B4, not B9",
-              "CRW-B9: assigned to B7, not B9"
+              "CRW-B4: assigned to B7, not B9",
+              "CRW-B9: shift 15:46-22:39 does not cover gate arrival 22:43"
             ]
           },
           "passed": false,
-          "explanation": "No crew on shift at gate B9: CRW-B4: assigned to B4, not B9; CRW-B9: assigned to B7, not B9. GROUND_REASSIGN_CREW can move a reassignable crew here."
+          "explanation": "No crew on shift at gate B9: CRW-B4: assigned to B7, not B9; CRW-B9: shift 15:46-22:39 does not cover gate arrival 22:43. GROUND_REASSIGN_CREW can move a reassignable crew here."
         }
       ]
     }
@@ -2010,16 +1989,16 @@
       "offers": [
         {
           "agent": "atc",
-          "run_id": "r-050839",
+          "run_id": "r-94304a",
           "round": 1,
           "state_version": 1,
           "preferred": "C2",
           "acceptable": [
-            "C2"
+            "C2",
+            "C3"
           ],
           "constraints_cited": [
             "R-1",
-            "C-1",
             "W-1",
             "T-1"
           ],
@@ -2029,24 +2008,24 @@
               "target": "C2"
             }
           ],
-          "rationale": "C2 has the lowest total cost at $943.32 with zero missed connections and zero overtime, versus $10971.82 for C1 and $10985.32 for C3. I offer ATC_EARLIER_SLOT to resequence flexible B62043 out of SL-2224 so that R-1 passes for C2, and C-1 depends on the GROUND_REASSIGN_CREW confirmation.",
-          "latency_s": 6.18,
+          "rationale": "C2 has the lowest total cost at 943.32 USD with 0 missed connections and 0 overtime, against 988.32 USD for C3. Both need my ATC_EARLIER_SLOT to clear R-1 at SL-2224 (occupied by flexible B62043) and both carry 7 min extra holding, so I am offering the concession for C2 and keeping C3 acceptable.",
+          "latency_s": 4.96,
           "valid": true
         },
         {
           "agent": "pilot",
-          "run_id": "r-050839",
+          "run_id": "r-94304a",
           "round": 1,
           "state_version": 1,
           "preferred": "C2",
           "acceptable": [
             "C2",
-            "C1"
+            "C3"
           ],
           "constraints_cited": [
             "F-1",
-            "C-1",
             "R-1",
+            "C-1",
             "G-2"
           ],
           "concessions": [
@@ -2055,22 +2034,22 @@
               "target": "C2"
             }
           ],
-          "rationale": "C2 passes F-1 with 7 min extra holding (280 kg burn, 1880 kg at landing vs 1800 kg reserve) and has the lowest total cost at $943.32 with 0 missed connections, versus about $10,971 for C1 and C3. C2 needs ATC_EARLIER_SLOT and GROUND_REASSIGN_CREW confirmed, and C1 is the fallback because it also stays within the 7 min holding limit.",
-          "latency_s": 4.37,
+          "rationale": "C2 passes F-1 with 7 min extra holding leaving 1880 kg against the 1800 kg reserve, and it is the lowest-cost option at 943.32 USD with 0 missed connections versus 988.32 USD for C3. I am offering PILOT_EXTRA_HOLDING to unlock C2, and C3 is also acceptable on the same concession.",
+          "latency_s": 4.75,
           "valid": true
         },
         {
           "agent": "ground",
-          "run_id": "r-050839",
+          "run_id": "r-94304a",
           "round": 1,
           "state_version": 1,
           "preferred": "C2",
           "acceptable": [
-            "C2"
+            "C2",
+            "C3"
           ],
           "constraints_cited": [
             "C-1",
-            "R-1",
             "G-2",
             "G-3"
           ],
@@ -2080,8 +2059,8 @@
               "target": "C2"
             }
           ],
-          "rationale": "C2 has the lowest total cost at $943.32 with 0 missed connections and 0 overtime minutes, and it is only safe if I reassign CRW-B9 to open B7, which C-1 flags as failing. C1 and C3 cost about $10,970 each with 40 missed connections, and C1 also depends on ATC and pilot concessions while failing G-2 at B4.",
-          "latency_s": 4.12,
+          "rationale": "C2 passes G-2 on B7 with the 10 min buffer and G-3, and its total cost of 943.32 USD is the lowest with zero missed connections and zero overtime. I offer GROUND_REASSIGN_CREW to clear C-1 for C2, since C3 costs 988.32 USD with 30 min overtime and no ground concession is needed for C-1 there.",
+          "latency_s": 4.38,
           "valid": true
         }
       ]
@@ -2091,30 +2070,30 @@
       "votes": [
         {
           "agent": "atc",
-          "run_id": "r-050839",
+          "run_id": "r-94304a",
           "round": 2,
           "proposal_version": 2,
           "vote": "accept",
-          "rationale": "C2 passes my checks R-1 (slot SL-2224 within the 20/hour capacity after the applied ATC_EARLIER_SLOT), W-1 (180 s behind DL338 meets the 120 s large-large minimum) and T-1 (no closed taxiways). Its total cost of $943.32 with 0 missed connections is the lowest of the candidates.",
-          "latency_s": 1.82
+          "rationale": "The frozen proposal C2 passes R-1, W-1, T-1 and F-1 and is safe with total cost 943.32 USD, lower than C3 at 988.32 USD. Its G-2 and C-1 checks are owned by other agents and pass in the final candidate data, so I accept.",
+          "latency_s": 1.43
         },
         {
           "agent": "pilot",
-          "run_id": "r-050839",
+          "run_id": "r-94304a",
           "round": 2,
           "proposal_version": 2,
           "vote": "accept",
-          "rationale": "The frozen proposal C2 passes F-1 with 7 min extra holding (280 kg burn, 1880 kg at landing vs 1800 kg reserve), and all my checks pass; its total cost is $943.32 with 0 missed connections, which is tolerable and well within my fuel-safe limit of 9 min.",
-          "latency_s": 1.48
+          "rationale": "The frozen proposal C2 passes F-1 with 7 min extra holding leaving 1880 kg against the 1800 kg reserve, and its checks W-1, R-1, T-1, G-1, G-2, G-3 and C-1 all pass. Its total cost of 943.32 USD with 0 missed connections and 0 overtime is the lowest of the safe candidates, and 7 min is within my fuel-safe limit of 9 min.",
+          "latency_s": 1.46
         },
         {
           "agent": "ground",
-          "run_id": "r-050839",
+          "run_id": "r-94304a",
           "round": 2,
           "proposal_version": 2,
           "vote": "accept",
-          "rationale": "Proposal C2 passes my checks G-1, G-2, G-3 and C-1, with CRW-B9 reassigned to B7 and the gate free from 22:34 including the 10 min buffer. Its total cost is $943.32 with 0 missed connections and 0 overtime minutes, which is the lowest of the candidates.",
-          "latency_s": 1.75
+          "rationale": "C2 passes my checks G-2 (B7 free with the 10 min buffer), G-3 (35 min turnaround met) and C-1 (CRW-B4 on shift at B7 after reassignment). Its cost of 943.32 USD with 0 missed connections and 0 overtime is the lowest of the viable options.",
+          "latency_s": 2.11
         }
       ]
     }
@@ -2139,16 +2118,18 @@
         "agent": "ground",
         "id": "GROUND_REASSIGN_CREW",
         "target": "C2",
-        "note": "moved CRW-B9 from B9 to B7",
+        "note": "moved CRW-B4 from B4 to B7",
         "applied": true
       }
     ],
     "feasible_before": [],
     "feasible_after": [
-      "C2"
+      "C2",
+      "C3"
     ],
     "in_all_acceptable": [
-      "C2"
+      "C2",
+      "C3"
     ],
     "rule": "Lowest cost among feasible candidates in all three acceptable sets",
     "proposal": {
@@ -2341,14 +2322,14 @@
   "stats": {
     "api_calls": 6,
     "retries": 0,
-    "total_latency_s": 8.08,
+    "total_latency_s": 7.14,
     "model": "claude-haiku-5-5",
     "thinking": {
       "type": "adaptive",
       "effort": "medium"
     },
-    "input_tokens": 40249,
-    "output_tokens": 3532,
-    "est_cost_usd": 0.00579
+    "input_tokens": 39555,
+    "output_tokens": 3190,
+    "est_cost_usd": 0.00555
   }
 }

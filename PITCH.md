@@ -20,9 +20,9 @@ We built three AI agents that do that negotiation in two rounds, with plain code
    the runway slot is taken, the gate is busy, the fuel reserve is too thin, or there's no crew."
 3. **Round 1.** "Each agent is its own Claude call. Ava, the tower, frees an earlier slot by resequencing
    another arrival. Pip, the pilot, accepts holding, but only up to his fuel-safe nine minutes. Gus, ground ops,
-   moves a crew from B9 to B7."
-4. **Coordinator.** "Plain code, no AI, applies those concessions and rechecks everything. One plan is now safe:
-   C2, land at 22:24, gate B7. Cost score: $943."
+   moves a crew from B4 to B7."
+4. **Coordinator.** "Plain code, no AI, applies those concessions and rechecks everything. Two plans are now safe, and
+   it takes the cheaper, C2: land at 22:24, gate B7. Cost score: $943."
 5. **Round 2.** Switch to **Pixel replay**, press Play. "All three accept the same frozen plan. Every hard check
    passes."
 6. **Compare.** "The obvious fix, just delay it and keep the planned gate, fails three safety checks and would

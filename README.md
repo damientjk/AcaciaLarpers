@@ -54,9 +54,9 @@ blocking plans are gate occupancy (G-2), crew availability (C-1) and fuel reserv
 
 - Before concessions all 6 candidate plans fail at least one check (runway slot, gate, fuel or crew).
 - Ava (ATC) frees an earlier slot, Pip (Pilot) accepts holding up to his fuel-safe 9 minutes, Gus (Ground) moves
-  a crew from B9 to B7.
-- Plan C2 becomes safe: land 22:24, gate B7, 7 min extra holding, cost score $943. All three agents accept it
-  in round 2 and the final recheck passes.
+  a crew from B4 to B7.
+- Plans C2 and C3 become safe. C2 is the cheaper: land 22:24, gate B7, 7 min extra holding, cost score $943.
+  All three agents accept it in round 2 and the final recheck passes.
 - The simple heuristic (land 22:29 at the planned gate B4) fails fuel, runway slot and gate checks, at $11,653.
 
 ## How it works
