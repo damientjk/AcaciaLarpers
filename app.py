@@ -54,9 +54,13 @@ section[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"] {dis
 .brand img {height:96px;width:auto}
 .brand h1 {font-size:46px !important;margin:0;padding:0;color:#1b1f3b}
 .brand small {display:block;font-size:13px;color:#3b4366}
-.incident {display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:10px 14px;margin:4px 0 6px;background:#f3f8fd;border:3px solid #1b1f3b;box-shadow:4px 4px 0 #1b1f3b;border-radius:4px}
+.incident {display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;gap:12px 22px;padding:16px 20px;margin:4px 0 10px;background:#f3f8fd;border:3px solid #1b1f3b;box-shadow:4px 4px 0 #1b1f3b;border-radius:4px}
 .incident .tag {font-family:'Jersey 15',monospace;background:#b42318;color:#fff;padding:2px 10px;border:2px solid #1b1f3b;font-size:19px}
-.incident .src {margin-left:auto;font-size:12px;color:#3b4366}
+.incident .facts {display:grid;grid-template-columns:repeat(2,max-content);gap:10px 12px}
+.incident .facts .chip {font-size:15px;padding:5px 12px}
+.incident .verdict {display:grid;justify-items:end;gap:8px;text-align:right}
+.incident .verdict small {font-size:12px;color:#3b4366}
+@media (max-width:1100px) {.incident {grid-template-columns:auto 1fr} .incident .verdict {justify-items:start;text-align:left}}
 .chip {display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:2px 8px;border:2px solid #1b1f3b;background:#fff;border-radius:3px}
 .ticket {display:inline-flex;align-items:stretch;background:#fff;border:3px solid #1b1f3b;box-shadow:3px 3px 0 #1b1f3b;border-radius:6px}
 .tk-body {display:flex;align-items:center;gap:12px;padding:4px 14px}
@@ -355,11 +359,11 @@ def frame(ticket=True):
  <span class="tk-fly">{plane}{H.get('distance_mi', '?')} mi</span>
  <span class="tk-port"><small>To</small><b>{H['destination']}</b><span>{CITY.get(H['destination'], '')}</span></span>
 </span><span class="tk-stub"><span>Flight</span><b>{H['carrier']} {H['flight']}</b><span>Sched {H['scheduled_arrival']} · {H['date']}</span></span></span>
-<span class="chip">Arrived <b>{H.get('arrival_delay_min', '?')} min</b> late</span>
+<div class="facts"><span class="chip">Arrived <b>{H.get('arrival_delay_min', '?')} min</b> late</span>
 <span class="chip">Weather <b>{H.get('weather_delay_min', 0)} min</b></span>
 <span class="chip">Late aircraft <b>{H.get('late_aircraft_delay_min', 0)} min</b></span>
-<span class="chip">Tail <b>{H.get('tail', '?')}</b></span>
-<span class="src">Real data: flights.csv · {outcome_badge(out) if out.get('type') else ''}</span></div>""")
+<span class="chip">Tail <b>{H.get('tail', '?')}</b></span></div>
+<div class="verdict">{outcome_badge(out) if out.get('type') else ''}<small>Real 2015 data · flights.csv</small></div></div>""")
 
 
 def run_picker(label):
