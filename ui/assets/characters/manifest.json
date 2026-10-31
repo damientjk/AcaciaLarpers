@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "pose": "static idle",
+  "display_width_px": 40,
+  "display_height_px": 54,
+  "image_rendering": "pixelated",
+  "notes": "High-resolution transparent PNG masters. 40 x 54 is the CSS display size, not the PNG file dimensions.",
+  "characters": {
+    "atc": {
+      "name": "Ava",
+      "role": "Air Traffic Control",
+      "file": "ava.png",
+      "source_width_px": 1080,
+      "source_height_px": 1457,
+      "mode": "RGBA",
+      "has_transparent_pixels": true,
+      "alpha_bounds": [
+        35,
+        47,
+        1044,
+        1433
+      ]
+    },
+    "pilot": {
+      "name": "Pip",
+      "role": "Pilot",
+      "file": "pip.png",
+      "source_width_px": 1080,
+      "source_height_px": 1457,
+      "mode": "RGBA",
+      "has_transparent_pixels": true,
+      "alpha_bounds": [
+        33,
+        37,
+        1012,
+        1427
+      ]
+    },
+    "ground": {
+      "name": "Gus",
+      "role": "Ground Operations",
+      "file": "gus.png",
+      "source_width_px": 1080,
+      "source_height_px": 1457,
+      "mode": "RGBA",
+      "has_transparent_pixels": true,
+      "alpha_bounds": [
+        0,
+        0,
+        1066,
+        1457
+      ]
+    }
+  }
+}
