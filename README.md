@@ -99,6 +99,15 @@ These checks are simplified. They are not full FAA compliance.
 
 - Cost of aircraft time: $100.76 per block minute in 2024, Airlines for America,
   https://www.airlines.org/dataset/u-s-passenger-carrier-delay-costs/
+- Holding fuel weight ($0.85/kg, approximate): jet fuel between IATA's 2025 average (about $90/bbl) and its
+  June 2026 outlook (about $152/bbl), at roughly 127 kg per barrel. IATA jet fuel price monitor,
+  https://www.iata.org/en/publications/economics/fuel-monitor/
+- Overtime weight ($1.5/min, approximate): a four-person ramp crew at the US median wage for hand laborers and
+  material movers (about $18/h), between straight time and 1.5x. BLS Occupational Employment and Wage
+  Statistics, occupation 53-7062, https://www.bls.gov/oes/current/oes537062.htm
+- Missed-connection weight ($250 per passenger, approximate): Switchfly's US per-passenger rebooking estimate
+  (2017 data), a cancellation figure used here as a misconnect proxy,
+  https://switchfly.com/blog/disrupting-travel-disruptions-and-helping-stranded-passengers
 
 ## Limitations
 
