@@ -12,14 +12,22 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-The run picker lists `fixtures/cached/` first (4 saved runs for an offline demo), then `logs/`. Sample runs in
-`fixtures/sample_logs/` are labelled SAMPLE and hidden once real runs exist. The sidebar buttons call
-`coordinator.run(...)`: with `ANTHROPIC_API_KEY` set the agents are live Claude calls, without it they use fake
-agents (labelled in the picker).
+On the **Airport** page, the Flight box opens a saved run or takes a new flight number. Saved runs come from
+`fixtures/cached/` (4 runs for an offline demo) and `logs/`; sample runs in `fixtures/sample_logs/` are listed last
+and labelled SAMPLE. **Run this flight** and **Random flight** call `coordinator.run(...)`: with
+`ANTHROPIC_API_KEY` set the agents are live Claude calls, without it they use fake agents (labelled as such). A run
+takes about 10 s.
 
-Pages: **Story** (problem, user, architecture, results), **Negotiation** (one run in full), **Pixel replay**
-(the same run played back as pixel-art agents talking), **Metrics** (charts computed from the run logs) and
-**Benchmark**.
+Pages (top bar):
+
+- **Airport**: the flight, the animated huddle, your decision panel, and the team.
+- **Ava**, **Pip**, **Gus**: one page per agent (ATC, Pilot, Ground) with its private state, its view of every
+  candidate plan, its offers and votes, and the prompt it runs on.
+- **Huddle**: the full replay, then every message and every safety check on the final plan.
+- **Your desk**: the duty manager approves or rejects the proposed plan.
+- **Results**: the 51-scenario benchmark, the live runs and failure tests, and charts across the saved runs.
+
+Coco, the coordinator, is plain code, not an AI agent, so it has no page of its own.
 
 ### Live agents and the benchmark
 
@@ -176,7 +184,7 @@ All simulated values are labelled "simulated" in the app and are not real airpor
 data/            flights.csv, airports.csv, airlines.csv
 config.yaml      cost weights, timeouts, simulation bounds
 app.py           Streamlit UI (Dafeng)
-ui/              pixel replay page and its Python helper (Dafeng)
+ui/              the animated huddle replay, pixel sprites and logo (Dafeng)
 docs/LOG_FORMAT.md   audit log contract between the pipeline and the UI
 fixtures/        cached demo runs + benchmark (cached/), sample logs for UI work
 models.py, scenario.py, options.py        (Ashvin)
