@@ -43,7 +43,7 @@ Costs are USD-equivalent scores from `config.yaml` weights, not measured savings
 | Unsafe plans accepted | **0** |
 | Simple heuristic (delay by the recorded delay, keep the planned gate) | infeasible in 100% of scenarios |
 | Live agent runs (10, `claude-haiku-5-5`, on the current simulation) | 8 consensus, 0 fallback, 2 escalation (both escalations are scenarios where the solver also finds nothing); 0 unsafe plans accepted; 5 retries; est. API cost $0.056 |
-| Agent result vs all-knowing solver on the same options and cost table | 6 of 8 consensus runs matched the solver's pick; 2 chose a dearer safe plan ($1,219, $818); mean gap 114.4% |
+| Agent result vs all-knowing solver on the same options and cost table | 6 of 8 consensus runs matched the solver's pick; 2 chose a dearer safe plan ($1,219, $818); agents' total cost +12% vs the solver's across the 8 runs (mean per-run gap 114%, inflated by one run on a $135 base) |
 | Failure tests (invalid proposal, impossible scenario, malformed reply, API timeout) | 4 of 4 handled |
 
 **Why the 11 escalations are the right answer.** When none of the up to 8 modelled plans passes every hard check,
