@@ -598,7 +598,8 @@ def agent_page(aid):
             steps = [("READ", f"{len(cands)} candidate plans for {H['carrier']}{H['flight']}, each checked in code.")]
             if o:
                 steps += [("RULES", f"Cites {', '.join(o['constraints_cited']) or 'nothing'}."),
-                          ("OFFER", f"Prefers {o['preferred']}; accepts {', '.join(o['acceptable']) or 'none'}."),
+                          ("OFFER", f"Prefers {o['preferred']}; accepts {', '.join(o['acceptable'])}." if o["preferred"]
+                           else "No plan is safe for me, so I accept none."),
                           ("CONCEDE", ", ".join(f"{c['id']} for {c['target']}" for c in o["concessions"]) or "Nothing to concede."),
                           ("WHY", o["rationale"])]
             elif r1:
@@ -673,7 +674,7 @@ def audit():
             with col:
                 conc = ", ".join(f"{c['id']} ({c['target']})" if c['target'] else c['id'] for c in o["concessions"]) or "none"
                 st.markdown(f"""<div class="card"><b>{n} · {role}</b><br>
-Prefers <b>{o['preferred']}</b> · accepts {", ".join(o['acceptable'])}<br>
+{f"Prefers <b>{o['preferred']}</b> · accepts {', '.join(o['acceptable'])}" if o['preferred'] else ("<b>No valid offer</b>" if o.get('error') else "<b>Accepts none</b>: no plan is safe")}<br>
 Cites: {", ".join(o['constraints_cited'])}<br>Concession: <b>{conc}</b><br>
 <i>{o['rationale']}</i><br><small>{o.get('latency_s', '?')} s</small></div>""", unsafe_allow_html=True)
     else:
