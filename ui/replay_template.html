@@ -33,16 +33,20 @@ canvas.px{image-rendering:pixelated;display:block}
 .outcome.consensus{background:#bff0c8}.outcome.fallback{background:#ffc2c4}.outcome.escalation{background:#b42318;color:#fff}.outcome.pending{background:#fff}
 .grid{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:14px}
 /* The full 16:9 backdrop, no tint, so the sky, plane and terminal keep their colours. */
-.stage{position:relative;aspect-ratio:16/9;background:url(%%BACKDROP%%) center/100% 100% no-repeat,#8ed0f7;image-rendering:pixelated;border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);overflow:hidden;border-radius:4px}
-/* Characters: Mo-sized, anchored by their feet at their own spot (tower, plane, terminal). */
-.seat{position:absolute;width:6.2%;transform:translate(-50%,-100%);cursor:pointer;border:0;background:none;padding:0;transition:filter .3s,opacity .3s;z-index:3}
+.stage{position:relative;aspect-ratio:16/9;background:#8ed0f7;border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);overflow:hidden;border-radius:4px}
+.stage canvas.bg{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated}
+/* Characters: one size, anchored by their feet at their own spot (tower, plane, terminal). */
+.seat{position:absolute;width:6.9%;transform:translate(-50%,-100%);cursor:pointer;border:0;background:none;padding:0;transition:filter .3s,opacity .3s;z-index:3}
 .seat canvas{width:100%}
 .seat.dim{opacity:.6;filter:grayscale(.5)}
 .seat.lit canvas{filter:drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 2px 0 #fff)}
 .label{position:absolute;top:100%;left:50%;transform:translateX(-50%);text-align:center;white-space:nowrap;line-height:1.15;pointer-events:none}
-.seat.lblright .label{top:22%;left:104%;transform:none;text-align:left}
 .tag{display:inline-block;font-family:var(--display);font-size:clamp(13px,1.15vw,16px);background:var(--ink);color:#fff;padding:0 6px}
-.sub{display:block;width:max-content;margin:1px auto 0;font-size:11px;color:var(--ink);background:rgba(255,255,255,.88);padding:0 4px}
+.bubble{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#fff;border:2px solid var(--ink);padding:3px 8px;font-size:clamp(11px,1.05vw,13px);line-height:1.3;width:max-content;max-width:min(200px,24vw);text-align:left;border-radius:3px;box-shadow:2px 2px 0 var(--ink);font-weight:500;pointer-events:none;z-index:4}
+.bubble::after{content:"";position:absolute;left:calc(50% - 5px);top:100%;border:5px solid transparent;border-top-color:var(--ink)}
+.seat.right .bubble{left:108%;bottom:auto;top:8%;transform:none}
+.seat.right .bubble::after{left:-10px;top:8px;border-top-color:transparent;border-right-color:var(--ink)}
+.quiet .bubble,.seat.busy .bubble{display:none}
 .think{position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%);background:#fff;border:2px solid var(--ink);padding:0 6px;font-family:var(--display);font-size:15px;white-space:nowrap;box-shadow:2px 2px 0 var(--ink);display:none}
 .think.show{display:block}
 .think.spinonly{background:none;border:0;box-shadow:none;padding:0}
@@ -55,7 +59,7 @@ canvas.px{image-rendering:pixelated;display:block}
 .spark{position:absolute;width:7px;height:7px;z-index:7;animation:spark 1.1s ease-out forwards}
 @keyframes spark{to{transform:translate(var(--dx),var(--dy));opacity:0}}
 /* The coordinator's board: small, bottom middle. */
-.board{position:absolute;left:50%;bottom:2.5%;transform:translateX(-50%);width:24%;text-align:center;z-index:2}
+.board{position:absolute;left:52%;top:57%;transform:translate(-50%,-100%);text-align:center;z-index:2;width:max-content;max-width:40%}
 .board .top{display:block;background:#b07a45;border:3px solid var(--ink);padding:2px 4px;box-shadow:inset -4px -4px 0 #8b5a2b;font-family:var(--display);color:#fff;text-shadow:1px 1px 0 var(--ink);font-size:clamp(12px,1.05vw,15px);line-height:1.1}
 .locks{display:flex;justify-content:center;gap:3px;margin-top:3px;min-height:10px}
 .locks i{width:10px;height:10px;border:2px solid var(--ink);background:#fff}
@@ -64,7 +68,7 @@ canvas.px{image-rendering:pixelated;display:block}
 .plancard.flip{animation:flip .5s}
 @keyframes flip{0%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
 /* Bottom-left status: a spinner while anyone is thinking. */
-.status{position:absolute;left:1.5%;bottom:3%;display:flex;align-items:center;gap:6px;background:#fff;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);padding:2px 10px;font-family:var(--display);font-size:clamp(13px,1.1vw,16px);line-height:1.1;max-width:38%;z-index:6}
+.status{position:absolute;left:50%;bottom:2.5%;transform:translateX(-50%);display:flex;align-items:center;gap:7px;background:rgba(27,31,59,.92);color:#fff;border:2px solid #fff;padding:2px 12px;font-family:var(--display);font-size:clamp(13px,1.15vw,16px);line-height:1.2;max-width:74%;z-index:7;text-align:center}
 .status .spin{width:16px;height:16px;flex:none}
 .status.idle .spin{display:none}
 .spin{position:relative;display:inline-block;width:28px;height:28px;animation:spin12 1s steps(12) infinite}
@@ -126,10 +130,11 @@ canvas.px{image-rendering:pixelated;display:block}
   <div class="grid">
     <div>
       <div class="stage" id="stage">
+        <canvas class="bg" id="sceneCanvas" width="320" height="180"></canvas>
         <div class="splash" id="splash"></div>
-        <div class="board"><span class="plancard" id="plancard">No plan yet</span><span class="top">Coordinator · plain code, no AI</span><div class="locks" id="locks"></div></div>
-        <div class="place" style="left:4.5%;top:20%">TOWER</div>
-        <div class="place" style="left:76%;top:46%">TERMINAL · GATES</div>
+        <div class="board"><span class="plancard" id="plancard">No plan yet</span><div class="locks" id="locks"></div></div>
+        <div class="place" style="left:6.5%;top:35.5%">TOWER</div>
+        <div class="place" id="gateLabel" style="left:76.5%;top:56.4%">GATES</div>
         <div class="status idle" id="status"><span class="spin" id="statusSpin"></span><span id="statusText">Ready</span></div>
       </div>
     </div>
@@ -164,12 +169,12 @@ const LOG=JSON.parse(document.getElementById("skylog").textContent);
 const LIVE=JSON.parse(document.getElementById("skylive").textContent);
 const VIEW=JSON.parse(document.getElementById("skyview").textContent)||"huddle";
 document.getElementById("wrap").classList.add("v-"+VIEW);
-const AG={atc:{name:"Ava",role:"Tower"},pilot:{name:"Pip",role:"Pilot"},ground:{name:"Gus",role:"Ground"},mod:{name:"Mo",role:"You"}};
+const AG={atc:{name:"Ava",role:"ATC"},pilot:{name:"Pip",role:"Pilot"},ground:{name:"Gus",role:"Ground"},mod:{name:"Coco",role:"Coordinator"}};
 /* Feet positions on the 320 x 180 backdrop: Ava at the tower base, Pip on the plane by the cockpit,
-   Gus at the terminal, Mo beside the coordinator's board. */
-const FEET={atc:[13,77],pilot:[57,42],ground:[86,78],mod:[66,97]};
+   Gus at the terminal, Coco the coordinator on the runway. */
+const FEET={atc:[12.5,22.2],pilot:[51.9,42.2],ground:[81.9,84.4],mod:[52,84.4]};
 /* Message targets (roughly chest height) and the board. */
-const POS={atc:[13,68],pilot:[57,34],ground:[86,69],mod:[66,88],coord:[50,86]};
+const POS={atc:[12.5,14],pilot:[51.9,34],ground:[81.9,76],mod:[52,74],coord:[52,74]};
 const COL={OFFER:"var(--propose)",PROPOSAL:"var(--propose)",SHARE:"var(--propose)",ACCEPT:"var(--accept)",REJECT:"var(--reject)",ABSTAIN:"var(--abstain)",CONCESSION:"var(--gold)"};
 const stage=document.getElementById("stage");
 const esc=s=>String(s??"").replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
@@ -182,12 +187,62 @@ document.getElementById("statusSpin").outerHTML=spinnerHTML().replace('class="sp
 /* seats */
 const seats={};
 ["atc","pilot","ground","mod"].forEach(id=>{
- const b=document.createElement("button");b.className="seat"+(id==="pilot"?" lblright":"");b.style.left=FEET[id][0]+"%";b.style.top=FEET[id][1]+"%";
+ const b=document.createElement("button");b.className="seat"+(id==="atc"||id==="mod"?" right":"");b.style.left=FEET[id][0]+"%";b.style.top=FEET[id][1]+"%";
  b.setAttribute("aria-label",`Show ${AG[id].name}'s details`);
- b.innerHTML=`<span class="think"></span>`;
+ b.innerHTML=`<span class="think"></span><span class="bubble"></span>`;
  b.appendChild(blinkable(newSprite(id),id));
- b.insertAdjacentHTML("beforeend",`<span class="label"><span class="tag">${AG[id].name}</span><span class="sub">${AG[id].role}</span></span>`);
+ b.insertAdjacentHTML("beforeend",`<span class="label"><span class="tag">${AG[id].name} · ${AG[id].role}</span></span>`);
  b.addEventListener("click",()=>showAgent(id));stage.appendChild(b);seats[id]=b});
+
+/* idle speech bubbles: short facts from each agent's private (simulated) state */
+function facts(){
+ const S=LOG.scenario.simulated||{},a=S.atc||{},p=S.pilot||{},g=S.ground||{};
+ const sl=a.slots||[],taken=sl.filter(s=>s.occupant).length,eta=(a.base_eta||"").slice(11,16);
+ const pax=(p.connections||[]).reduce((n,c)=>n+(c.passengers||0),0);
+ const pg=(g.gates||[]).find(x=>x.gate_id===g.planned_gate),busy=pg&&(pg.occupancy||[]).length?pg.occupancy.map(o=>o.end).sort().pop().slice(11,16):null;
+ if(g.planned_gate)document.getElementById("gateLabel").textContent="GATE "+g.planned_gate;
+ return{atc:(H.weather_delay_min>15?"Weather cut my arrival rate. ":`${H.carrier}${H.flight} is ${H.arrival_delay_min} min late. `)+(sl.length?`${taken} of ${sl.length} slots near ${eta} are taken.`:"Finding a slot."),
+  pilot:(p.fuel_safe_holding_min!=null?`${p.fuel_safe_holding_min} min of holding is fuel-safe. `:"")+(pax?`${pax} passengers connecting.`:"Watching my fuel."),
+  ground:g.planned_gate?(busy?`Gate ${g.planned_gate} is busy until ${busy}.`:`Gate ${g.planned_gate} is free.`):"Checking gates and crew.",
+  mod:LOG.human_decision?(LOG.human_decision.approved?"You approved this plan.":"You rejected this plan."):"I check every plan in plain code, no AI."}}
+const F=facts();Object.keys(seats).forEach(id=>{seats[id].querySelector(".bubble").textContent=F[id]});
+function quiet(on){stage.classList.toggle("quiet",on)}
+
+/* the animated airport, ported from the Sky Huddle design artifact (same 320 x 180 scene as backdrop.png) */
+const sc=document.getElementById("sceneCanvas"),sx=sc.getContext("2d"),SW=320,SH=180,STORM=(H.weather_delay_min||0)>15;
+const clouds=[{x:20,y:18,s:1},{x:120,y:36,s:.7},{x:210,y:14,s:1.2},{x:300,y:44,s:.8}];
+function R(x,y,w,h,c){sx.fillStyle=c;sx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
+function cloud(x,y,s){const w=30*s;R(x,y+4,w,6,"#fff");R(x+5*s,y,w*.55,10,"#fff");R(x+3*s,y+9,w-4,2,"#d6eefc")}
+function drawScene(t){
+ ["#7cc6f5","#8ed0f7","#a3daf9","#b8e4fb","#cdeefd"].forEach((c,i)=>R(0,i*24,SW,24,c));
+ for(let a=-12;a<=12;a++)for(let b=-12;b<=12;b++){const r=a*a+b*b;if(r<144)R(282+a,30+b,1,1,r<90?"#ffd447":"#ffe68a")}
+ clouds.forEach(c=>{const x=((c.x+t*0.006*c.s)%(SW+60))-40;cloud(x,c.y,c.s)});
+ if(STORM){R(110,20,90,10,"#6b7280");R(120,14,60,8,"#6b7280");R(104,28,100,6,"#4b5563");
+  for(let i=0;i<22;i++){const x=108+(i*41)%96,y=34+((t*0.08+i*13)%34);R(x,y,1,4,"#93c5fd")}
+  if(Math.floor(t/1700)%5===0&&(t%1700)<120){R(150,34,2,8,"#ffe066");R(148,42,2,6,"#ffe066")}}
+ [[0,14],[18,22],[34,12],[62,26],[80,16],[180,20],[196,30],[214,18],[300,24]].forEach(([x,h])=>R(x,128-h,16,h,"#a7c4e0"));
+ for(let x=0;x<SW;x+=8){const h=6+((x*37)%9);R(x,135-h,8,h,"#78c46a")}
+ R(0,133,SW,7,"#5bb450");R(0,133,SW,2,"#7ed36b");
+ R(0,140,SW,20,"#4b5563");R(0,140,SW,1,"#9ca3af");R(0,159,SW,1,"#9ca3af");
+ for(let x=4;x<SW;x+=22)R(x,149,12,2,"#f8fafc");
+ for(let x=6;x<SW;x+=16)R(x,141,2,1,(Math.floor(t/400)+x/16)%2<1?"#ffd447":"#8b7a2a");
+ for(let y=160;y<SH;y+=10)for(let x=0;x<SW;x+=10){R(x,y,10,10,"#8b5a2b");R(x,y,10,1,"#a06a36");R(x+9,y,1,10,"#6d4420");R(x+3+(x*y)%5,y+4,2,2,"#6d4420")}
+ R(30,62,22,78,"#d6dde6");R(46,62,6,78,"#b4bfcc");for(let y=72;y<136;y+=12)R(36,y,6,4,"#334155");
+ R(20,46,42,16,"#94a3b8");R(23,48,36,10,"#7dd3fc");for(let x=23;x<60;x+=9)R(x,48,2,10,"#334155");
+ R(18,42,46,4,"#475569");R(40,32,2,10,"#475569");R(39,29,4,3,Math.floor(t/500)%2?"#ff4d4d":"#7a1f1f");
+ R(226,100,94,40,"#e2e8f0");R(226,96,94,4,"#64748b");R(226,110,94,10,"#93c5fd");for(let x=230;x<320;x+=12)R(x,110,2,10,"#475569");
+ for(let y=122;y<140;y+=6)for(let x=226;x<320;x+=12)R(x+(y%12?6:0),y,1,6,"#cbd5e1");
+ R(206,118,22,7,"#94a3b8");R(206,125,3,15,"#64748b");
+ R(284,134,22,5,"#475569");R(286,139,4,3,OUT);R(300,139,4,3,OUT);R(288,129,8,5,"#8b5a2b");R(297,130,7,4,"#b07a45");
+ const cx=150,cy=82+Math.round(Math.sin(t/700)*3);
+ R(cx-28,cy+4,30,6,"#b8c4d3");R(cx-12,cy+10,10,5,"#94a3b8");
+ R(cx-40,cy-6,76,12,"#f8fafc");R(cx+36,cy-4,4,9,"#f8fafc");R(cx+40,cy-2,2,5,"#f8fafc");R(cx-40,cy+3,80,3,"#cbd5e1");
+ R(cx-40,cy,78,2,"#2563eb");R(cx+30,cy-4,8,3,"#1e293b");
+ for(let x=cx-30;x<cx+26;x+=6)R(x,cy-3,3,2,"#60a5fa");
+ R(cx-42,cy-22,8,16,"#2563eb");R(cx-46,cy-26,8,6,"#2563eb");R(cx-48,cy-4,14,4,"#cbd5e1");R(cx-40,cy-22,2,16,"#1d4ed8");
+ const pe=seats.pilot;if(pe){pe.style.top=((cy-6)/SH*100)+"%";POS.pilot[1]=(cy-20)/SH*100}
+}
+if(reduce)drawScene(0);else{const loop=t=>{drawScene(t);requestAnimationFrame(loop)};requestAnimationFrame(loop)}
 
 /* helpers */
 const ST=LOG.stats||{};document.getElementById("modelchip").textContent=LIVE?(LIVE.fake?"fake agents (no API)":"live Claude agents"):`${ST.model||(LOG.fake_agents?"fake agents (no API)":"model: see config.yaml")}${ST.thinking?" · extended thinking":""}`;
@@ -196,7 +251,7 @@ function splash(a,b){const el=document.getElementById("splash");el.innerHTML=`${
 function plancard(t){const pc=document.getElementById("plancard");pc.textContent=t;pc.classList.remove("flip");void pc.offsetWidth;pc.classList.add("flip")}
 function stamp(type){const s=document.createElement("div");s.className="stamp";const c=type==="consensus"?"var(--good)":"var(--bad)";s.style.borderColor=c;s.style.color=c;s.textContent=type==="consensus"?"Deal!":type==="fallback"?"Rulebook":"Human call";stage.appendChild(s)}
 function setRound(r){document.getElementById("roundNo").textContent=r}
-function think(ids,on,label){ids.forEach(id=>{const t=seats[id].querySelector(".think");t.innerHTML=label?esc(label):spinnerHTML();t.classList.toggle("spinonly",!label);t.classList.remove("say");t.classList.toggle("show",on)})}
+function think(ids,on,label){ids.forEach(id=>{const t=seats[id].querySelector(".think");t.innerHTML=label?esc(label):spinnerHTML();t.classList.toggle("spinonly",!label);t.classList.remove("say");t.classList.toggle("show",on);seats[id].classList.toggle("busy",on)})}
 function say(id,text,ms){const t=seats[id].querySelector(".think");t.textContent=text;t.classList.remove("spinonly");t.classList.add("say","show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show","say"),ms||1450)}
 function spotlight(ids){Object.keys(seats).forEach(id=>{seats[id].classList.toggle("dim",!!ids&&!ids.includes(id));seats[id].classList.toggle("lit",!!ids&&ids.includes(id))})}
 function radio(from,to,type){
@@ -212,7 +267,7 @@ function shield(at){const [x,y]=POS[at];const s=document.createElement("div");s.
  s.innerHTML=`<svg viewBox="0 0 9 10" shape-rendering="crispEdges" width="24" height="28"><path fill="#1b1f3b" d="M1 0h7v1h1v5H8v2H7v1H6v1H3V9H2V8H1V6H0V1h1z"/><path fill="#e5484d" d="M1 1h7v5H7v2H6v1H3V8H2V6H1z"/><path fill="#fff" d="M4 2h1v4H4zM4 7h1v1H4z"/></svg>`;stage.appendChild(s);setTimeout(()=>s.remove(),950)}
 function fireworks(){const cols=["#ffd447","#ff8a3d","#3fae54","#4f8cff","#e5484d","#fff"];for(let i=0;i<28;i++){const s=document.createElement("div");s.className="spark";s.style.left="50%";s.style.top="45%";s.style.background=cols[i%6];
  const a=i/28*Math.PI*2,d=50+Math.random()*70;s.style.setProperty("--dx",Math.cos(a)*d+"px");s.style.setProperty("--dy",Math.sin(a)*d+"px");stage.appendChild(s);setTimeout(()=>s.remove(),1200)}}
-function locks(rs){document.getElementById("locks").innerHTML=(rs||[]).map(r=>`<i class="${r.passed?"ok":"no"}" title="${esc(r.rule_id)}"></i>`).join("")}
+function locks(rs){const el=document.getElementById("locks");if(el)el.innerHTML=(rs||[]).map(r=>`<i class="${r.passed?"ok":"no"}" title="${esc(r.rule_id)}"></i>`).join("")}
 const feas=(set,id)=>(checks[set]&&checks[set][id]||[]).every(r=>r.passed);
 function strip(set,pick){
  const el=document.getElementById("cstrip");
@@ -228,7 +283,7 @@ function addLog(turn,type,who,to,text,json){
 /* ---------- live mode: the run is happening now, shown in the same scene ---------- */
 const ids=["atc","pilot","ground"];
 if(LIVE){
- document.getElementById("wrap").classList.add("live");
+ document.getElementById("wrap").classList.add("live");quiet(true);
  const ph=LIVE.phase;  // 0 build, 1 round 1, 2 coordinator, 3 round 2, 4 final
  const o=document.getElementById("outcome");o.textContent="Running…";
  setRound(ph>=3?2:ph>=1?1:0);strip(null);
@@ -273,24 +328,24 @@ steps.push(()=>{spotlight(null);const fc=out.final_candidate;
  const set=out.type==="fallback"?"before_concessions":"after_concessions";
  if(fc){locks(checks[set][fc]);strip(set,fc)}
  setTimeout(()=>stamp(out.type),600);
- status(out.type==="consensus"?"Deal reached":out.type==="fallback"?"Rulebook decided":"Escalated to Mo",false);
+ status(out.type==="consensus"?"Deal reached":out.type==="fallback"?"Rulebook decided":"Escalated to you",false);
  if(out.type==="consensus"){fireworks();addLog(null,"CONSENSUS","Coordinator","",`${out.reason} Unlocked by: ${(out.concessions_that_unlocked||[]).join(" + ")||"no concession"}.`,out)}
  else if(out.type==="fallback"){shield("coord");addLog(null,"FALLBACK","Rulebook","",`${out.reason} Rulebook picks ${fc}.`,LOG.fallback)}
- else{shield("coord");addLog(null,"ESCALATE","Rulebook","Mo",out.reason,out)}
+ else{shield("coord");addLog(null,"ESCALATE","Rulebook","you",out.reason,out)}
  const o=document.getElementById("outcome");o.className="outcome "+out.type;o.textContent=out.type==="consensus"?"Consensus":out.type==="fallback"?"Fallback, not consensus":"Escalated"});
-steps.push(()=>{spotlight(["mod"]);radio("coord","mod","PROPOSAL");
+steps.push(()=>{spotlight(["mod"]);
  const hd=LOG.human_decision;
- think(["mod"],true,hd?(hd.approved?"Approved":"Rejected"):"Your call");
- status(hd?(hd.approved?"Mo approved":"Mo rejected"):"Waiting for Mo: approve or reject below",false);
- addLog(null,hd?(hd.approved?"APPROVED":"REJECT"):"REVIEW","Mo (duty manager)","",hd?`${hd.approved?"Approved":"Rejected"} by ${hd.by||"duty manager"}.`:"Evidence sent to the duty manager. Approve or reject below the replay.",hd)});
+ say("mod",hd?(hd.approved?"You approved it":"You rejected it"):"Over to you: approve or reject",4000);
+ status(hd?(hd.approved?"You approved":"You rejected"):"Your call: approve or reject",false);
+ addLog(null,hd?(hd.approved?"APPROVED":"REJECT"):"REVIEW","You (duty manager)","",hd?`${hd.approved?"Approved":"Rejected"} by ${hd.by||"duty manager"}.`:"Evidence sent to the duty manager. Approve or reject below the replay.",hd)});
 }
 
 /* agent card */
 function showAgent(id){
  const card=document.getElementById("agentcard");card.classList.add("show");
  const o=r1&&r1.offers.find(x=>x.agent===id),v=r2&&r2.votes.find(x=>x.agent===id),sim=(LOG.scenario.simulated||{})[id];
- card.innerHTML=`<div class="ah"><span id="acs"></span><div><h3>${AG[id].name}, ${AG[id].role}</h3><p class="note">${id==="mod"?"You. The human who approves or rejects the final plan.":"Its own LLM call each round, with its own prompt and private state."}</p></div></div>
- <dl class="kv">${id==="mod"?`<dt>Decision</dt><dd>${esc(LOG.human_decision?(LOG.human_decision.approved?"Approved":"Rejected"):"Pending: use Approve or Reject below")}</dd>`:
+ card.innerHTML=`<div class="ah"><span id="acs"></span><div><h3>${AG[id].name}, ${AG[id].role}</h3><p class="note">${id==="mod"?"Plain code, no AI. Applies the concessions, rechecks every plan and freezes one proposal. You make the final call.":"Its own LLM call each round, with its own prompt and private state."}</p></div></div>
+ <dl class="kv">${id==="mod"?`<dt>Frozen plan</dt><dd>${esc(cp&&cp.proposal?cp.proposal.candidate:"none")}</dd><dt>Your decision</dt><dd>${esc(LOG.human_decision?(LOG.human_decision.approved?"Approved":"Rejected"):"Pending")}</dd>`:
  `<dt>Private state</dt><dd>${esc(sim?JSON.stringify(sim):"–")} <em>(simulated)</em></dd>
  <dt>Round 1 prefers</dt><dd>${esc(o?o.preferred:"–")}</dd><dt>Accepts</dt><dd>${esc(o?o.acceptable.join(", "):"–")}</dd>
  <dt>Checks cited</dt><dd>${esc(o?o.constraints_cited.join(", "):"–")}</dd><dt>Concession</dt><dd>${esc(o&&o.concessions.length?o.concessions.map(c=>c.id+" ("+c.target+")").join(", "):"none")}</dd>
@@ -300,11 +355,11 @@ function showAgent(id){
 
 /* player */
 let i=0,timer=null;
-function restart(){clearTimeout(timer);i=0;stage.querySelectorAll(".stamp").forEach(n=>n.remove());document.getElementById("plancard").textContent="No plan yet";document.getElementById("log").dataset.fresh="1";document.getElementById("log").innerHTML='<p class="note">Press Play. Every message appears here with its JSON.</p>';
+function restart(){clearTimeout(timer);i=0;quiet(false);stage.querySelectorAll(".stamp").forEach(n=>n.remove());document.getElementById("plancard").textContent="No plan yet";document.getElementById("log").dataset.fresh="1";document.getElementById("log").innerHTML='<p class="note">Press Play. Every message appears here with its JSON.</p>';
  setRound(0);spotlight(null);think(["atc","pilot","ground","mod"],false);strip(null);locks([]);status("Ready: press Play",false);const o=document.getElementById("outcome");o.className="outcome pending";o.textContent="Ready"}
 function step(){if(i>=steps.length)return false;steps[i++]();return i<steps.length}
-document.getElementById("play").addEventListener("click",()=>{restart();const tick=()=>{if(step())timer=setTimeout(tick,reduce?60:1500)};tick()});
-document.getElementById("step").addEventListener("click",()=>{clearTimeout(timer);if(i>=steps.length)restart();step()});
+document.getElementById("play").addEventListener("click",()=>{restart();quiet(true);const tick=()=>{if(step())timer=setTimeout(tick,reduce?60:1500)};tick()});
+document.getElementById("step").addEventListener("click",()=>{clearTimeout(timer);if(i>=steps.length)restart();quiet(true);step()});
 document.getElementById("restart").addEventListener("click",restart);
 if(!LIVE)restart();
 </script>

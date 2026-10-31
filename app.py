@@ -36,6 +36,7 @@ footer {display:none;}
 section[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"] {display:none;}
 .block-container {padding-top: 4.2rem; max-width: 1500px;}
 [data-testid="InputInstructions"] {display:none;}
+[data-testid="stImage"] img {image-rendering: pixelated;}
 [data-testid="stMain"] .stButton button, [data-testid="stMain"] .stFormSubmitButton button, [data-testid="stPopover"] button {font-family:'Jersey 15',monospace; font-size:19px; font-weight:400; border:3px solid #1b1f3b; border-radius:4px; box-shadow:3px 3px 0 #1b1f3b; background:#fff; color:#1b1f3b;}
 [data-testid="stMain"] button[data-testid="stBaseButton-primary"], [data-testid="stMain"] button[data-testid="stBaseButton-primaryFormSubmit"] {background:#ff8a3d; color:#1b1f3b;}
 [data-testid="stMain"] .stButton button:hover {background:#ffd447; color:#1b1f3b;}
@@ -50,7 +51,7 @@ section[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"] {dis
 .sim {color:#6d28d9;font-weight:600;font-size:12px;} .real {color:#1e7d34;font-weight:600;font-size:12px;}
 /* brand and boarding-pass incident bar (from the Sky Huddle design artifact) */
 .brand {display:flex;align-items:center;gap:12px}
-.brand img {width:46px;image-rendering:pixelated}
+.brand img {height:96px;width:auto}
 .brand h1 {font-size:46px !important;margin:0;padding:0;color:#1b1f3b}
 .brand small {display:block;font-size:13px;color:#3b4366}
 .incident {display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:10px 14px;margin:4px 0 6px;background:#f3f8fd;border:3px solid #1b1f3b;box-shadow:4px 4px 0 #1b1f3b;border-radius:4px}
@@ -287,12 +288,27 @@ CITY = {"DEN": "Denver", "DFW": "Dallas/Fort Worth", "ORD": "Chicago O'Hare", "L
         "OAK": "Oakland", "SAN": "San Diego", "BWI": "Baltimore", "DCA": "Washington National", "SLC": "Salt Lake City"}
 ROLE = {"atc": ("Ava", "Air traffic control", "Owns the runway: slots, wake spacing, taxi routes."),
         "pilot": ("Pip", "Pilot in command", "Owns the aircraft: fuel at landing."),
-        "ground": ("Gus", "Ground operations", "Owns the ramp: gates, turnaround, crew.")}
+        "ground": ("Gus", "Ground operations", "Owns the ramp: gates, turnaround, crew."),
+        "mod": ("Coco", "Coordinator", "Plain code, no AI: applies concessions, rechecks, freezes one plan.")}
 
 
-def png(agent):
+def png(agent, scale=3):
+    """Pixel sprite at an exact integer scale (20 x 27 grid), shown at that size so it stays crisp."""
     from ui.sprites import sprite_png
-    return sprite_png(agent)
+    return sprite_png(agent, scale)
+
+
+@st.cache_data
+def logo_b64(height=120):
+    """The Sky Huddle logo (ui/assets/logo.png), resized once for the header."""
+    import base64
+    import io
+    from PIL import Image
+    im = Image.open(ROOT / "ui" / "assets" / "logo.png")
+    im = im.resize((round(im.width * height * 2 / im.height), height * 2), Image.LANCZOS)  # 2x for sharp retina
+    buf = io.BytesIO()
+    im.save(buf, "PNG", optimize=True)
+    return base64.b64encode(buf.getvalue()).decode()
 
 
 def key_box():
@@ -324,10 +340,9 @@ def frame(ticket=True):
     """Brand, key status and the boarding-pass bar for the flight on screen: the same on every page."""
     import base64
     c1, c2 = st.columns([3, 2], vertical_alignment="center")
-    p = png("pilot")
-    img = f'<img src="data:image/png;base64,{base64.b64encode(p).decode()}" alt="">' if p else ""
+    img = f'<img src="data:image/png;base64,{logo_b64()}" alt="Sky Huddle logo">'
     c1.html(f'<div class="brand">{img}<div><h1>Sky Huddle</h1><small>Three AI agents settle one flight '
-            f'disruption in two rounds. You, Mo, make the call.</small></div></div>')
+            f'disruption in two rounds. Coco coordinates. You make the call.</small></div></div>')
     with c2:
         key_box()
     if not ticket:
@@ -428,17 +443,26 @@ def decision_panel():
 # ---------- pages ----------
 def page_airport():
     frame()
-    c = st.columns([2, 2, 1.5, 1.5], vertical_alignment="bottom")
-    flight_in = c[0].text_input("Flight number", value="AA1344", key="flight_in",
-                                help="Airline code and number from the 2015 data, for example AA1344 or DL2681.")
-    date_in = c[1].text_input("Date", value="2015-01-01", key="date_in", help="YYYY-MM-DD, in 2015.")
-    go = c[2].button("Run this flight", type="primary", width="stretch")
+    # One box: pick a saved run to open it, or type a new flight number to run it.
+    names = list(logs)
+    c = st.columns([3.2, 1.6, 1.4, 1.4], vertical_alignment="bottom")
+    pick = c[0].selectbox("Flight", names, index=names.index(st.session_state["current_run"]),
+                          accept_new_options=True, placeholder="Type a flight number, e.g. AA1090",
+                          help="Open a saved run from the list, or type a new flight number (e.g. AA1090) "
+                               "and press Enter, then Run.")
+    saved = pick in logs
+    if saved and pick != st.session_state["current_run"]:
+        st.session_state["current_run"] = pick
+        st.rerun()
+    flight_in = f"{H['carrier']}{H['flight']}" if saved else (pick or "").strip().upper()
+    date_in = c[1].text_input("Date", value=H["date"] if saved else "2015-01-01", key=f"date_in_{pick}",
+                              help="YYYY-MM-DD, in 2015.")
+    go = c[2].button("Run this flight", type="primary", width="stretch",
+                     help="Run the flight in the box on this date" + (" again" if saved else ""))
     rnd = c[3].button("Random flight", width="stretch", help="Run a random delayed flight from the 2015 data.")
-    a, b = st.columns([2, 3], vertical_alignment="bottom")
-    with a:
-        run_picker("Or open a saved run")
-    b.caption("Try AA1344 on 2015-01-01, AA1090 on 2015-06-28 or MQ2950 on 2015-01-06. A run takes about 10 s. "
-              + ("" if KEY_STATUS == "ok" else "No working key, so new runs use fake agents."))
+    st.caption("Click the box to open a saved run, or type a new flight number such as AA1090 (2015-06-28) or "
+               "MQ2950 (2015-01-06). A run takes about 10 s. "
+               + ("" if KEY_STATUS == "ok" else "No working key, so new runs use fake agents."))
     scene, desk = st.columns([1.75, 1])
     with scene:
         st.subheader("The huddle")
@@ -454,23 +478,25 @@ def page_airport():
         with slot.container():
             show_replay("airport")
     with desk:
-        st.subheader("Mo's desk")
+        st.subheader("Your desk")
         decision_panel()
         st.page_link(HUDDLE, label="Every message and safety check", icon=":material/forum:")
     st.subheader("Meet the team")
     cols = st.columns(4)
-    for col, aid in zip(cols, ["atc", "pilot", "ground"]):
+    for col, aid in zip(cols, ["atc", "pilot", "ground", "mod"]):
         name, role, owns = ROLE[aid]
         with col.container(border=True):
             i, t = st.columns([1, 3], vertical_alignment="center")
-            if png(aid):
-                i.image(png(aid), width=56)
+            i.image(png(aid, 3), width=60)
             t.markdown(f"**{name}** · {role}  \n{owns}")
-            st.page_link(AGENT_PAGES[aid], label=f"Open {name}'s brain", icon=":material/psychology:")
-    with cols[3].container(border=True):
+            if aid in AGENT_PAGES:
+                st.page_link(AGENT_PAGES[aid], label=f"Open {name}'s brain", icon=":material/psychology:")
+            else:
+                st.page_link(HUDDLE, label="See Coco's log", icon=":material/forum:")
+    with st.container(border=True):
         st.markdown("**How the huddle works**  \n1. A real delayed 2015 flight arrives.  \n2. Round 1: each agent "
-                    "offers plans and a concession.  \n3. Plain code applies them, rechecks, freezes one plan.  \n"
-                    "4. Round 2: the agents vote.  \n5. Mo approves, or the rulebook / escalation steps in.")
+                    "offers plans and a concession.  \n3. Coco (plain code) applies them, rechecks, freezes one plan.  \n"
+                    "4. Round 2: the agents vote.  \n5. You approve, or the rulebook / escalation steps in.")
 
 
 def agent_page(aid):
@@ -484,8 +510,7 @@ def agent_page(aid):
         mine = A.OWN_RULES[aid]
         left, mid, right = st.columns([1, 2, 1.3])
         with left.container(border=True):
-            if png(aid):
-                st.image(png(aid), width=120)
+            st.image(png(aid, 6), width=120)
             st.subheader(name)
             st.caption(role)
             st.markdown(f"{owns}  \n**Checks it owns:** {', '.join(sorted(mine))}  \n"
@@ -508,7 +533,7 @@ def agent_page(aid):
                              f'<small>{why}</small></div>')
             st.html('<div class="inv">' + "".join(cells) + "</div>")
             st.caption(f"Green: {name} accepts it. Yellow: passes {name}'s checks but not chosen. Dark: breaks a check "
-                       f"{name} owns (before concessions). Gold outline: {name}'s first choice. FINAL: the plan Mo sees.")
+                       f"{name} owns (before concessions). Gold outline: {name}'s first choice. FINAL: the plan on your desk.")
         with right.container(border=True):
             st.subheader("Thought stream")
             steps = [("READ", f"{len(cands)} candidate plans for {H['carrier']}{H['flight']}, each checked in code.")]
@@ -542,8 +567,8 @@ def page_huddle():
 
 def page_mo():
     frame()
-    st.subheader("Mo · the duty manager (you)")
-    st.markdown("The agents only propose. Plain code checks every plan. **You approve or reject it.**")
+    st.subheader("Your desk · duty manager")
+    st.markdown("The agents only propose. Coco, the coordinator, checks every plan in plain code. **You approve or reject it.**")
     a, b = st.columns([1.3, 1])
     with a.container(border=True):
         run_picker("Flight on your desk")
@@ -811,11 +836,11 @@ def page_results():
 
 # ---------- navigation and the run on screen ----------
 AGENT_PAGES = {aid: st.Page(agent_page(aid), title=ROLE[aid][0], icon=":material/person:", url_path=ROLE[aid][0].lower())
-               for aid in ["atc", "pilot", "ground"]}
+               for aid in ["atc", "pilot", "ground"]}  # Coco is plain code, so it has no brain page
 HUDDLE = st.Page(page_huddle, title="Huddle", icon=":material/forum:", url_path="huddle")
 pg = st.navigation([st.Page(page_airport, title="Airport", icon=":material/flight_land:", url_path="airport", default=True),
                     *AGENT_PAGES.values(), HUDDLE,
-                    st.Page(page_mo, title="Mo", icon=":material/verified_user:", url_path="mo"),
+                    st.Page(page_mo, title="Your desk", icon=":material/gavel:", url_path="desk"),
                     st.Page(page_results, title="Results", icon=":material/bar_chart:", url_path="results")],
                    position="top")
 
