@@ -77,8 +77,8 @@ blocking plans are gate occupancy (G-2), crew availability (C-1) and fuel reserv
 
 | ID | Check | Basis |
 |---|---|---|
-| F-1 | Fuel at landing meets the reserve | Simplified; 45 min inspired by 14 CFR 121.639 |
-| W-1 | Wake spacing behind the preceding aircraft | Simplified, based on FAA JO 7110.65 categories |
+| F-1 | Fuel at landing meets the reserve | Simplified; the reserve is a scenario parameter inspired by the 45-minute figure in 14 CFR 121.639, a dispatch-fuel rule, so this is not a landing-fuel compliance check |
+| W-1 | Wake spacing behind the preceding aircraft | Simulated profile informed by FAA JO 7110.65 categories, not quoted minima |
 | R-1 | Slot within runway capacity | Simulated |
 | T-1 | Taxi route avoids closed taxiways | Simulated |
 | G-1 | Aircraft fits the gate | Simulated |
