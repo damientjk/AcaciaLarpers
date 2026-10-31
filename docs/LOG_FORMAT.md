@@ -65,15 +65,26 @@ Field names can change at the 12:15 freeze, but then update this file and `fixtu
 }
 ```
 
-## Hooks the UI calls (optional)
+## Hooks the UI calls
 
-`app.py` tries `import coordinator` and calls:
+`coordinator.run(random=False, flight=None, date=None, scenario_id=None, fake_agents=False) -> dict`
+(signature as stubbed in `coordinator.py`). It must write one log to `logs/<run_id>.json` in the shape above
+and return the same dict. `app.py` calls:
 
-- `coordinator.run(random=True)` for "Run a random qualifying row"
-- `coordinator.run(flight="AA1344", date="2015-01-01")` for search
+- `coordinator.run(random=True, fake_agents=<no ANTHROPIC_API_KEY>)` for "Run a random qualifying row"
+- `coordinator.run(flight="AA1344", date="2015-01-01", fake_agents=...)` for search
 
-Both should write the log to `logs/` and return the same dict. If the import fails, the UI shows saved runs only.
+If the import fails or `run` raises `NotImplementedError`, the UI shows saved runs only. Any other exception is shown as an error.
+
+## Adapter: `normalize_log(raw)` in `app.py`
+
+Every log is passed through `normalize_log` before the pages and `ui/replay.py` see it. It does not rename fields;
+it makes the coordinator's output safe: fills missing optional keys (`fallback`, `baselines`, `stats`, `human_decision`),
+turns `target: null` into `""`, accepts string concessions, accepts `candidates`/`costs` as lists, and wraps a single
+`checks` dict as both before/after. If the coordinator changes a field name, add the mapping there.
 
 ## Benchmark
 
 `benchmark.py` writes `logs/benchmark.json` in the shape of `fixtures/sample_benchmark.json`.
+`normalize_benchmark` in `app.py` fills missing counters with 0 so a partial file still renders.
+Run picker order: `fixtures/cached/` (committed real runs for offline demo), `logs/`, `fixtures/sample_logs/`.
