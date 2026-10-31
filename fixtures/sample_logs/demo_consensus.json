@@ -1,0 +1,1739 @@
+{
+  "run_id": "r-demo-0001",
+  "label": "Demo: concession unlocks gate B7",
+  "created_at": "2026-10-31T12:00:00+08:00",
+  "sample": true,
+  "scenario": {
+    "scenario_id": "demo-001",
+    "issue_time": "2015-01-01T19:55",
+    "historical": {
+      "carrier": "AA",
+      "carrier_name": "American Airlines Inc.",
+      "flight": "1344",
+      "tail": "N200AA",
+      "origin": "DEN",
+      "destination": "DFW",
+      "date": "2015-01-01",
+      "scheduled_arrival": "20:30",
+      "actual_arrival": "22:29",
+      "arrival_delay_min": 119,
+      "weather_delay_min": 35,
+      "late_aircraft_delay_min": 40,
+      "air_system_delay_min": 44,
+      "distance_mi": 641,
+      "air_time_min": 95,
+      "taxi_in_min": 12
+    },
+    "simulated": {
+      "atc": {
+        "runway": "17C",
+        "declared_rate_per_hr": 30,
+        "slots": [
+          "20:32",
+          "20:40",
+          "20:52",
+          "21:05"
+        ],
+        "preceding": "AAL2213 B757",
+        "closed_taxiways": [
+          "L"
+        ]
+      },
+      "pilot": {
+        "aircraft": "A321",
+        "fuel_on_board_min": 50,
+        "reserve_min": 45,
+        "max_extra_holding_min": 12,
+        "connecting_pax": 9
+      },
+      "ground": {
+        "gates": {
+          "B4": "occupied until 20:55",
+          "B7": "free, no crew until 21:20",
+          "C3": "free",
+          "C5": "regional only"
+        },
+        "turnaround_min": 45,
+        "next_departure": "22:05",
+        "crew_shift_end": "23:00"
+      }
+    }
+  },
+  "weights": {
+    "delay_usd_per_min": 100.76,
+    "holding_fuel_usd_per_kg": 0.85,
+    "overtime_usd_per_min": 1.5,
+    "missed_connection_usd": 250
+  },
+  "candidates": [
+    {
+      "id": "C1",
+      "landing": "20:40",
+      "extra_holding_min": 0,
+      "gate": "B4",
+      "concession": null,
+      "gate_arrival": "20:48",
+      "gate_release": "21:33"
+    },
+    {
+      "id": "C2",
+      "landing": "20:40",
+      "extra_holding_min": 0,
+      "gate": "B7",
+      "concession": "GROUND_REASSIGN_CREW",
+      "gate_arrival": "20:48",
+      "gate_release": "21:33"
+    },
+    {
+      "id": "C3",
+      "landing": "20:52",
+      "extra_holding_min": 12,
+      "gate": "C3",
+      "concession": "PILOT_EXTRA_HOLDING",
+      "gate_arrival": "21:00",
+      "gate_release": "21:45"
+    },
+    {
+      "id": "C4",
+      "landing": "21:05",
+      "extra_holding_min": 25,
+      "gate": "B4",
+      "concession": null,
+      "gate_arrival": "21:13",
+      "gate_release": "21:58"
+    },
+    {
+      "id": "C5",
+      "landing": "20:32",
+      "extra_holding_min": 0,
+      "gate": "B7",
+      "concession": "ATC_EARLIER_SLOT + GROUND_REASSIGN_CREW",
+      "gate_arrival": "20:40",
+      "gate_release": "21:25"
+    },
+    {
+      "id": "C6",
+      "landing": "20:32",
+      "extra_holding_min": 0,
+      "gate": "B4",
+      "concession": "ATC_EARLIER_SLOT",
+      "gate_arrival": "20:40",
+      "gate_release": "21:25"
+    },
+    {
+      "id": "C7",
+      "landing": "20:52",
+      "extra_holding_min": 12,
+      "gate": "B7",
+      "concession": "GROUND_REASSIGN_CREW",
+      "gate_arrival": "21:00",
+      "gate_release": "21:45"
+    },
+    {
+      "id": "C8",
+      "landing": "20:40",
+      "extra_holding_min": 0,
+      "gate": "C5",
+      "concession": null,
+      "gate_arrival": "20:48",
+      "gate_release": "21:33"
+    }
+  ],
+  "costs": {
+    "C1": {
+      "delay_min": 10,
+      "holding_fuel_kg": 0,
+      "overtime_min": 0,
+      "missed_connections": 0,
+      "total_usd": 1008
+    },
+    "C2": {
+      "delay_min": 10,
+      "holding_fuel_kg": 0,
+      "overtime_min": 20,
+      "missed_connections": 0,
+      "total_usd": 1038
+    },
+    "C3": {
+      "delay_min": 22,
+      "holding_fuel_kg": 480,
+      "overtime_min": 0,
+      "missed_connections": 9,
+      "total_usd": 4875
+    },
+    "C4": {
+      "delay_min": 35,
+      "holding_fuel_kg": 1000,
+      "overtime_min": 0,
+      "missed_connections": 6,
+      "total_usd": 5877
+    },
+    "C5": {
+      "delay_min": 2,
+      "holding_fuel_kg": 0,
+      "overtime_min": 20,
+      "missed_connections": 0,
+      "total_usd": 232
+    },
+    "C6": {
+      "delay_min": 2,
+      "holding_fuel_kg": 0,
+      "overtime_min": 0,
+      "missed_connections": 0,
+      "total_usd": 202
+    },
+    "C7": {
+      "delay_min": 22,
+      "holding_fuel_kg": 480,
+      "overtime_min": 20,
+      "missed_connections": 6,
+      "total_usd": 4155
+    },
+    "C8": {
+      "delay_min": 10,
+      "holding_fuel_kg": 0,
+      "overtime_min": 0,
+      "missed_connections": 0,
+      "total_usd": 1008
+    }
+  },
+  "checks": {
+    "before_concessions": {
+      "C1": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 50,
+            "reserve_min": 45,
+            "extra_holding_min": 0
+          },
+          "passed": true,
+          "explanation": "50 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "20:40",
+            "declared_rate_per_hr": 30
+          },
+          "passed": true,
+          "explanation": "Slot within declared capacity"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "B4"
+          },
+          "passed": true,
+          "explanation": "A321 fits B4"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "B4",
+            "occupied_until": "20:55",
+            "buffer_min": 10
+          },
+          "passed": false,
+          "explanation": "B4 occupied until 20:55 plus 10 min buffer"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "B4",
+            "crew_move": false
+          },
+          "passed": true,
+          "explanation": "Crew available"
+        }
+      ],
+      "C2": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 50,
+            "reserve_min": 45,
+            "extra_holding_min": 0
+          },
+          "passed": true,
+          "explanation": "50 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "20:40",
+            "declared_rate_per_hr": 30
+          },
+          "passed": true,
+          "explanation": "Slot within declared capacity"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "B7"
+          },
+          "passed": true,
+          "explanation": "A321 fits B7"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "B7",
+            "occupied_until": null,
+            "buffer_min": 10
+          },
+          "passed": true,
+          "explanation": "B7 free for the full window"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "B7",
+            "crew_move": false
+          },
+          "passed": false,
+          "explanation": "No crew at B7 until 21:20"
+        }
+      ],
+      "C3": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 47,
+            "reserve_min": 45,
+            "extra_holding_min": 12
+          },
+          "passed": true,
+          "explanation": "47 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "20:52",
+            "declared_rate_per_hr": 30
+          },
+          "passed": true,
+          "explanation": "Slot within declared capacity"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "C3"
+          },
+          "passed": true,
+          "explanation": "A321 fits C3"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "C3",
+            "occupied_until": null,
+            "buffer_min": 10
+          },
+          "passed": true,
+          "explanation": "C3 free for the full window"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "C3",
+            "crew_move": false
+          },
+          "passed": true,
+          "explanation": "Crew available"
+        }
+      ],
+      "C4": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 38,
+            "reserve_min": 45,
+            "extra_holding_min": 25
+          },
+          "passed": false,
+          "explanation": "38 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "21:05",
+            "declared_rate_per_hr": 30
+          },
+          "passed": true,
+          "explanation": "Slot within declared capacity"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "B4"
+          },
+          "passed": true,
+          "explanation": "A321 fits B4"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "B4",
+            "occupied_until": "20:55",
+            "buffer_min": 10
+          },
+          "passed": true,
+          "explanation": "B4 free for the full window"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "B4",
+            "crew_move": false
+          },
+          "passed": true,
+          "explanation": "Crew available"
+        }
+      ],
+      "C5": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 50,
+            "reserve_min": 45,
+            "extra_holding_min": 0
+          },
+          "passed": true,
+          "explanation": "50 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "20:32",
+            "declared_rate_per_hr": 30
+          },
+          "passed": false,
+          "explanation": "20:32 slot is full at 30 arrivals/hour"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "B7"
+          },
+          "passed": true,
+          "explanation": "A321 fits B7"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "B7",
+            "occupied_until": null,
+            "buffer_min": 10
+          },
+          "passed": true,
+          "explanation": "B7 free for the full window"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "B7",
+            "crew_move": false
+          },
+          "passed": false,
+          "explanation": "No crew at B7 until 21:20"
+        }
+      ],
+      "C6": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 50,
+            "reserve_min": 45,
+            "extra_holding_min": 0
+          },
+          "passed": true,
+          "explanation": "50 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "20:32",
+            "declared_rate_per_hr": 30
+          },
+          "passed": false,
+          "explanation": "20:32 slot is full at 30 arrivals/hour"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "B4"
+          },
+          "passed": true,
+          "explanation": "A321 fits B4"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "B4",
+            "occupied_until": "20:55",
+            "buffer_min": 10
+          },
+          "passed": false,
+          "explanation": "B4 occupied until 20:55 plus 10 min buffer"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "B4",
+            "crew_move": false
+          },
+          "passed": true,
+          "explanation": "Crew available"
+        }
+      ],
+      "C7": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 47,
+            "reserve_min": 45,
+            "extra_holding_min": 12
+          },
+          "passed": true,
+          "explanation": "47 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "20:52",
+            "declared_rate_per_hr": 30
+          },
+          "passed": true,
+          "explanation": "Slot within declared capacity"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "B7"
+          },
+          "passed": true,
+          "explanation": "A321 fits B7"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "B7",
+            "occupied_until": null,
+            "buffer_min": 10
+          },
+          "passed": true,
+          "explanation": "B7 free for the full window"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "B7",
+            "crew_move": false
+          },
+          "passed": false,
+          "explanation": "No crew at B7 until 21:20"
+        }
+      ],
+      "C8": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 50,
+            "reserve_min": 45,
+            "extra_holding_min": 0
+          },
+          "passed": true,
+          "explanation": "50 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "20:40",
+            "declared_rate_per_hr": 30
+          },
+          "passed": true,
+          "explanation": "Slot within declared capacity"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "C5"
+          },
+          "passed": false,
+          "explanation": "A321 does not fit regional gate C5"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "C5",
+            "occupied_until": null,
+            "buffer_min": 10
+          },
+          "passed": true,
+          "explanation": "C5 free for the full window"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "C5",
+            "crew_move": false
+          },
+          "passed": true,
+          "explanation": "Crew available"
+        }
+      ]
+    },
+    "after_concessions": {
+      "C1": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 50,
+            "reserve_min": 45,
+            "extra_holding_min": 0
+          },
+          "passed": true,
+          "explanation": "50 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "20:40",
+            "declared_rate_per_hr": 30
+          },
+          "passed": true,
+          "explanation": "Slot within declared capacity"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "B4"
+          },
+          "passed": true,
+          "explanation": "A321 fits B4"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "B4",
+            "occupied_until": "20:55",
+            "buffer_min": 10
+          },
+          "passed": false,
+          "explanation": "B4 occupied until 20:55 plus 10 min buffer"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "B4",
+            "crew_move": false
+          },
+          "passed": true,
+          "explanation": "Crew available"
+        }
+      ],
+      "C2": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 50,
+            "reserve_min": 45,
+            "extra_holding_min": 0
+          },
+          "passed": true,
+          "explanation": "50 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "20:40",
+            "declared_rate_per_hr": 30
+          },
+          "passed": true,
+          "explanation": "Slot within declared capacity"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "B7"
+          },
+          "passed": true,
+          "explanation": "A321 fits B7"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "B7",
+            "occupied_until": null,
+            "buffer_min": 10
+          },
+          "passed": true,
+          "explanation": "B7 free for the full window"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "B7",
+            "crew_move": true
+          },
+          "passed": true,
+          "explanation": "Crew reassigned from B9 to B7 from 20:25"
+        }
+      ],
+      "C3": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 47,
+            "reserve_min": 45,
+            "extra_holding_min": 12
+          },
+          "passed": true,
+          "explanation": "47 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "20:52",
+            "declared_rate_per_hr": 30
+          },
+          "passed": true,
+          "explanation": "Slot within declared capacity"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "C3"
+          },
+          "passed": true,
+          "explanation": "A321 fits C3"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "C3",
+            "occupied_until": null,
+            "buffer_min": 10
+          },
+          "passed": true,
+          "explanation": "C3 free for the full window"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "C3",
+            "crew_move": false
+          },
+          "passed": true,
+          "explanation": "Crew available"
+        }
+      ],
+      "C4": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 38,
+            "reserve_min": 45,
+            "extra_holding_min": 25
+          },
+          "passed": false,
+          "explanation": "38 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "21:05",
+            "declared_rate_per_hr": 30
+          },
+          "passed": true,
+          "explanation": "Slot within declared capacity"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "B4"
+          },
+          "passed": true,
+          "explanation": "A321 fits B4"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "B4",
+            "occupied_until": "20:55",
+            "buffer_min": 10
+          },
+          "passed": true,
+          "explanation": "B4 free for the full window"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "B4",
+            "crew_move": false
+          },
+          "passed": true,
+          "explanation": "Crew available"
+        }
+      ],
+      "C5": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 50,
+            "reserve_min": 45,
+            "extra_holding_min": 0
+          },
+          "passed": true,
+          "explanation": "50 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "20:32",
+            "declared_rate_per_hr": 30
+          },
+          "passed": true,
+          "explanation": "Slot within declared capacity"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "B7"
+          },
+          "passed": true,
+          "explanation": "A321 fits B7"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "B7",
+            "occupied_until": null,
+            "buffer_min": 10
+          },
+          "passed": true,
+          "explanation": "B7 free for the full window"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "B7",
+            "crew_move": true
+          },
+          "passed": true,
+          "explanation": "Crew reassigned from B9 to B7 from 20:25"
+        }
+      ],
+      "C6": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 50,
+            "reserve_min": 45,
+            "extra_holding_min": 0
+          },
+          "passed": true,
+          "explanation": "50 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "20:32",
+            "declared_rate_per_hr": 30
+          },
+          "passed": true,
+          "explanation": "Slot within declared capacity"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "B4"
+          },
+          "passed": true,
+          "explanation": "A321 fits B4"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "B4",
+            "occupied_until": "20:55",
+            "buffer_min": 10
+          },
+          "passed": false,
+          "explanation": "B4 occupied until 20:55 plus 10 min buffer"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "B4",
+            "crew_move": false
+          },
+          "passed": true,
+          "explanation": "Crew available"
+        }
+      ],
+      "C7": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 47,
+            "reserve_min": 45,
+            "extra_holding_min": 12
+          },
+          "passed": true,
+          "explanation": "47 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "20:52",
+            "declared_rate_per_hr": 30
+          },
+          "passed": true,
+          "explanation": "Slot within declared capacity"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "B7"
+          },
+          "passed": true,
+          "explanation": "A321 fits B7"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "B7",
+            "occupied_until": null,
+            "buffer_min": 10
+          },
+          "passed": true,
+          "explanation": "B7 free for the full window"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "B7",
+            "crew_move": true
+          },
+          "passed": true,
+          "explanation": "Crew reassigned from B9 to B7 from 20:25"
+        }
+      ],
+      "C8": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {
+            "fuel_at_landing_min": 50,
+            "reserve_min": 45,
+            "extra_holding_min": 0
+          },
+          "passed": true,
+          "explanation": "50 min fuel at landing, reserve 45"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {
+            "leader": "AAL2213 B757",
+            "gap_min": 3,
+            "required_min": 3
+          },
+          "passed": true,
+          "explanation": "3 min behind the preceding B757 (Medium after Heavy-equivalent spacing kept)"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {
+            "slot": "20:40",
+            "declared_rate_per_hr": 30
+          },
+          "passed": true,
+          "explanation": "Slot within declared capacity"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {
+            "closed": [
+              "L"
+            ]
+          },
+          "passed": true,
+          "explanation": "Route via taxiway K avoids closed taxiway L"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {
+            "aircraft": "A321",
+            "gate": "C5"
+          },
+          "passed": false,
+          "explanation": "A321 does not fit regional gate C5"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {
+            "gate": "C5",
+            "occupied_until": null,
+            "buffer_min": 10
+          },
+          "passed": true,
+          "explanation": "C5 free for the full window"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {
+            "turnaround_min": 45
+          },
+          "passed": true,
+          "explanation": "45 min turnaround fits before next departure 22:05"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {
+            "gate": "C5",
+            "crew_move": false
+          },
+          "passed": true,
+          "explanation": "Crew available"
+        }
+      ]
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "offers": [
+        {
+          "agent": "atc",
+          "preferred": "C5",
+          "acceptable": [
+            "C2",
+            "C3",
+            "C5",
+            "C7"
+          ],
+          "constraints_cited": [
+            "R-1",
+            "W-1"
+          ],
+          "concessions": [
+            {
+              "id": "ATC_EARLIER_SLOT",
+              "target": "20:32"
+            }
+          ],
+          "rationale": "20:40 and 20:52 fit current capacity. I can resequence AAL2213 to open 20:32 and keep wake spacing.",
+          "latency_s": 3.1,
+          "valid": true
+        },
+        {
+          "agent": "pilot",
+          "preferred": "C5",
+          "acceptable": [
+            "C2",
+            "C3",
+            "C5",
+            "C7"
+          ],
+          "constraints_cited": [
+            "F-1"
+          ],
+          "concessions": [
+            {
+              "id": "PILOT_EXTRA_HOLDING",
+              "target": "12 min"
+            }
+          ],
+          "rationale": "50 min fuel now. Holding 25 min leaves 38 min, under the 45 min reserve. I can accept up to 12 min. 9 passengers connect.",
+          "latency_s": 2.8,
+          "valid": true
+        },
+        {
+          "agent": "ground",
+          "preferred": "C3",
+          "acceptable": [
+            "C2",
+            "C3",
+            "C5",
+            "C7"
+          ],
+          "constraints_cited": [
+            "G-2",
+            "C-1"
+          ],
+          "concessions": [
+            {
+              "id": "GROUND_REASSIGN_CREW",
+              "target": "B7"
+            }
+          ],
+          "rationale": "B4 occupied until 20:55. B7 usable if the crew moves from B9 at 20:25. C3 works without changes.",
+          "latency_s": 3.4,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "votes": [
+        {
+          "agent": "atc",
+          "proposal_version": 2,
+          "vote": "accept",
+          "rationale": "C5 keeps wake spacing behind the resequenced B757.",
+          "latency_s": 2.2
+        },
+        {
+          "agent": "pilot",
+          "proposal_version": 2,
+          "vote": "accept",
+          "rationale": "No holding, 50 min fuel at landing, connections protected.",
+          "latency_s": 2.0
+        },
+        {
+          "agent": "ground",
+          "proposal_version": 2,
+          "vote": "accept",
+          "rationale": "Crew move to B7 confirmed, turnaround fits.",
+          "latency_s": 2.5
+        }
+      ]
+    }
+  ],
+  "compromise": {
+    "concessions_applied": [
+      {
+        "agent": "atc",
+        "id": "ATC_EARLIER_SLOT",
+        "target": "20:32"
+      },
+      {
+        "agent": "pilot",
+        "id": "PILOT_EXTRA_HOLDING",
+        "target": "12 min"
+      },
+      {
+        "agent": "ground",
+        "id": "GROUND_REASSIGN_CREW",
+        "target": "B7"
+      }
+    ],
+    "feasible_before": [
+      "C3"
+    ],
+    "feasible_after": [
+      "C2",
+      "C3",
+      "C5",
+      "C7"
+    ],
+    "in_all_acceptable": [
+      "C2",
+      "C3",
+      "C5",
+      "C7"
+    ],
+    "rule": "Lowest cost among feasible candidates in all three acceptable sets",
+    "proposal": {
+      "version": 2,
+      "candidate": "C5"
+    }
+  },
+  "outcome": {
+    "type": "consensus",
+    "final_candidate": "C5",
+    "reason": "All three accepted proposal v2 and the final recheck passed.",
+    "concessions_that_unlocked": [
+      "ATC_EARLIER_SLOT",
+      "GROUND_REASSIGN_CREW"
+    ],
+    "final_recheck": {
+      "state_version": 2,
+      "passed": true
+    }
+  },
+  "fallback": null,
+  "baselines": {
+    "solver": {
+      "candidate": "C5",
+      "total_usd": 232
+    },
+    "heuristic": {
+      "plan": "Delay ETA by recorded delay, keep planned gate B4",
+      "feasible": false,
+      "failed": [
+        "G-2"
+      ]
+    }
+  },
+  "human_decision": null,
+  "stats": {
+    "api_calls": 6,
+    "retries": 0,
+    "total_latency_s": 9.6
+  }
+}

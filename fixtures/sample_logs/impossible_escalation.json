@@ -1,0 +1,476 @@
+{
+  "run_id": "r-esc-0003",
+  "label": "Impossible scenario: nothing passes, escalate",
+  "sample": true,
+  "created_at": "2026-10-31T12:00:00+08:00",
+  "scenario": {
+    "scenario_id": "esc-001",
+    "issue_time": "2015-01-01T04:30",
+    "historical": {
+      "carrier": "AA",
+      "carrier_name": "American Airlines Inc.",
+      "flight": "8",
+      "tail": "N368AA",
+      "origin": "HNL",
+      "destination": "DFW",
+      "date": "2015-01-01",
+      "scheduled_arrival": "05:10",
+      "actual_arrival": "06:59",
+      "arrival_delay_min": 109,
+      "weather_delay_min": 0,
+      "late_aircraft_delay_min": 108,
+      "air_system_delay_min": 1,
+      "distance_mi": 3784,
+      "air_time_min": 390,
+      "taxi_in_min": 9
+    },
+    "simulated": {
+      "atc": {
+        "runway": "17C"
+      },
+      "pilot": {
+        "fuel_on_board_min": 47,
+        "reserve_min": 45
+      },
+      "ground": {
+        "gates": {
+          "D2": "occupied until 06:30",
+          "D4": "too small"
+        }
+      }
+    }
+  },
+  "weights": {
+    "delay_usd_per_min": 100.76,
+    "holding_fuel_usd_per_kg": 0.85,
+    "overtime_usd_per_min": 1.5,
+    "missed_connection_usd": 250
+  },
+  "candidates": [
+    {
+      "id": "C1",
+      "landing": "05:20",
+      "extra_holding_min": 0,
+      "gate": "D2",
+      "concession": null,
+      "gate_arrival": "05:20",
+      "gate_release": "05:20"
+    },
+    {
+      "id": "C2",
+      "landing": "05:30",
+      "extra_holding_min": 0,
+      "gate": "D4",
+      "concession": null,
+      "gate_arrival": "05:30",
+      "gate_release": "05:30"
+    },
+    {
+      "id": "C3",
+      "landing": "05:45",
+      "extra_holding_min": 25,
+      "gate": "D2",
+      "concession": null,
+      "gate_arrival": "05:45",
+      "gate_release": "05:45"
+    }
+  ],
+  "costs": {
+    "C1": {
+      "delay_min": 10,
+      "holding_fuel_kg": 0,
+      "overtime_min": 0,
+      "missed_connections": 0,
+      "total_usd": 1008
+    },
+    "C2": {
+      "delay_min": 20,
+      "holding_fuel_kg": 0,
+      "overtime_min": 0,
+      "missed_connections": 0,
+      "total_usd": 2015
+    },
+    "C3": {
+      "delay_min": 30,
+      "holding_fuel_kg": 0,
+      "overtime_min": 0,
+      "missed_connections": 0,
+      "total_usd": 3023
+    }
+  },
+  "checks": {
+    "before_concessions": {
+      "C1": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {},
+          "passed": false,
+          "explanation": "Blocked in this scenario"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        }
+      ],
+      "C2": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {},
+          "passed": false,
+          "explanation": "Blocked in this scenario"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        }
+      ],
+      "C3": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {},
+          "passed": false,
+          "explanation": "Blocked in this scenario"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        }
+      ]
+    },
+    "after_concessions": {
+      "C1": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {},
+          "passed": false,
+          "explanation": "Blocked in this scenario"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        }
+      ],
+      "C2": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {},
+          "passed": false,
+          "explanation": "Blocked in this scenario"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        }
+      ],
+      "C3": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified; 45 min reserve inspired by 14 CFR 121.639",
+          "inputs": {},
+          "passed": false,
+          "explanation": "Blocked in this scenario"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simplified wake profile based on FAA JO 7110.65 categories",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway capacity",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway closures",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate size limits",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate occupancy plus 10 min buffer",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Assumption: 45 min turnaround minimum",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated ground crew roster",
+          "inputs": {},
+          "passed": true,
+          "explanation": "Passes"
+        }
+      ]
+    }
+  },
+  "rounds": [],
+  "compromise": null,
+  "outcome": {
+    "type": "escalation",
+    "final_candidate": null,
+    "reason": "No feasible plan within the modelled options. Escalated to the duty manager.",
+    "concessions_that_unlocked": [],
+    "final_recheck": null
+  },
+  "fallback": {
+    "candidate": null,
+    "rule": "Nothing passes the checker",
+    "feasible": []
+  },
+  "baselines": {},
+  "human_decision": null,
+  "stats": {
+    "api_calls": 0,
+    "retries": 0,
+    "total_latency_s": 0.4
+  }
+}
