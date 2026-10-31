@@ -12,8 +12,8 @@ protocol:
 
 llm:
   model: claude-haiku-5-5      # fast model for the three agents
-  max_tokens: 1024
-  temperature: 0
+  max_tokens: 4096
+  effort: low                  # no temperature: non-default sampling values are rejected on this model
 
 costs:
   delay_usd_per_min: 100.76    # A4A 2024 block-minute cost, see README sources
