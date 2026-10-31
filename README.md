@@ -9,17 +9,57 @@ Autonomous SG 2026, Airbus track, Challenge 2.
 
 ```bash
 pip install -r requirements.txt
-python fixtures/make_sample_logs.py   # sample runs, until the pipeline writes real ones
 streamlit run app.py
 ```
 
-The run picker lists `fixtures/cached/` first (commit real runs there for the offline demo), then `logs/`, then
-`fixtures/sample_logs/` (labelled sample). "New run" buttons call `coordinator.run(...)`; without `ANTHROPIC_API_KEY`
-they pass `fake_agents=True`. Logs are read through `normalize_log` in `app.py` (see `docs/LOG_FORMAT.md`).
-Status: backend modules are stubs on `main`, so only sample logs render until they are filled in.
+The run picker lists `fixtures/cached/` first (4 saved runs for an offline demo), then `logs/`. Sample runs in
+`fixtures/sample_logs/` are labelled SAMPLE and hidden once real runs exist. The sidebar buttons call
+`coordinator.run(...)`: with `ANTHROPIC_API_KEY` set the agents are live Claude calls, without it they use fake
+agents (labelled in the picker).
 
 Pages: **Story** (problem, user, architecture, results), **Negotiation** (one run in full), **Pixel replay**
-(the same run played back as pixel-art agents talking), **Benchmark**.
+(the same run played back as pixel-art agents talking), **Metrics** (charts computed from the run logs) and
+**Benchmark**.
+
+### Live agents and the benchmark
+
+```bash
+export ANTHROPIC_API_KEY=...                       # never commit this
+python -m pytest -q                                 # 141 tests, no API calls
+python benchmark.py --agents 10 --live             # writes logs/benchmark.json
+python -c "import coordinator; print(coordinator.run(flight='AA1344', date='2015-01-01')['outcome'])"
+```
+
+## Results
+
+Measured inside the simulation on 51 seeded scenarios (20 weather only, 20 late aircraft only, 11 both).
+Costs are USD-equivalent scores from `config.yaml` weights, not measured savings.
+
+| | Result |
+|---|---|
+| Scenarios with a safe plan before any concession | 21 of 51 |
+| Scenarios with a safe plan after agent concessions | **29 of 51** (concessions rescued 8) |
+| Scenarios with no safe plan in the modelled options | 22 of 51, escalated to the duty manager |
+| Unsafe plans accepted | **0** |
+| Simple heuristic (delay by the recorded delay, keep the planned gate) | infeasible in 100% of scenarios |
+| Agent result vs all-knowing solver on the same options | 0% cost gap |
+| Failure tests (invalid proposal, impossible scenario, malformed reply, API timeout) | 4 of 4 handled |
+
+Agent-run figures above come from fake agents (10 runs: 7 consensus, 3 escalation). Re-run
+`python benchmark.py --agents 10 --live` to replace them with live Claude runs.
+
+**Why 22 escalations is the right answer.** When none of the up to 8 modelled plans passes every hard check,
+the system refuses to guess and hands the decision to the duty manager with the reasons. The checks most often
+blocking plans are gate occupancy (G-2), crew availability (C-1) and fuel reserve (F-1).
+
+### Demo run: AA1344 Denver to Dallas/Fort Worth, 1 Jan 2015
+
+- Before concessions all 6 candidate plans fail at least one check (runway slot, gate, fuel or crew).
+- Ava (ATC) frees an earlier slot, Pip (Pilot) accepts holding up to his fuel-safe 9 minutes, Gus (Ground) moves
+  a crew from B9 to B7.
+- Plan C2 becomes safe: land 22:24, gate B7, 7 min extra holding, cost score $943. All three agents accept it
+  in round 2 and the final recheck passes.
+- The simple heuristic (land 22:29 at the planned gate B4) fails fuel, runway slot and gate checks, at $11,653.
 
 ## How it works
 
@@ -77,7 +117,7 @@ config.yaml      cost weights, timeouts, simulation bounds
 app.py           Streamlit UI (Dafeng)
 ui/              pixel replay page and its Python helper (Dafeng)
 docs/LOG_FORMAT.md   audit log contract between the pipeline and the UI
-fixtures/        sample logs and benchmark for UI work; later the 50 seeded scenario IDs
+fixtures/        cached demo runs + benchmark (cached/), sample logs for UI work
 models.py, scenario.py, options.py        (Ashvin)
 checker.py, costs.py, fallback.py, benchmark.py   (Yizhuo)
 agents.py, coordinator.py                (Damien)

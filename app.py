@@ -158,7 +158,8 @@ def load(path):
 
 
 def benchmark():
-    for p in [ROOT / "logs" / "benchmark.json", ROOT / "fixtures" / "sample_benchmark.json"]:
+    for p in [ROOT / "logs" / "benchmark.json", ROOT / "fixtures" / "cached" / "benchmark.json",
+              ROOT / "fixtures" / "sample_benchmark.json"]:
         if p.exists():
             return normalize_benchmark(json.loads(p.read_text())), p
     return None, None

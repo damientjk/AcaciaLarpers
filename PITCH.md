@@ -1,37 +1,44 @@
 # 3-minute table pitch
 
-One speaker talks, one drives the laptop. The app is the presentation: start on the **Story** page,
-demo scenario selected, replay ready.
+One speaker talks, one drives the laptop. The app is the presentation. Before judges arrive: open the
+**Story** page, pick **AA1344 DEN→DFW** in the run picker, and have **Pixel replay** ready to press Play.
+If Wi-Fi or the API is down, everything below works from the cached runs.
 
 ## 0:00 to 0:30 · The user and the problem (Story page)
 
-"Picture the duty manager at an airline hub. A storm cuts the arrival rate and this flight, American 1344 from
-Denver, is running late. Today they phone the tower, the captain and the ramp, one after another, to agree when
-it lands and which gate it gets. Every minute of aircraft time costs U.S. airlines about a hundred dollars.
+"Picture the duty manager at an airline hub. A storm and a late inbound aircraft hit American 1344 from Denver
+to Dallas. Today they phone the tower, the captain and the ramp one by one to agree when it lands and which gate
+it gets. Every minute of aircraft time costs U.S. airlines about a hundred dollars.
 
-We built three AI agents that do that negotiation for them, in two rounds, with code that keeps every plan safe."
+We built three AI agents that do that negotiation in two rounds, with plain code that keeps every plan safe."
 
-## 0:30 to 2:00 · Live demo (Negotiation page, then Pixel replay)
+## 0:30 to 2:00 · Live demo (Negotiation, then Pixel replay)
 
-1. **Scenario.** "Left is the real flight row from the dataset. Right is simulated, and labelled: fuel, gates, crew.
+1. **Scenario.** "Left is the real 2015 flight row. Right is simulated and labelled: slots, fuel, gates, crew.
    Each agent only sees its own part."
-2. **The conflict.** "Before anyone gives ground, only one plan is safe: C3, 22 minutes late with 12 minutes of
-   holding. Simulated cost: about $4,900."
-3. **Round 1.** "Gus, the ground agent, offers to move a crew so gate B7 opens. Ava, the tower agent, offers to
-   resequence a Boeing 757 to free an earlier slot. Pip, the pilot agent, says he can hold 12 minutes at most."
-4. **Coordinator.** "Plain code, no AI, applies those concessions and rechecks. Now C5 is safe: land at 20:32,
-   gate B7, no holding. It costs $232."
+2. **The deadlock.** "We generated six landing plans. Before anyone gives ground, all six break a safety rule:
+   the runway slot is taken, the gate is busy, the fuel reserve is too thin, or there's no crew."
+3. **Round 1.** "Each agent is its own Claude call. Ava, the tower, frees an earlier slot by resequencing
+   another arrival. Pip, the pilot, accepts holding, but only up to his fuel-safe nine minutes. Gus, ground ops,
+   moves a crew from B9 to B7."
+4. **Coordinator.** "Plain code, no AI, applies those concessions and rechecks everything. One plan is now safe:
+   C2, land at 22:24, gate B7. Cost score: $943."
 5. **Round 2.** Switch to **Pixel replay**, press Play. "All three accept the same frozen plan. Every hard check
-   passes: fuel, wake spacing, runway capacity, gate, crew."
-6. **Human in charge.** Back on Negotiation, press **Approve**. "The duty manager has the last word."
-7. **Hand over.** "Pick any flight from the list and we'll run it live." (Use the cached runs if Wi-Fi or the API
-   is slow.)
+   passes."
+6. **Compare.** "The obvious fix, just delay it and keep the planned gate, fails three safety checks and would
+   cost over $11,000."
+7. **Human in charge.** Back on Negotiation, press **Approve**. "The duty manager has the last word."
+8. **Hand over.** "Pick any flight and we'll run it live." (Sidebar: flight and date, or "random qualifying row".)
 
-## 2:00 to 2:45 · Results and a failure (Benchmark page)
+## 2:00 to 2:45 · Results and a failure (Metrics, then Benchmark)
 
-"Across our test runs: consensus rate, fallback rate, and zero accepted unsafe plans. Here's a failure on purpose:
-the ground agent times out. An abstention isn't an accept, so the rulebook takes over and picks C3. It's labelled
-as a fallback, never as agreement." (Select the timeout run to show it.)
+"We ran 51 seeded scenarios. Before concessions, 21 had a safe plan. After the agents' concessions, 29 did:
+the negotiation rescued 8. Zero unsafe plans were ever accepted, and all four failure tests pass: an invalid
+proposal is blocked, a garbled reply or an API timeout falls back to the rulebook, and an impossible scenario
+escalates.
+
+The other 22 have no safe plan in the options we model. We don't guess: we escalate to the duty manager with the
+reasons." (Point at the option funnel on Metrics, then the failure tests on Benchmark.)
 
 ## 2:45 to 3:00 · Impact and next steps
 
@@ -41,8 +48,12 @@ as a fallback, never as agreement." (Select the timeout run to show it.)
 
 | Question | Owner | Short answer |
 |---|---|---|
-| Where does it fail, and how would the user know? | Yizhuo | Timeout, bad output or no deal goes to the fallback, labelled. Nothing feasible escalates to the human. |
-| How do you stop unsafe plans? | Yizhuo | Agents never decide safety. The checker blocks every plan, and the final plan is rechecked before the human sees it. |
-| What do the agents add over a solver? | Damien | Concessions. The solver only knows the base state. Agents reveal what they can give up, which unlocked C5. |
-| What's real and what's simulated? | Ashvin | The flight row is real. Slots, fuel, gates and crew are simulated, seeded and labelled. |
-| Why two rounds? What about timeouts? | Damien | Bounded cost and time. 20 s per call, one retry, then fallback. Retries never open a new round. |
+| Where does it fail, and how would the user know? | Yizhuo | Timeout, bad output or no deal goes to the rulebook, labelled fallback. Nothing safe escalates to the human with reasons. |
+| How do you stop unsafe plans? | Yizhuo | Agents never decide safety. Eight coded checks run on every plan, and the final plan is rechecked before the human sees it. 0 unsafe plans accepted. |
+| What do the agents add over a solver? | Damien | Concessions. The solver only knows the base state. The agents reveal what they can give up, which made 8 more scenarios solvable. On the same options they match the solver's cost. |
+| Why do 22 of 51 escalate? | Ashvin | We model up to 8 plans per flight with tight simulated gates, crew and fuel. When none is safe, refusing is correct. Busy gates, crew and fuel reserve block most. |
+| What's real and what's simulated? | Ashvin | The flight row is real 2015 DOT data. Slots, fuel, gates and crew are simulated, seeded and labelled. Checks are simplified, not FAA compliance. |
+| Why two rounds? What about timeouts? | Damien | Bounded time and cost. Per-call timeout and one retry, then fallback. Retries never open a new round. |
+
+Agent-run numbers in the app come from fake agents until someone runs `python benchmark.py --agents 10 --live`.
+Say "in our simulation" for every number.
