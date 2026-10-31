@@ -304,9 +304,9 @@ steps.push(()=>{setRound(0);spotlight(null);ids.forEach(id=>radio("coord",id,"SH
 if(r1){
  steps.push(()=>{setRound(1);splash("Round 1","offers and concessions");spotlight(ids);think(ids,true);status("Round 1: agents thinking",true);strip("before_concessions");
   addLog(1,"CHECK","Coordinator","",`Checker ran on ${cands.length} candidates before any concession: ${(cp&&cp.feasible_before||[]).length} pass (${(cp&&cp.feasible_before||[]).join(", ")||"none"}). All three agents think in parallel.`,null)});
- r1.offers.forEach(o=>steps.push(()=>{think([o.agent],false);radio(o.agent,"coord","OFFER");status(`${AG[o.agent].name} offers: prefers ${o.preferred}`,true);
-  say(o.agent,o.preferred?`I prefer ${o.preferred}${o.concessions.length?" · I can concede":""}`:"No valid offer");
-  addLog(1,"OFFER",AG[o.agent].name,"Coordinator",`Prefers ${o.preferred}. Accepts ${o.acceptable.join(", ")}. Cites ${o.constraints_cited.join(", ")}. ${o.rationale}`,o)}));
+ r1.offers.forEach(o=>steps.push(()=>{think([o.agent],false);radio(o.agent,"coord","OFFER");status(o.preferred?`${AG[o.agent].name} offers: prefers ${o.preferred}`:`${AG[o.agent].name}: nothing is safe`,true);
+  say(o.agent,o.preferred?`I prefer ${o.preferred}${o.concessions.length?" · I can concede":""}`:o.valid===false?"No valid offer":"Nothing here is safe");
+  addLog(1,"OFFER",AG[o.agent].name,"Coordinator",(o.preferred?`Prefers ${o.preferred}. Accepts ${o.acceptable.join(", ")}.`:"Accepts none: no plan is safe.")+` Cites ${o.constraints_cited.join(", ")}. ${o.rationale}`,o)}));
  const concs=(cp&&cp.concessions_applied)||[];
  if(concs.length)steps.push(()=>{spotlight(ids);status("Coordinator applies concessions",true);concs.forEach(c=>token(c.agent,c.id.replace(/_/g," ").toLowerCase()));
   setTimeout(()=>strip("after_concessions"),700);
