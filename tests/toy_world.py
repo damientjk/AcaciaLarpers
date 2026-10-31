@@ -21,7 +21,8 @@ COSTS = {"C1": 150, "C2": 6100, "C3": 4900, "C5": 232}
 
 def scenario(impossible: bool = False) -> Scenario:
     return Scenario(scenario_id="toy-demo", issue_time="2015-01-01T19:55", historical=HISTORICAL, simulated={
-        "atc": {"earlier_slot_open": False},
+        "atc": {"earlier_slot_open": False,
+                "slot_20_32": "occupied by AAL2213, a flexible neighbour that can be resequenced to 20:44"},
         "pilot": {"max_extra_holding_min": 0 if impossible else 12},
         "ground": {"crew_at_B7": False, "b7_compatible": not impossible},
     })
@@ -62,7 +63,9 @@ class ToyWorld:
         return s.model_copy(update={"simulated": sim})
 
     def view(self, s, agent):
-        return {"historical": s.historical.model_dump(), "private": s.simulated[agent]}
+        hidden = {"earlier_slot_open", "crew_at_B7", "b7_compatible"}   # checker internals, not agent knowledge
+        return {"historical": s.historical.model_dump(),
+                "private": {k: v for k, v in s.simulated[agent].items() if k not in hidden}}
 
     def solve(self, candidates, checks, costs):
         ok = [c.id for c in candidates if all(r.passed for r in checks[c.id])]
