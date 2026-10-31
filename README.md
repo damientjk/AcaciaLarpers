@@ -25,7 +25,7 @@ Pages: **Story** (problem, user, architecture, results), **Negotiation** (one ru
 
 ```bash
 export ANTHROPIC_API_KEY=...                       # never commit this
-python -m pytest -q                                 # 141 tests, no API calls
+python -m pytest -q                                 # 144 tests, no API calls
 python benchmark.py --agents 10 --live             # writes logs/benchmark.json
 python -c "import coordinator; print(coordinator.run(flight='AA1344', date='2015-01-01')['outcome'])"
 ```
@@ -90,10 +90,39 @@ These checks are simplified. They are not full FAA compliance.
 
 ## Data
 
-- `data/flights.csv`: 358,774 delayed 2015 US flights (US DOT). Every row qualifies.
+- `data/flights.csv`: 358,774 delayed 2015 US flights (US DOT). Every row qualifies (weather delay > 15 min or
+  late-aircraft delay > 20 min): 32,525 weather only, 316,762 late aircraft only, 9,487 both. It is a
+  disruption-only extract, not a full schedule: no October, no cancellations or diversions, so it cannot be used
+  to rebuild real runway, gate or aircraft rotations.
 - `data/airports.csv`, `data/airlines.csv`: labels.
-- Anything not in these files (slots, fuel, gates, crew) is simulated, seeded by scenario ID and labelled
-  "simulated" in the UI.
+
+**What is real.** Carrier, flight, tail, route, date, scheduled and actual times, recorded delays and their causes,
+distance and taxi-in time all come from the row unchanged. The unconstrained landing time (base ETA) is the row's
+real wheels-on time; a plan only adds extra holding on top of it, so the recorded delay is counted once.
+
+**Time handling.** DOT gives departures in origin local time and arrivals in destination local time. Everything
+is converted to destination local time: the time-zone offset is inferred from scheduled departure + scheduled
+block time vs scheduled arrival, and actual arrival = scheduled arrival + `ARRIVAL_DELAY`, which handles overnight
+flights and `2400` without guessing dates. On 20,000 sampled rows this matches the file's `ARRIVAL_TIME` in every
+case.
+
+**What is simulated** (seeded by scenario ID, so any scenario rebuilds exactly from its ID; bounds in
+`config.yaml` under `simulation:`; labelled "simulated" in the UI):
+
+| Area | Simulated | Assumption behind it |
+|---|---|---|
+| Aircraft | Narrowbody / widebody and wake category | Inferred from distance (2,000 mi or more = widebody, heavy wake); DOT has no aircraft type |
+| Runway | Arrival rate 30/h (20/h in weather), neighbouring traffic, wake categories, which neighbours ATC may move | Generic single arrival runway |
+| Taxiways | 6 generic taxiways, each gate reached by 2; one may be closed (more often in weather) | Not the real airport layout |
+| Fuel | Fuel on board, burn rates, 45 min reserve, fuel-safe and comfortable holding | Typical burn figures, not airline data |
+| Gates | 2 or 3 generic gates (B4, B7, B9), size, occupancy | The planned gate is often still occupied, always for late-aircraft rows |
+| Crew | Shifts and assignments; the planned gate's crew can follow its flight if that gate is blocked | Simplified ramp staffing |
+| Passengers | 0 to 3 onward connections | Not from booking data |
+| Turnaround | 35 min narrowbody, 75 min widebody; next departure after the scheduled arrival | Assumption |
+
+`demo-001` uses a real row chosen by rule (an evening narrowbody arrival at ATL with both delay causes), with its
+simulated state deliberately shaped so that preferences conflict. The code does not fix which plan wins. Every
+other scenario uses the seeded generator unchanged.
 
 ## Sources
 
@@ -104,6 +133,11 @@ These checks are simplified. They are not full FAA compliance.
 
 - Results are measured inside the simulation. They are not proven reductions of the real 2015 delays.
 - One airport and one disrupted flight per scenario. No multi-flight cascades.
+- Every airport gets the same generic layout (one arrival runway, 6 taxiways, 2 or 3 gates). Results say nothing
+  about a specific airport's real capacity.
+- Aircraft type is inferred from distance, so wake category and fuel burn can be wrong for a given flight. A
+  registry lookup by tail number would fix this.
+- The time-zone offset is inferred from the schedule and rounded to whole hours.
 - Agents are not expected to beat a central solver that knows every constraint. We measure how well they
   coordinate within bounds and how traceable the agreement is.
 
