@@ -16,7 +16,7 @@ import streamlit.components.v1 as components
 from ui.replay import replay_html
 
 ROOT = Path(__file__).parent
-LOG_DIRS = [ROOT / "logs", ROOT / "fixtures" / "sample_logs"]
+LOG_DIRS = [ROOT / "fixtures" / "cached", ROOT / "logs", ROOT / "fixtures" / "sample_logs"]
 DECISIONS = ROOT / "logs" / "decisions"
 AGENTS = {"atc": ("Ava", "ATC"), "pilot": ("Pip", "Pilot"), "ground": ("Gus", "Ground ops")}
 COST_PER_MIN_SOURCE = ("Airlines for America: U.S. Passenger Carrier Delay Costs",
@@ -37,6 +37,99 @@ h1, h2, h3 {font-family: 'Pixelify Sans', monospace !important; letter-spacing: 
 """, unsafe_allow_html=True)
 
 
+
+# ---------- adapters: team format -> shape the UI and ui/replay.py expect ----------
+def _as_list(x):
+    return list(x) if isinstance(x, (list, tuple)) else ([] if x is None else [x])
+
+
+def _by_id(x):
+    """Accept {id: item} or [item with id]; return {id: item}."""
+    if isinstance(x, dict):
+        return x
+    return {i["id"]: i for i in _as_list(x)}
+
+
+def _concession(c):
+    if isinstance(c, str):
+        return {"id": c, "target": ""}
+    c = dict(c)
+    c["target"] = c.get("target") or ""
+    return c
+
+
+def normalize_log(raw):
+    """Make a coordinator log (docs/LOG_FORMAT.md) safe for the UI. Tolerates missing optional
+    fields, models dumped with None, candidates/costs given as lists, and string concessions."""
+    log = dict(raw)
+    log.setdefault("run_id", "unknown")
+    log.setdefault("sample", False)
+    sc = dict(log.get("scenario") or {})
+    sc.setdefault("historical", {})
+    sc.setdefault("simulated", {})
+    log["scenario"] = sc
+    cands = _by_id(log.get("candidates"))
+    log["candidates"] = list(cands.values())
+    log["costs"] = _by_id(log.get("costs")) if isinstance(log.get("costs"), list) else dict(log.get("costs") or {})
+    chk = log.get("checks") or {}
+    if isinstance(chk, dict) and not ({"before_concessions", "after_concessions"} & set(chk)):
+        chk = {"before_concessions": chk, "after_concessions": chk}  # single check set
+    chk = {k: dict(chk.get(k) or {}) for k in ("before_concessions", "after_concessions")}
+    log["checks"] = chk
+    rounds = []
+    for r in _as_list(log.get("rounds")):
+        r = dict(r)
+        if "offers" in r:
+            r["offers"] = [dict(o, concessions=[_concession(c) for c in _as_list(o.get("concessions"))],
+                                acceptable=_as_list(o.get("acceptable")),
+                                constraints_cited=_as_list(o.get("constraints_cited")),
+                                rationale=o.get("rationale", ""), valid=o.get("valid", True))
+                           for o in r["offers"]]
+        if "votes" in r:
+            r["votes"] = [dict(v, rationale=v.get("rationale", "")) for v in r["votes"]]
+        rounds.append(r)
+    log["rounds"] = rounds
+    cp = log.get("compromise")
+    if cp:
+        cp = dict(cp)
+        for k in ("feasible_before", "feasible_after", "in_all_acceptable"):
+            cp[k] = _as_list(cp.get(k))
+        cp["concessions_applied"] = [dict(_concession(c), agent=c.get("agent", "") if isinstance(c, dict) else "")
+                                     for c in _as_list(cp.get("concessions_applied"))]
+        cp.setdefault("rule", "")
+        cp.setdefault("proposal", {"version": 1, "candidate": ""})
+    log["compromise"] = cp or None
+    out = dict(log.get("outcome") or {"type": "escalation", "final_candidate": None, "reason": "No outcome recorded."})
+    out.setdefault("final_candidate", None)
+    out.setdefault("reason", "")
+    out["concessions_that_unlocked"] = _as_list(out.get("concessions_that_unlocked"))
+    log["outcome"] = out
+    log.setdefault("fallback", None)
+    log.setdefault("baselines", {})
+    log.setdefault("human_decision", None)
+    log.setdefault("stats", {})
+    return log
+
+
+def normalize_benchmark(raw):
+    """Fill gaps so the Benchmark and Story pages never KeyError on a partial benchmark.json."""
+    b = dict(raw)
+    a = dict(b.get("agents") or {})
+    for k in ("completed", "consensus", "fallback", "escalation", "accepted_violations", "mean_api_calls", "mean_latency_s"):
+        a.setdefault(k, 0)
+    b["agents"] = a
+    b.setdefault("scenarios", {})
+    for k in ("total", "weather_only", "late_aircraft_only", "both"):
+        b["scenarios"].setdefault(k, 0)
+    b.setdefault("cost_vs_solver_gap_pct", 0)
+    b["heuristic"] = dict(b.get("heuristic") or {}); b["heuristic"].setdefault("infeasible_rate_pct", 0)
+    b["deterministic"] = dict(b.get("deterministic") or {})
+    for k in ("runs", "fallback_feasible", "escalations"):
+        b["deterministic"].setdefault(k, 0)
+    b.setdefault("failure_tests", [])
+    return b
+
+
 # ---------- data ----------
 @st.cache_data(ttl=5)
 def list_logs():
@@ -48,19 +141,20 @@ def list_logs():
                     log = json.loads(p.read_text())
                 except json.JSONDecodeError:
                     continue
-                if "run_id" in log and "scenario" in log:
+                if isinstance(log, dict) and "run_id" in log and "scenario" in log:
+                    log = normalize_log(log)
                     found[f"{log.get('label') or log['run_id']}  ({p.parent.name})"] = str(p)
     return found
 
 
 def load(path):
-    return json.loads(Path(path).read_text())
+    return normalize_log(json.loads(Path(path).read_text()))
 
 
 def benchmark():
     for p in [ROOT / "logs" / "benchmark.json", ROOT / "fixtures" / "sample_benchmark.json"]:
         if p.exists():
-            return json.loads(p.read_text()), p
+            return normalize_benchmark(json.loads(p.read_text())), p
     return None, None
 
 
@@ -71,19 +165,29 @@ def outcome_badge(out):
 
 
 def try_pipeline_run(mode, flight=None, date=None):
-    """Calls Damien's coordinator if it exists. Contract in docs/LOG_FORMAT.md."""
+    """Calls Damien's coordinator.run(random, flight, date, scenario_id, fake_agents).
+    Without ANTHROPIC_API_KEY it runs with fake_agents=True (random agents, real checker)."""
+    import os
     try:
         import coordinator  # noqa: WPS433
     except ImportError:
         st.info("The pipeline isn't in the repo yet (no coordinator.py). Showing saved runs only.")
         return None
+    fake = not os.environ.get("ANTHROPIC_API_KEY")
     try:
         if mode == "random":
-            return coordinator.run(random=True)
-        return coordinator.run(flight=flight, date=date)
+            res = coordinator.run(random=True, fake_agents=fake)
+        else:
+            res = coordinator.run(flight=flight, date=date, fake_agents=fake)
+    except NotImplementedError:
+        st.warning("coordinator.run is still a stub. Showing saved runs only.")
+        return None
     except Exception as e:  # show the failure, never crash the demo
         st.error(f"Run failed: {e}. The saved runs below still work.")
         return None
+    if fake:
+        st.sidebar.caption("No API key: ran with fake (random) agents.")
+    return res
 
 
 # ---------- sidebar ----------
@@ -193,7 +297,7 @@ elif page == "Negotiation":
         for col, o in zip(cols, r1["offers"]):
             n, role = AGENTS[o["agent"]]
             with col:
-                conc = ", ".join(f"{c['id']} ({c['target']})" for c in o["concessions"]) or "none"
+                conc = ", ".join(f"{c['id']} ({c['target']})" if c['target'] else c['id'] for c in o["concessions"]) or "none"
                 st.markdown(f"""<div class="card"><b>{n} · {role}</b><br>
 Prefers <b>{o['preferred']}</b> · accepts {", ".join(o['acceptable'])}<br>
 Cites: {", ".join(o['constraints_cited'])}<br>Concession: <b>{conc}</b><br>
@@ -290,7 +394,7 @@ elif page == "Pixel replay":
     if key in st.session_state:
         view["human_decision"] = {"approved": st.session_state[key]["approved"], "by": "duty manager",
                                   "note": st.session_state[key].get("note", "")}
-    components.html(replay_html(view), height=1250, scrolling=True)
+    components.html(replay_html(normalize_log(view)), height=1250, scrolling=True)
 
 else:
     st.title("Benchmark")

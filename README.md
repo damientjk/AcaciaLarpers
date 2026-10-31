@@ -13,6 +13,11 @@ python fixtures/make_sample_logs.py   # sample runs, until the pipeline writes r
 streamlit run app.py
 ```
 
+The run picker lists `fixtures/cached/` first (commit real runs there for the offline demo), then `logs/`, then
+`fixtures/sample_logs/` (labelled sample). "New run" buttons call `coordinator.run(...)`; without `ANTHROPIC_API_KEY`
+they pass `fake_agents=True`. Logs are read through `normalize_log` in `app.py` (see `docs/LOG_FORMAT.md`).
+Status: backend modules are stubs on `main`, so only sample logs render until they are filled in.
+
 Pages: **Story** (problem, user, architecture, results), **Negotiation** (one run in full), **Pixel replay**
 (the same run played back as pixel-art agents talking), **Benchmark**.
 
