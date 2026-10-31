@@ -23,7 +23,7 @@ Pages: **Story** (problem, user, architecture, results), **Negotiation** (one ru
 
 ## How it works
 
-1. A real delayed flight from `flights.csv` anchors the scenario.
+1. A real delayed flight from `data/flights.csv` anchors the scenario.
 2. Simulated, labelled state is added: arrival slots, fuel, gates, crew.
 3. Up to 8 candidate plans (landing slot, extra holding, gate) are generated and checked.
 4. **Round 1:** each agent, in its own LLM call with its own prompt and private state, returns a preferred
@@ -52,8 +52,8 @@ These checks are simplified. They are not full FAA compliance.
 
 ## Data
 
-- `flights.csv`: 358,774 delayed 2015 US flights (US DOT). Every row qualifies.
-- `airports.csv`, `airlines.csv`: labels.
+- `data/flights.csv`: 358,774 delayed 2015 US flights (US DOT). Every row qualifies.
+- `data/airports.csv`, `data/airlines.csv`: labels.
 - Anything not in these files (slots, fuel, gates, crew) is simulated, seeded by scenario ID and labelled
   "simulated" in the UI.
 
@@ -72,6 +72,8 @@ These checks are simplified. They are not full FAA compliance.
 ## Repo layout
 
 ```
+data/            flights.csv, airports.csv, airlines.csv
+config.yaml      cost weights, timeouts, simulation bounds
 app.py           Streamlit UI (Dafeng)
 ui/              pixel replay page and its Python helper (Dafeng)
 docs/LOG_FORMAT.md   audit log contract between the pipeline and the UI
@@ -80,4 +82,5 @@ models.py, scenario.py, options.py        (Ashvin)
 checker.py, costs.py, fallback.py, benchmark.py   (Yizhuo)
 agents.py, coordinator.py                (Damien)
 logs/            JSON audit logs and duty manager decisions
+tests/           schema and check tests (run: python -m pytest tests)
 ```
