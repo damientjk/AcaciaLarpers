@@ -23,6 +23,18 @@ AGENTS = {"atc": ("Ava", "ATC"), "pilot": ("Pip", "Pilot"), "ground": ("Gus", "G
 COST_PER_MIN_SOURCE = ("Airlines for America: U.S. Passenger Carrier Delay Costs",
                        "https://www.airlines.org/dataset/u-s-passenger-carrier-delay-costs/")
 
+def _load_dotenv(path):
+    """Read KEY=value lines from a local .env (gitignored, see .env.example) into the environment.
+    Values already set in the environment win; the key never leaves this machine."""
+    if path.exists():
+        for line in path.read_text().splitlines():
+            k, sep, v = line.strip().partition("=")
+            if sep and k and not k.startswith("#") and v.strip():
+                os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+_load_dotenv(ROOT / ".env")
+
 st.set_page_config(page_title="Sky Huddle", page_icon="✈️", layout="wide", initial_sidebar_state="collapsed")
 st.markdown("""
 <style>
