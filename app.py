@@ -28,6 +28,14 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Poppins:wght@400;500;600&display=swap');
 html, body, [class*="css"], .stMarkdown, p, li, label {font-family: 'Poppins', sans-serif;}
 h1, h2, h3 {font-family: 'Pixelify Sans', monospace !important; letter-spacing: .02em;}
+header[data-testid="stHeader"] {display:none;} footer {display:none;}
+.block-container {padding-top: 1.6rem; max-width: 1500px;}
+section[data-testid="stSidebar"] {border-right: 3px solid #1b1f3b;}
+section[data-testid="stSidebar"] input {border: 2px solid #1b1f3b !important; border-radius: 3px !important; background: #fff !important;}
+section[data-testid="stSidebar"] .stButton button {font-family:'Pixelify Sans',monospace; font-weight:700; border:3px solid #1b1f3b; border-radius:4px; box-shadow:3px 3px 0 #1b1f3b; background:#fff; color:#1b1f3b;}
+section[data-testid="stSidebar"] .stButton button:hover {background:#ffd447; color:#1b1f3b;}
+section[data-testid="stSidebar"] .stButton button:active {transform:translate(2px,2px); box-shadow:1px 1px 0 #1b1f3b;}
+[data-testid="stMetric"] {background:#f3f8fd; border:3px solid #1b1f3b; box-shadow:3px 3px 0 #1b1f3b; padding:8px 12px;}
 .badge {display:inline-block;padding:2px 10px;border:3px solid #1b1f3b;font-family:'Pixelify Sans',monospace;font-size:16px;box-shadow:3px 3px 0 #1b1f3b;}
 .b-consensus {background:#bff0c8;} .b-fallback {background:#ffc2c4;} .b-escalation {background:#e5484d;color:#fff;}
 .card {border:3px solid #1b1f3b;padding:10px 12px;margin-bottom:8px;background:#fff;box-shadow:3px 3px 0 #1b1f3b;}
@@ -221,14 +229,14 @@ if st.sidebar.button("Run a random qualifying row"):
     if new:
         list_logs.clear()
         st.sidebar.success(f"Done: {new.get('run_id')}. Pick it above.")
-with st.sidebar.form("search"):
-    f = st.text_input("Flight (e.g. AA1344)")
-    d = st.text_input("Date (YYYY-MM-DD)", "2015-01-01")
-    if st.form_submit_button("Run this flight"):
-        new = try_pipeline_run("search", f, d)
-        if new:
-            list_logs.clear()
-            st.success(f"Done: {new.get('run_id')}. Pick it in the list.")
+st.sidebar.caption("Run one flight from the 2015 data")
+flight_in = st.sidebar.text_input("Flight", placeholder="AA1344", key="flight_in")
+date_in = st.sidebar.text_input("Date", value="2015-01-01", placeholder="YYYY-MM-DD", key="date_in")
+if st.sidebar.button("Run this flight"):
+    new = try_pipeline_run("search", flight_in.strip().upper(), date_in.strip())
+    if new:
+        list_logs.clear()
+        st.sidebar.success(f"Done: {new.get('run_id')}. Pick it in the list above.")
 
 H = log["scenario"]["historical"]
 SIM = log["scenario"].get("simulated", {})
@@ -414,7 +422,7 @@ elif page == "Pixel replay":
     if key in st.session_state:
         view["human_decision"] = {"approved": st.session_state[key]["approved"], "by": "duty manager",
                                   "note": st.session_state[key].get("note", "")}
-    components.html(replay_html(normalize_log(view)), height=1250, scrolling=True)
+    components.html(replay_html(normalize_log(view)), height=1060, scrolling=True)
 
 elif page == "Metrics":
     import altair as alt
