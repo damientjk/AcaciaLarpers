@@ -37,16 +37,16 @@ Costs are USD-equivalent scores from `config.yaml` weights, not measured savings
 
 | | Result |
 |---|---|
-| Scenarios with a safe plan before any concession | 21 of 51 |
-| Scenarios with a safe plan after agent concessions | **29 of 51** (concessions rescued 8) |
-| Scenarios with no safe plan in the modelled options | 22 of 51, escalated to the duty manager |
+| Scenarios with a safe plan before any concession | 26 of 51 |
+| Scenarios with a safe plan after agent concessions | **40 of 51** (concessions rescued 14) |
+| Scenarios with no safe plan in the modelled options | 11 of 51, escalated to the duty manager |
 | Unsafe plans accepted | **0** |
 | Simple heuristic (delay by the recorded delay, keep the planned gate) | infeasible in 100% of scenarios |
-| Live agent runs (10, `claude-haiku-5-5`) | 7 consensus, 0 fallback, 3 escalation; 0 unsafe plans accepted; est. API cost $0.053 |
+| Live agent runs (10, `claude-haiku-5-5`, measured before the gate and crew simulation was relaxed) | 7 consensus, 0 fallback, 3 escalation; 0 unsafe plans accepted; est. API cost $0.053 |
 | Agent result vs all-knowing solver on the same options | 6 of 7 consensus runs matched the solver's cost; one chose a plan $1,213 dearer (mean gap 42.9%) |
 | Failure tests (invalid proposal, impossible scenario, malformed reply, API timeout) | 4 of 4 handled |
 
-**Why 22 escalations is the right answer.** When none of the up to 8 modelled plans passes every hard check,
+**Why the 11 escalations are the right answer.** When none of the up to 8 modelled plans passes every hard check,
 the system refuses to guess and hands the decision to the duty manager with the reasons. The checks most often
 blocking plans are gate occupancy (G-2), crew availability (C-1) and fuel reserve (F-1).
 

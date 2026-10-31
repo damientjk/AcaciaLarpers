@@ -32,12 +32,12 @@ We built three AI agents that do that negotiation in two rounds, with plain code
 
 ## 2:00 to 2:45 · Results and a failure (Metrics, then Benchmark)
 
-"We ran 51 seeded scenarios. Before concessions, 21 had a safe plan. After the agents' concessions, 29 did:
-the negotiation rescued 8. Zero unsafe plans were ever accepted, and all four failure tests pass: an invalid
+"We ran 51 seeded scenarios. Before concessions, 26 had a safe plan. After the agents' concessions, 40 did:
+the negotiation rescued 14. Zero unsafe plans were ever accepted, and all four failure tests pass: an invalid
 proposal is blocked, a garbled reply or an API timeout falls back to the rulebook, and an impossible scenario
 escalates.
 
-The other 22 have no safe plan in the options we model. We don't guess: we escalate to the duty manager with the
+The other 11 have no safe plan in the options we model. We don't guess: we escalate to the duty manager with the
 reasons." (Point at the option funnel on Metrics, then the failure tests on Benchmark.)
 
 ## 2:45 to 3:00 · Impact and next steps
@@ -50,8 +50,8 @@ reasons." (Point at the option funnel on Metrics, then the failure tests on Benc
 |---|---|---|
 | Where does it fail, and how would the user know? | Yizhuo | Timeout, bad output or no deal goes to the rulebook, labelled fallback. Nothing safe escalates to the human with reasons. |
 | How do you stop unsafe plans? | Yizhuo | Agents never decide safety. Eight coded checks run on every plan, and the final plan is rechecked before the human sees it. 0 unsafe plans accepted. |
-| What do the agents add over a solver? | Damien | Concessions. The solver only knows the base state. The agents reveal what they can give up, which made 8 more scenarios solvable. On the same options, 6 of 7 live consensus runs matched the solver's cost; one picked a dearer safe plan (mean gap 42.9%). |
-| Why do 22 of 51 escalate? | Ashvin | We model up to 8 plans per flight with tight simulated gates, crew and fuel. When none is safe, refusing is correct. Busy gates, crew and fuel reserve block most. |
+| What do the agents add over a solver? | Damien | Concessions. The solver only knows the base state. The agents reveal what they can give up, which made 14 more scenarios solvable. On the same options, 6 of 7 live consensus runs matched the solver's cost; one picked a dearer safe plan (mean gap 42.9%). |
+| Why do 11 of 51 escalate? | Ashvin | We model up to 8 plans per flight. In these 11, none passes every hard check, mostly because the gate is still occupied at arrival or a taxiway is closed. Refusing is correct, and the duty manager gets the reasons. |
 | What's real and what's simulated? | Ashvin | The flight row is real 2015 DOT data. Slots, fuel, gates and crew are simulated, seeded and labelled. Checks are simplified, not FAA compliance. |
 | Why two rounds? What about timeouts? | Damien | Bounded time and cost. Per-call timeout and one retry, then fallback. Retries never open a new round. |
 

@@ -1,6 +1,6 @@
 {
   "sample": false,
-  "generated_at": "2026-10-31T05:12:04+00:00",
+  "generated_at": "2026-10-31T05:31:45+00:00",
   "note": "Measured inside the simulation. Costs are USD-equivalent scores with config.yaml weights, not measured savings. Checks are simplified, not FAA compliance.",
   "source": "scenario.fixture_ids()",
   "scenarios": {
@@ -12,21 +12,21 @@
   },
   "deterministic": {
     "runs": 51,
-    "fallback_feasible": 29,
-    "escalations": 22,
-    "feasible_on_base_state": 21,
-    "mean_feasible_count": 1.51,
+    "fallback_feasible": 40,
+    "escalations": 11,
+    "feasible_on_base_state": 26,
+    "mean_feasible_count": 2.12,
     "rule_failures_after_concessions": {
       "F-1": 51,
       "W-1": 31,
-      "R-1": 21,
-      "T-1": 49,
+      "R-1": 12,
+      "T-1": 41,
       "G-1": 0,
-      "G-2": 173,
+      "G-2": 150,
       "G-3": 0,
-      "C-1": 69
+      "C-1": 85
     },
-    "mean_execution_ms": 2.87
+    "mean_execution_ms": 10.42
   },
   "agents": {
     "completed": 10,
@@ -84,8 +84,8 @@
       "result": "fallback",
       "passed": true,
       "detail": {
-        "run_id": "r-17a529",
-        "scenario_id": "S14929",
+        "run_id": "r-52ba81",
+        "scenario_id": "S12137",
         "offers_valid": [
           false,
           false,
@@ -103,8 +103,8 @@
       "result": "fallback",
       "passed": true,
       "detail": {
-        "run_id": "r-2c0b16",
-        "scenario_id": "S14929",
+        "run_id": "r-6d463e",
+        "scenario_id": "S12137",
         "offers_valid": [
           false,
           false,
@@ -427,7 +427,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 7.82
+      "execution_ms": 26.15
     },
     {
       "scenario_id": "S12137",
@@ -440,9 +440,20 @@
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
           "target": "10"
+        },
+        {
+          "agent": "atc",
+          "id": "ATC_EARLIER_SLOT",
+          "target": "C1"
         }
       ],
       "concessions_applied": [
+        {
+          "agent": "atc",
+          "id": "ATC_EARLIER_SLOT",
+          "target": "C1",
+          "note": "moved UA1083 from SL-1312 to SL-1333"
+        },
         {
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
@@ -452,28 +463,33 @@
       ],
       "concessions_rejected": [],
       "candidates": 6,
-      "feasible_before": [],
-      "feasible_after": [],
-      "feasible_count": 0,
-      "outcome": "escalation",
-      "selected": null,
-      "reason": "No feasible plan within the modelled options. 6 candidate(s) evaluated, none passed every check. Escalate to the duty manager.",
+      "feasible_before": [
+        "C3"
+      ],
+      "feasible_after": [
+        "C1",
+        "C3"
+      ],
+      "feasible_count": 2,
+      "outcome": "fallback",
+      "selected": "C1",
+      "reason": "C1 is the lowest-cost feasible candidate (134.76 USD-equivalent).",
       "solver_base": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C3",
+        "total_usd": 1353.6
       },
       "solver": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C1",
+        "total_usd": 134.76
       },
       "rules_before": {
         "C1": {
           "F-1": true,
           "W-1": true,
           "R-1": false,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -485,15 +501,15 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -505,15 +521,15 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C5": {
           "F-1": false,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -525,37 +541,37 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "rules_after": {
         "C1": {
           "F-1": true,
           "W-1": true,
-          "R-1": false,
-          "T-1": false,
+          "R-1": true,
+          "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
         "C2": {
           "F-1": true,
           "W-1": true,
-          "R-1": false,
+          "R-1": true,
           "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -567,15 +583,15 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C5": {
           "F-1": false,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -587,7 +603,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "costs": {
@@ -608,9 +624,9 @@
         "C3": {
           "delay_min": 10.0,
           "holding_fuel_kg": 400.0,
-          "overtime_min": 0.0,
+          "overtime_min": 4.0,
           "missed_connections": 0,
-          "total_usd": 1347.6
+          "total_usd": 1353.6
         },
         "C4": {
           "delay_min": 10.0,
@@ -622,9 +638,9 @@
         "C5": {
           "delay_min": 13.0,
           "holding_fuel_kg": 520.0,
-          "overtime_min": 0.0,
+          "overtime_min": 7.0,
           "missed_connections": 0,
-          "total_usd": 1751.88
+          "total_usd": 1762.38
         },
         "C6": {
           "delay_min": 13.0,
@@ -645,9 +661,7 @@
         "plan": "Delay ETA by recorded delay (22 min), keep planned gate B4",
         "feasible": false,
         "failed": [
-          "R-1",
-          "T-1",
-          "G-2"
+          "R-1"
         ],
         "cost": {
           "delay_min": 4.0,
@@ -659,7 +673,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 2.75
+      "execution_ms": 14.49
     },
     {
       "scenario_id": "S14929",
@@ -697,18 +711,21 @@
       "candidates": 8,
       "feasible_before": [
         "C4",
-        "C5"
+        "C5",
+        "C6"
       ],
       "feasible_after": [
         "C1",
         "C2",
+        "C3",
         "C4",
-        "C5"
+        "C5",
+        "C6"
       ],
-      "feasible_count": 4,
+      "feasible_count": 6,
       "outcome": "fallback",
       "selected": "C1",
-      "reason": "C1 is the lowest-cost feasible candidate (404.28 USD-equivalent). Tie between ['C1', 'C2'] broken by candidate ID.",
+      "reason": "C1 is the lowest-cost feasible candidate (404.28 USD-equivalent). Tie between ['C1', 'C2', 'C3'] broken by candidate ID.",
       "solver_base": {
         "candidate": "C4",
         "total_usd": 1617.12
@@ -742,7 +759,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": false,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -772,7 +789,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -824,7 +841,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -854,7 +871,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -962,7 +979,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.46
+      "execution_ms": 12.32
     },
     {
       "scenario_id": "S23912",
@@ -1000,19 +1017,19 @@
       "candidates": 4,
       "feasible_before": [],
       "feasible_after": [
-        "C2"
+        "C1"
       ],
       "feasible_count": 1,
       "outcome": "fallback",
-      "selected": "C2",
-      "reason": "C2 is the lowest-cost feasible candidate (1364.10 USD-equivalent).",
+      "selected": "C1",
+      "reason": "C1 is the lowest-cost feasible candidate (1389.60 USD-equivalent).",
       "solver_base": {
         "candidate": null,
         "total_usd": null
       },
       "solver": {
-        "candidate": "C2",
-        "total_usd": 1364.1
+        "candidate": "C1",
+        "total_usd": 1389.6
       },
       "rules_before": {
         "C1": {
@@ -1021,7 +1038,7 @@
           "R-1": false,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -1033,7 +1050,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": false,
@@ -1043,7 +1060,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C4": {
           "F-1": false,
@@ -1053,7 +1070,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "rules_after": {
@@ -1063,7 +1080,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -1075,7 +1092,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": false,
@@ -1085,7 +1102,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C4": {
           "F-1": false,
@@ -1095,37 +1112,37 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "costs": {
         "C1": {
           "delay_min": 10.0,
           "holding_fuel_kg": 400.0,
-          "overtime_min": 16.0,
+          "overtime_min": 28.0,
           "missed_connections": 0,
-          "total_usd": 1371.6
+          "total_usd": 1389.6
         },
         "C2": {
           "delay_min": 10.0,
           "holding_fuel_kg": 400.0,
-          "overtime_min": 11.0,
+          "overtime_min": 0.0,
           "missed_connections": 0,
-          "total_usd": 1364.1
+          "total_usd": 1347.6
         },
         "C3": {
           "delay_min": 25.0,
           "holding_fuel_kg": 1000.0,
-          "overtime_min": 31.0,
+          "overtime_min": 0.0,
           "missed_connections": 0,
-          "total_usd": 3415.5
+          "total_usd": 3369.0
         },
         "C4": {
           "delay_min": 25.0,
           "holding_fuel_kg": 1000.0,
-          "overtime_min": 26.0,
+          "overtime_min": 0.0,
           "missed_connections": 0,
-          "total_usd": 3408.0
+          "total_usd": 3369.0
         }
       },
       "cost_errors": [],
@@ -1140,20 +1157,19 @@
         "feasible": false,
         "failed": [
           "W-1",
-          "R-1",
-          "G-2"
+          "R-1"
         ],
         "cost": {
           "delay_min": 11.0,
           "holding_fuel_kg": 440.0,
-          "overtime_min": 17.0,
+          "overtime_min": 29.0,
           "missed_connections": 0,
-          "total_usd": 1507.86
+          "total_usd": 1525.86
         },
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.9
+      "execution_ms": 9.19
     },
     {
       "scenario_id": "S29519",
@@ -1191,23 +1207,20 @@
       "candidates": 8,
       "feasible_before": [
         "C5",
-        "C6",
         "C8"
       ],
       "feasible_after": [
         "C2",
-        "C3",
         "C5",
-        "C6",
         "C8"
       ],
-      "feasible_count": 5,
+      "feasible_count": 3,
       "outcome": "fallback",
       "selected": "C2",
-      "reason": "C2 is the lowest-cost feasible candidate (7750.00 USD-equivalent). Tie between ['C2', 'C3'] broken by candidate ID.",
+      "reason": "C2 is the lowest-cost feasible candidate (7750.00 USD-equivalent).",
       "solver_base": {
         "candidate": "C5",
-        "total_usd": 8558.56
+        "total_usd": 8567.56
       },
       "solver": {
         "candidate": "C2",
@@ -1220,7 +1233,7 @@
           "R-1": false,
           "T-1": false,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -1238,7 +1251,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": false,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -1250,7 +1263,7 @@
           "R-1": true,
           "T-1": false,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -1268,7 +1281,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -1280,7 +1293,7 @@
           "R-1": true,
           "T-1": false,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -1302,7 +1315,7 @@
           "R-1": true,
           "T-1": false,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -1320,7 +1333,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -1332,7 +1345,7 @@
           "R-1": true,
           "T-1": false,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -1350,7 +1363,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -1362,7 +1375,7 @@
           "R-1": true,
           "T-1": false,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -1409,9 +1422,9 @@
         "C5": {
           "delay_min": 6.0,
           "holding_fuel_kg": 240.0,
-          "overtime_min": 0.0,
+          "overtime_min": 6.0,
           "missed_connections": 31,
-          "total_usd": 8558.56
+          "total_usd": 8567.56
         },
         "C6": {
           "delay_min": 6.0,
@@ -1423,16 +1436,16 @@
         "C7": {
           "delay_min": 21.0,
           "holding_fuel_kg": 840.0,
-          "overtime_min": 6.0,
+          "overtime_min": 0.0,
           "missed_connections": 31,
-          "total_usd": 10588.96
+          "total_usd": 10579.96
         },
         "C8": {
           "delay_min": 21.0,
           "holding_fuel_kg": 840.0,
-          "overtime_min": 8.0,
+          "overtime_min": 21.0,
           "missed_connections": 31,
-          "total_usd": 10591.96
+          "total_usd": 10611.46
         }
       },
       "cost_errors": [],
@@ -1447,8 +1460,7 @@
         "feasible": false,
         "failed": [
           "R-1",
-          "T-1",
-          "G-2"
+          "T-1"
         ],
         "cost": {
           "delay_min": 7.0,
@@ -1460,7 +1472,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.69
+      "execution_ms": 13.54
     },
     {
       "scenario_id": "S34206",
@@ -1473,20 +1485,9 @@
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
           "target": "16"
-        },
-        {
-          "agent": "atc",
-          "id": "ATC_EARLIER_SLOT",
-          "target": "C1"
         }
       ],
       "concessions_applied": [
-        {
-          "agent": "atc",
-          "id": "ATC_EARLIER_SLOT",
-          "target": "C1",
-          "note": "moved AA2165 from SL-2345 to SL-0009"
-        },
         {
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
@@ -1496,26 +1497,19 @@
       ],
       "concessions_rejected": [],
       "candidates": 8,
-      "feasible_before": [
-        "C4",
-        "C6"
-      ],
-      "feasible_after": [
-        "C2",
-        "C4",
-        "C6"
-      ],
-      "feasible_count": 3,
-      "outcome": "fallback",
-      "selected": "C2",
-      "reason": "C2 is the lowest-cost feasible candidate (269.52 USD-equivalent).",
+      "feasible_before": [],
+      "feasible_after": [],
+      "feasible_count": 0,
+      "outcome": "escalation",
+      "selected": null,
+      "reason": "No feasible plan within the modelled options. 8 candidate(s) evaluated, none passed every check. Escalate to the duty manager.",
       "solver_base": {
-        "candidate": "C4",
-        "total_usd": 1482.36
+        "candidate": null,
+        "total_usd": null
       },
       "solver": {
-        "candidate": "C2",
-        "total_usd": 269.52
+        "candidate": null,
+        "total_usd": null
       },
       "rules_before": {
         "C1": {
@@ -1532,11 +1526,11 @@
           "F-1": true,
           "W-1": true,
           "R-1": false,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": true,
@@ -1552,11 +1546,11 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C5": {
           "F-1": true,
@@ -1572,11 +1566,11 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C7": {
           "F-1": false,
@@ -1592,18 +1586,18 @@
           "F-1": false,
           "W-1": true,
           "R-1": true,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "rules_after": {
         "C1": {
           "F-1": true,
           "W-1": true,
-          "R-1": true,
+          "R-1": false,
           "T-1": false,
           "G-1": true,
           "G-2": true,
@@ -1613,12 +1607,12 @@
         "C2": {
           "F-1": true,
           "W-1": true,
-          "R-1": true,
-          "T-1": true,
+          "R-1": false,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": true,
@@ -1634,11 +1628,11 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C5": {
           "F-1": true,
@@ -1654,11 +1648,11 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C7": {
           "F-1": false,
@@ -1674,11 +1668,11 @@
           "F-1": false,
           "W-1": true,
           "R-1": true,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "costs": {
@@ -1763,7 +1757,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.61
+      "execution_ms": 11.67
     },
     {
       "scenario_id": "S35636",
@@ -1821,7 +1815,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": true,
@@ -1841,7 +1835,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C5": {
           "F-1": false,
@@ -1861,7 +1855,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "rules_after": {
@@ -1883,7 +1877,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": true,
@@ -1903,7 +1897,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C5": {
           "F-1": false,
@@ -1923,7 +1917,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "costs": {
@@ -1994,7 +1988,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.33
+      "execution_ms": 5.35
     },
     {
       "scenario_id": "S43968",
@@ -2032,18 +2026,21 @@
       "candidates": 8,
       "feasible_before": [
         "C4",
+        "C5",
         "C6"
       ],
       "feasible_after": [
         "C1",
+        "C2",
         "C3",
         "C4",
+        "C5",
         "C6"
       ],
-      "feasible_count": 4,
+      "feasible_count": 6,
       "outcome": "fallback",
       "selected": "C1",
-      "reason": "C1 is the lowest-cost feasible candidate (269.52 USD-equivalent). Tie between ['C1', 'C3'] broken by candidate ID.",
+      "reason": "C1 is the lowest-cost feasible candidate (269.52 USD-equivalent). Tie between ['C1', 'C2', 'C3'] broken by candidate ID.",
       "solver_base": {
         "candidate": "C4",
         "total_usd": 673.8
@@ -2067,11 +2064,11 @@
           "F-1": true,
           "W-1": true,
           "R-1": false,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -2097,11 +2094,11 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C6": {
           "F-1": true,
@@ -2127,11 +2124,11 @@
           "F-1": false,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "rules_after": {
@@ -2149,11 +2146,11 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -2179,11 +2176,11 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C6": {
           "F-1": true,
@@ -2209,11 +2206,11 @@
           "F-1": false,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "costs": {
@@ -2269,9 +2266,9 @@
         "C8": {
           "delay_min": 23.0,
           "holding_fuel_kg": 920.0,
-          "overtime_min": 0.0,
+          "overtime_min": 15.0,
           "missed_connections": 36,
-          "total_usd": 12099.48
+          "total_usd": 12121.98
         }
       },
       "cost_errors": [],
@@ -2297,7 +2294,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 7.91
+      "execution_ms": 12.41
     },
     {
       "scenario_id": "S48747",
@@ -2537,7 +2534,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.36
+      "execution_ms": 3.78
     },
     {
       "scenario_id": "S107608",
@@ -2562,19 +2559,27 @@
       ],
       "concessions_rejected": [],
       "candidates": 6,
-      "feasible_before": [],
-      "feasible_after": [],
-      "feasible_count": 0,
-      "outcome": "escalation",
-      "selected": null,
-      "reason": "No feasible plan within the modelled options. 6 candidate(s) evaluated, none passed every check. Escalate to the duty manager.",
+      "feasible_before": [
+        "C1",
+        "C4",
+        "C5"
+      ],
+      "feasible_after": [
+        "C1",
+        "C4",
+        "C5"
+      ],
+      "feasible_count": 3,
+      "outcome": "fallback",
+      "selected": "C1",
+      "reason": "C1 is the lowest-cost feasible candidate (1078.08 USD-equivalent).",
       "solver_base": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C1",
+        "total_usd": 1078.08
       },
       "solver": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C1",
+        "total_usd": 1078.08
       },
       "rules_before": {
         "C1": {
@@ -2583,7 +2588,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -2613,7 +2618,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -2623,7 +2628,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -2645,7 +2650,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -2675,7 +2680,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -2685,7 +2690,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -2755,8 +2760,7 @@
         "plan": "Delay ETA by recorded delay (43 min), keep planned gate B4",
         "feasible": false,
         "failed": [
-          "R-1",
-          "G-2"
+          "R-1"
         ],
         "cost": {
           "delay_min": 7.0,
@@ -2768,7 +2772,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.33
+      "execution_ms": 4.01
     },
     {
       "scenario_id": "S151754",
@@ -3060,7 +3064,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.7
+      "execution_ms": 4.81
     },
     {
       "scenario_id": "S201998",
@@ -3098,18 +3102,18 @@
       "candidates": 6,
       "feasible_before": [],
       "feasible_after": [
-        "C2"
+        "C3"
       ],
       "feasible_count": 1,
       "outcome": "fallback",
-      "selected": "C2",
-      "reason": "C2 is the lowest-cost feasible candidate (539.04 USD-equivalent).",
+      "selected": "C3",
+      "reason": "C3 is the lowest-cost feasible candidate (539.04 USD-equivalent).",
       "solver_base": {
         "candidate": null,
         "total_usd": null
       },
       "solver": {
-        "candidate": "C2",
+        "candidate": "C3",
         "total_usd": 539.04
       },
       "rules_before": {
@@ -3127,17 +3131,17 @@
           "F-1": true,
           "W-1": true,
           "R-1": false,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": true,
           "W-1": true,
           "R-1": false,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -3157,17 +3161,17 @@
           "F-1": false,
           "W-1": true,
           "R-1": true,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C6": {
           "F-1": false,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -3189,17 +3193,17 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -3219,17 +3223,17 @@
           "F-1": false,
           "W-1": true,
           "R-1": true,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C6": {
           "F-1": false,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -3304,7 +3308,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.43
+      "execution_ms": 19.33
     },
     {
       "scenario_id": "S202191",
@@ -3343,13 +3347,12 @@
       "feasible_before": [],
       "feasible_after": [
         "C1",
-        "C3",
         "C2"
       ],
-      "feasible_count": 3,
+      "feasible_count": 2,
       "outcome": "fallback",
       "selected": "C1",
-      "reason": "C1 is the lowest-cost feasible candidate (0.00 USD-equivalent). Tie between ['C1', 'C3'] broken by candidate ID.",
+      "reason": "C1 is the lowest-cost feasible candidate (0.00 USD-equivalent). Tie between ['C1', 'C2'] broken by candidate ID.",
       "solver_base": {
         "candidate": null,
         "total_usd": null
@@ -3387,7 +3390,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C4": {
           "F-1": false,
@@ -3417,7 +3420,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "rules_after": {
@@ -3449,7 +3452,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C4": {
           "F-1": false,
@@ -3479,7 +3482,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "costs": {
@@ -3493,9 +3496,9 @@
         "C2": {
           "delay_min": 0.0,
           "holding_fuel_kg": 0.0,
-          "overtime_min": 18.0,
+          "overtime_min": 0.0,
           "missed_connections": 0,
-          "total_usd": 27.0
+          "total_usd": 0.0
         },
         "C3": {
           "delay_min": 0.0,
@@ -3514,9 +3517,9 @@
         "C5": {
           "delay_min": 12.0,
           "holding_fuel_kg": 480.0,
-          "overtime_min": 30.0,
+          "overtime_min": 0.0,
           "missed_connections": 0,
-          "total_usd": 1662.12
+          "total_usd": 1617.12
         },
         "C6": {
           "delay_min": 12.0,
@@ -3549,7 +3552,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.39
+      "execution_ms": 17.59
     },
     {
       "scenario_id": "S208924",
@@ -3671,7 +3674,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         }
@@ -3753,7 +3756,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         }
@@ -3840,7 +3843,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.74
+      "execution_ms": 4.91
     },
     {
       "scenario_id": "S226993",
@@ -3894,7 +3897,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": false,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -3926,7 +3929,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": false,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -3990,7 +3993,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.84
+      "execution_ms": 5.74
     },
     {
       "scenario_id": "S229874",
@@ -4028,25 +4031,25 @@
       "candidates": 8,
       "feasible_before": [
         "C4",
-        "C5",
         "C6",
+        "C5",
         "C7",
         "C8"
       ],
       "feasible_after": [
         "C1",
-        "C2",
         "C3",
+        "C2",
         "C4",
-        "C5",
         "C6",
+        "C5",
         "C7",
         "C8"
       ],
       "feasible_count": 8,
       "outcome": "fallback",
       "selected": "C1",
-      "reason": "C1 is the lowest-cost feasible candidate (11039.04 USD-equivalent). Tie between ['C1', 'C2'] broken by candidate ID.",
+      "reason": "C1 is the lowest-cost feasible candidate (11039.04 USD-equivalent).",
       "solver_base": {
         "candidate": "C4",
         "total_usd": 11847.6
@@ -4230,16 +4233,16 @@
         "C2": {
           "delay_min": 4.0,
           "holding_fuel_kg": 160.0,
-          "overtime_min": 0.0,
+          "overtime_min": 15.0,
           "missed_connections": 42,
-          "total_usd": 11039.04
+          "total_usd": 11061.54
         },
         "C3": {
           "delay_min": 4.0,
           "holding_fuel_kg": 160.0,
-          "overtime_min": 24.0,
+          "overtime_min": 7.0,
           "missed_connections": 42,
-          "total_usd": 11075.04
+          "total_usd": 11049.54
         },
         "C4": {
           "delay_min": 10.0,
@@ -4251,16 +4254,16 @@
         "C5": {
           "delay_min": 10.0,
           "holding_fuel_kg": 400.0,
-          "overtime_min": 0.0,
+          "overtime_min": 21.0,
           "missed_connections": 42,
-          "total_usd": 11847.6
+          "total_usd": 11879.1
         },
         "C6": {
           "delay_min": 10.0,
           "holding_fuel_kg": 400.0,
-          "overtime_min": 30.0,
+          "overtime_min": 13.0,
           "missed_connections": 42,
-          "total_usd": 11892.6
+          "total_usd": 11867.1
         },
         "C7": {
           "delay_min": 19.0,
@@ -4272,9 +4275,9 @@
         "C8": {
           "delay_min": 19.0,
           "holding_fuel_kg": 760.0,
-          "overtime_min": 7.0,
+          "overtime_min": 30.0,
           "missed_connections": 42,
-          "total_usd": 13070.94
+          "total_usd": 13105.44
         }
       },
       "cost_errors": [],
@@ -4300,7 +4303,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.69
+      "execution_ms": 13.82
     },
     {
       "scenario_id": "S268944",
@@ -4313,6 +4316,11 @@
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
           "target": "15"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7"
         }
       ],
       "concessions_applied": [
@@ -4321,23 +4329,32 @@
           "id": "PILOT_EXTRA_HOLDING",
           "target": "15",
           "note": "accepted holding limit 7 -> 15 min (fuel-safe limit 15 min)"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7",
+          "note": "moved CRW-B4 from B4 to B7"
         }
       ],
       "concessions_rejected": [],
       "candidates": 4,
       "feasible_before": [],
-      "feasible_after": [],
-      "feasible_count": 0,
-      "outcome": "escalation",
-      "selected": null,
-      "reason": "No feasible plan within the modelled options. 4 candidate(s) evaluated, none passed every check. Escalate to the duty manager.",
+      "feasible_after": [
+        "C2",
+        "C4"
+      ],
+      "feasible_count": 2,
+      "outcome": "fallback",
+      "selected": "C2",
+      "reason": "C2 is the lowest-cost feasible candidate (1482.36 USD-equivalent).",
       "solver_base": {
         "candidate": null,
         "total_usd": null
       },
       "solver": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C2",
+        "total_usd": 1482.36
       },
       "rules_before": {
         "C1": {
@@ -4390,7 +4407,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C2": {
           "F-1": true,
@@ -4400,7 +4417,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -4410,7 +4427,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C4": {
           "F-1": true,
@@ -4420,7 +4437,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "costs": {
@@ -4480,7 +4497,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 0.95
+      "execution_ms": 4.06
     },
     {
       "scenario_id": "S271370",
@@ -4642,9 +4659,9 @@
         "C4": {
           "delay_min": 28.0,
           "holding_fuel_kg": 1120.0,
-          "overtime_min": 15.0,
+          "overtime_min": 0.0,
           "missed_connections": 0,
-          "total_usd": 3795.78
+          "total_usd": 3773.28
         }
       },
       "cost_errors": [],
@@ -4672,7 +4689,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.93
+      "execution_ms": 5.92
     },
     {
       "scenario_id": "S275195",
@@ -4710,18 +4727,18 @@
       "candidates": 8,
       "feasible_before": [
         "C4",
-        "C6"
+        "C5"
       ],
       "feasible_after": [
         "C1",
-        "C3",
+        "C2",
         "C4",
-        "C6"
+        "C5"
       ],
       "feasible_count": 4,
       "outcome": "fallback",
       "selected": "C1",
-      "reason": "C1 is the lowest-cost feasible candidate (269.52 USD-equivalent). Tie between ['C1', 'C3'] broken by candidate ID.",
+      "reason": "C1 is the lowest-cost feasible candidate (269.52 USD-equivalent). Tie between ['C1', 'C2'] broken by candidate ID.",
       "solver_base": {
         "candidate": "C4",
         "total_usd": 1078.08
@@ -4747,7 +4764,7 @@
           "R-1": false,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -4757,7 +4774,7 @@
           "R-1": false,
           "T-1": true,
           "G-1": true,
-          "G-2": true,
+          "G-2": false,
           "G-3": true,
           "C-1": true
         },
@@ -4777,7 +4794,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -4787,7 +4804,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": true,
+          "G-2": false,
           "G-3": true,
           "C-1": true
         },
@@ -4829,7 +4846,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -4839,7 +4856,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": true,
+          "G-2": false,
           "G-3": true,
           "C-1": true
         },
@@ -4859,7 +4876,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -4869,7 +4886,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": true,
+          "G-2": false,
           "G-3": true,
           "C-1": true
         },
@@ -4947,9 +4964,9 @@
         "C8": {
           "delay_min": 17.0,
           "holding_fuel_kg": 680.0,
-          "overtime_min": 1.0,
+          "overtime_min": 0.0,
           "missed_connections": 19,
-          "total_usd": 7042.42
+          "total_usd": 7040.92
         }
       },
       "cost_errors": [],
@@ -4975,7 +4992,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.6
+      "execution_ms": 13.82
     },
     {
       "scenario_id": "S343183",
@@ -4988,9 +5005,20 @@
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
           "target": "19"
+        },
+        {
+          "agent": "atc",
+          "id": "ATC_EARLIER_SLOT",
+          "target": "C1"
         }
       ],
       "concessions_applied": [
+        {
+          "agent": "atc",
+          "id": "ATC_EARLIER_SLOT",
+          "target": "C1",
+          "note": "moved B61601 from SL-1751 to SL-1839"
+        },
         {
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
@@ -5000,19 +5028,26 @@
       ],
       "concessions_rejected": [],
       "candidates": 8,
-      "feasible_before": [],
-      "feasible_after": [],
-      "feasible_count": 0,
-      "outcome": "escalation",
-      "selected": null,
-      "reason": "No feasible plan within the modelled options. 8 candidate(s) evaluated, none passed every check. Escalate to the duty manager.",
+      "feasible_before": [
+        "C3",
+        "C5"
+      ],
+      "feasible_after": [
+        "C1",
+        "C3",
+        "C5"
+      ],
+      "feasible_count": 3,
+      "outcome": "fallback",
+      "selected": "C1",
+      "reason": "C1 is the lowest-cost feasible candidate (404.28 USD-equivalent).",
       "solver_base": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C3",
+        "total_usd": 1218.84
       },
       "solver": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C1",
+        "total_usd": 404.28
       },
       "rules_before": {
         "C1": {
@@ -5021,7 +5056,7 @@
           "R-1": false,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -5033,7 +5068,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": true,
@@ -5041,7 +5076,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -5053,7 +5088,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C5": {
           "F-1": true,
@@ -5061,7 +5096,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -5073,7 +5108,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C7": {
           "F-1": false,
@@ -5081,7 +5116,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -5093,29 +5128,29 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "rules_after": {
         "C1": {
           "F-1": true,
           "W-1": true,
-          "R-1": false,
+          "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
         "C2": {
           "F-1": true,
           "W-1": true,
-          "R-1": false,
+          "R-1": true,
           "T-1": true,
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": true,
@@ -5123,7 +5158,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -5135,7 +5170,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C5": {
           "F-1": true,
@@ -5143,7 +5178,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -5155,7 +5190,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C7": {
           "F-1": false,
@@ -5163,7 +5198,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -5175,7 +5210,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "costs": {
@@ -5196,9 +5231,9 @@
         "C3": {
           "delay_min": 9.0,
           "holding_fuel_kg": 360.0,
-          "overtime_min": 0.0,
+          "overtime_min": 4.0,
           "missed_connections": 0,
-          "total_usd": 1212.84
+          "total_usd": 1218.84
         },
         "C4": {
           "delay_min": 9.0,
@@ -5210,9 +5245,9 @@
         "C5": {
           "delay_min": 18.0,
           "holding_fuel_kg": 720.0,
-          "overtime_min": 0.0,
+          "overtime_min": 13.0,
           "missed_connections": 0,
-          "total_usd": 2425.68
+          "total_usd": 2445.18
         },
         "C6": {
           "delay_min": 18.0,
@@ -5224,16 +5259,16 @@
         "C7": {
           "delay_min": 24.0,
           "holding_fuel_kg": 960.0,
-          "overtime_min": 0.0,
+          "overtime_min": 19.0,
           "missed_connections": 0,
-          "total_usd": 3234.24
+          "total_usd": 3262.74
         },
         "C8": {
           "delay_min": 24.0,
           "holding_fuel_kg": 960.0,
-          "overtime_min": 6.0,
+          "overtime_min": 0.0,
           "missed_connections": 0,
-          "total_usd": 3243.24
+          "total_usd": 3234.24
         }
       },
       "cost_errors": [],
@@ -5247,8 +5282,7 @@
         "plan": "Delay ETA by recorded delay (231 min), keep planned gate B4",
         "feasible": false,
         "failed": [
-          "R-1",
-          "G-2"
+          "R-1"
         ],
         "cost": {
           "delay_min": 3.0,
@@ -5260,7 +5294,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.47
+      "execution_ms": 17.41
     },
     {
       "scenario_id": "S354770",
@@ -5285,23 +5319,19 @@
       ],
       "concessions_rejected": [],
       "candidates": 2,
-      "feasible_before": [
-        "C2"
-      ],
-      "feasible_after": [
-        "C2"
-      ],
-      "feasible_count": 1,
-      "outcome": "fallback",
-      "selected": "C2",
-      "reason": "C2 is the lowest-cost feasible candidate (404.28 USD-equivalent).",
+      "feasible_before": [],
+      "feasible_after": [],
+      "feasible_count": 0,
+      "outcome": "escalation",
+      "selected": null,
+      "reason": "No feasible plan within the modelled options. 2 candidate(s) evaluated, none passed every check. Escalate to the duty manager.",
       "solver_base": {
-        "candidate": "C2",
-        "total_usd": 404.28
+        "candidate": null,
+        "total_usd": null
       },
       "solver": {
-        "candidate": "C2",
-        "total_usd": 404.28
+        "candidate": null,
+        "total_usd": null
       },
       "rules_before": {
         "C1": {
@@ -5318,7 +5348,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -5340,7 +5370,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": true,
+          "T-1": false,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -5388,7 +5418,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 0.58
+      "execution_ms": 1.74
     },
     {
       "scenario_id": "S8582",
@@ -5406,11 +5436,6 @@
           "agent": "atc",
           "id": "ATC_EARLIER_SLOT",
           "target": "C1"
-        },
-        {
-          "agent": "ground",
-          "id": "GROUND_REASSIGN_CREW",
-          "target": "B9"
         }
       ],
       "concessions_applied": [
@@ -5425,32 +5450,30 @@
           "id": "PILOT_EXTRA_HOLDING",
           "target": "18",
           "note": "accepted holding limit 9 -> 18 min (fuel-safe limit 18 min)"
-        },
-        {
-          "agent": "ground",
-          "id": "GROUND_REASSIGN_CREW",
-          "target": "B9",
-          "note": "moved CRW-B7 from B7 to B9"
         }
       ],
       "concessions_rejected": [],
       "candidates": 8,
-      "feasible_before": [],
-      "feasible_after": [
-        "C3",
-        "C6"
+      "feasible_before": [
+        "C5",
+        "C8"
       ],
-      "feasible_count": 2,
+      "feasible_after": [
+        "C2",
+        "C5",
+        "C8"
+      ],
+      "feasible_count": 3,
       "outcome": "fallback",
-      "selected": "C3",
-      "reason": "C3 is the lowest-cost feasible candidate (134.76 USD-equivalent).",
+      "selected": "C2",
+      "reason": "C2 is the lowest-cost feasible candidate (172.26 USD-equivalent).",
       "solver_base": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C5",
+        "total_usd": 717.3
       },
       "solver": {
-        "candidate": "C3",
-        "total_usd": 134.76
+        "candidate": "C2",
+        "total_usd": 172.26
       },
       "rules_before": {
         "C1": {
@@ -5469,7 +5492,7 @@
           "R-1": false,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -5479,7 +5502,7 @@
           "R-1": false,
           "T-1": true,
           "G-1": true,
-          "G-2": true,
+          "G-2": false,
           "G-3": true,
           "C-1": false
         },
@@ -5499,7 +5522,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         },
@@ -5509,7 +5532,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": true,
+          "G-2": false,
           "G-3": true,
           "C-1": false
         },
@@ -5529,7 +5552,7 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         }
@@ -5551,9 +5574,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -5561,9 +5584,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": true,
+          "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C4": {
           "F-1": true,
@@ -5581,9 +5604,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C6": {
           "F-1": true,
@@ -5591,9 +5614,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": true,
+          "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C7": {
           "F-1": true,
@@ -5611,9 +5634,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "costs": {
@@ -5627,9 +5650,9 @@
         "C2": {
           "delay_min": 1.0,
           "holding_fuel_kg": 40.0,
-          "overtime_min": 0.0,
+          "overtime_min": 25.0,
           "missed_connections": 0,
-          "total_usd": 134.76
+          "total_usd": 172.26
         },
         "C3": {
           "delay_min": 1.0,
@@ -5648,9 +5671,9 @@
         "C5": {
           "delay_min": 5.0,
           "holding_fuel_kg": 200.0,
-          "overtime_min": 0.0,
+          "overtime_min": 29.0,
           "missed_connections": 0,
-          "total_usd": 673.8
+          "total_usd": 717.3
         },
         "C6": {
           "delay_min": 5.0,
@@ -5669,9 +5692,9 @@
         "C8": {
           "delay_min": 7.0,
           "holding_fuel_kg": 280.0,
-          "overtime_min": 0.0,
+          "overtime_min": 31.0,
           "missed_connections": 0,
-          "total_usd": 943.32
+          "total_usd": 989.82
         }
       },
       "cost_errors": [],
@@ -5698,7 +5721,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 8.47
+      "execution_ms": 24.71
     },
     {
       "scenario_id": "S24602",
@@ -5919,9 +5942,9 @@
         "C3": {
           "delay_min": 0.0,
           "holding_fuel_kg": 0.0,
-          "overtime_min": 0.0,
+          "overtime_min": 9.0,
           "missed_connections": 0,
-          "total_usd": 0.0
+          "total_usd": 13.5
         },
         "C4": {
           "delay_min": 2.0,
@@ -5940,9 +5963,9 @@
         "C6": {
           "delay_min": 2.0,
           "holding_fuel_kg": 80.0,
-          "overtime_min": 0.0,
+          "overtime_min": 11.0,
           "missed_connections": 0,
-          "total_usd": 269.52
+          "total_usd": 286.02
         },
         "C7": {
           "delay_min": 26.0,
@@ -5983,7 +6006,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 2.76
+      "execution_ms": 5.61
     },
     {
       "scenario_id": "S78881",
@@ -5996,6 +6019,11 @@
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
           "target": "8"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7"
         }
       ],
       "concessions_applied": [
@@ -6004,14 +6032,18 @@
           "id": "PILOT_EXTRA_HOLDING",
           "target": "8",
           "note": "accepted holding limit 4 -> 8 min (fuel-safe limit 8 min)"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7",
+          "note": "moved CRW-B4 from B4 to B7"
         }
       ],
       "concessions_rejected": [],
       "candidates": 8,
       "feasible_before": [
-        "C2",
         "C3",
-        "C5",
         "C6"
       ],
       "feasible_after": [
@@ -6025,7 +6057,7 @@
       "selected": "C2",
       "reason": "C2 is the lowest-cost feasible candidate (134.76 USD-equivalent). Tie between ['C2', 'C3'] broken by candidate ID.",
       "solver_base": {
-        "candidate": "C2",
+        "candidate": "C3",
         "total_usd": 134.76
       },
       "solver": {
@@ -6051,7 +6083,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": true,
@@ -6081,7 +6113,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C6": {
           "F-1": true,
@@ -6111,7 +6143,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "rules_after": {
@@ -6123,7 +6155,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C2": {
           "F-1": true,
@@ -6153,7 +6185,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C5": {
           "F-1": true,
@@ -6183,7 +6215,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C8": {
           "F-1": true,
@@ -6278,7 +6310,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.75
+      "execution_ms": 7.67
     },
     {
       "scenario_id": "S80976",
@@ -6563,7 +6595,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.85
+      "execution_ms": 5.33
     },
     {
       "scenario_id": "S123805",
@@ -6794,7 +6826,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.42
+      "execution_ms": 4.16
     },
     {
       "scenario_id": "S140553",
@@ -6820,23 +6852,23 @@
       "concessions_rejected": [],
       "candidates": 8,
       "feasible_before": [
-        "C2",
-        "C5"
+        "C3",
+        "C6"
       ],
       "feasible_after": [
-        "C2",
-        "C5"
+        "C3",
+        "C6"
       ],
       "feasible_count": 2,
       "outcome": "fallback",
-      "selected": "C2",
-      "reason": "C2 is the lowest-cost feasible candidate (0.00 USD-equivalent).",
+      "selected": "C3",
+      "reason": "C3 is the lowest-cost feasible candidate (0.00 USD-equivalent).",
       "solver_base": {
-        "candidate": "C2",
+        "candidate": "C3",
         "total_usd": 0.0
       },
       "solver": {
-        "candidate": "C2",
+        "candidate": "C3",
         "total_usd": 0.0
       },
       "rules_before": {
@@ -6858,7 +6890,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": true,
@@ -6868,7 +6900,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C4": {
           "F-1": true,
@@ -6888,7 +6920,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C6": {
           "F-1": true,
@@ -6898,7 +6930,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C7": {
           "F-1": false,
@@ -6918,7 +6950,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "rules_after": {
@@ -6940,7 +6972,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": true,
@@ -6950,7 +6982,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C4": {
           "F-1": true,
@@ -6970,7 +7002,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C6": {
           "F-1": true,
@@ -6980,7 +7012,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C7": {
           "F-1": false,
@@ -7000,7 +7032,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "costs": {
@@ -7084,7 +7116,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.83
+      "execution_ms": 14.08
     },
     {
       "scenario_id": "S150971",
@@ -7097,6 +7129,11 @@
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
           "target": "19"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7"
         }
       ],
       "concessions_applied": [
@@ -7105,23 +7142,32 @@
           "id": "PILOT_EXTRA_HOLDING",
           "target": "19",
           "note": "accepted holding limit 9 -> 19 min (fuel-safe limit 19 min)"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7",
+          "note": "moved CRW-B4 from B4 to B7"
         }
       ],
       "concessions_rejected": [],
       "candidates": 8,
       "feasible_before": [],
-      "feasible_after": [],
-      "feasible_count": 0,
-      "outcome": "escalation",
-      "selected": null,
-      "reason": "No feasible plan within the modelled options. 8 candidate(s) evaluated, none passed every check. Escalate to the duty manager.",
+      "feasible_after": [
+        "C2",
+        "C5"
+      ],
+      "feasible_count": 2,
+      "outcome": "fallback",
+      "selected": "C2",
+      "reason": "C2 is the lowest-cost feasible candidate (0.00 USD-equivalent).",
       "solver_base": {
         "candidate": null,
         "total_usd": null
       },
       "solver": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C2",
+        "total_usd": 0.0
       },
       "rules_before": {
         "C1": {
@@ -7138,7 +7184,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -7148,7 +7194,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -7168,7 +7214,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -7178,7 +7224,7 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -7198,7 +7244,7 @@
           "F-1": false,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -7214,23 +7260,23 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C2": {
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -7244,23 +7290,23 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C5": {
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C6": {
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -7274,17 +7320,17 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C8": {
           "F-1": false,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "costs": {
@@ -7369,7 +7415,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.92
+      "execution_ms": 11.39
     },
     {
       "scenario_id": "S161184",
@@ -7394,19 +7440,25 @@
       ],
       "concessions_rejected": [],
       "candidates": 8,
-      "feasible_before": [],
-      "feasible_after": [],
-      "feasible_count": 0,
-      "outcome": "escalation",
-      "selected": null,
-      "reason": "No feasible plan within the modelled options. 8 candidate(s) evaluated, none passed every check. Escalate to the duty manager.",
+      "feasible_before": [
+        "C5",
+        "C8"
+      ],
+      "feasible_after": [
+        "C5",
+        "C8"
+      ],
+      "feasible_count": 2,
+      "outcome": "fallback",
+      "selected": "C5",
+      "reason": "C5 is the lowest-cost feasible candidate (673.80 USD-equivalent).",
       "solver_base": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C5",
+        "total_usd": 673.8
       },
       "solver": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C5",
+        "total_usd": 673.8
       },
       "rules_before": {
         "C1": {
@@ -7425,9 +7477,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -7435,9 +7487,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C4": {
           "F-1": true,
@@ -7455,9 +7507,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C6": {
           "F-1": true,
@@ -7465,9 +7517,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C7": {
           "F-1": true,
@@ -7485,9 +7537,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "rules_after": {
@@ -7507,9 +7559,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -7517,9 +7569,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C4": {
           "F-1": true,
@@ -7537,9 +7589,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C6": {
           "F-1": true,
@@ -7547,9 +7599,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C7": {
           "F-1": true,
@@ -7567,9 +7619,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "costs": {
@@ -7655,7 +7707,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.87
+      "execution_ms": 8.56
     },
     {
       "scenario_id": "S183466",
@@ -7959,7 +8011,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.84
+      "execution_ms": 28.07
     },
     {
       "scenario_id": "S187031",
@@ -7993,14 +8045,14 @@
       "feasible_count": 1,
       "outcome": "fallback",
       "selected": "C4",
-      "reason": "C4 is the lowest-cost feasible candidate (4810.04 USD-equivalent).",
+      "reason": "C4 is the lowest-cost feasible candidate (4804.04 USD-equivalent).",
       "solver_base": {
         "candidate": "C4",
-        "total_usd": 4810.04
+        "total_usd": 4804.04
       },
       "solver": {
         "candidate": "C4",
-        "total_usd": 4810.04
+        "total_usd": 4804.04
       },
       "rules_before": {
         "C1": {
@@ -8137,9 +8189,9 @@
         "C2": {
           "delay_min": 0.0,
           "holding_fuel_kg": 0.0,
-          "overtime_min": 10.0,
+          "overtime_min": 6.0,
           "missed_connections": 0,
-          "total_usd": 15.0
+          "total_usd": 9.0
         },
         "C3": {
           "delay_min": 4.0,
@@ -8151,9 +8203,9 @@
         "C4": {
           "delay_min": 4.0,
           "holding_fuel_kg": 160.0,
-          "overtime_min": 14.0,
+          "overtime_min": 10.0,
           "missed_connections": 17,
-          "total_usd": 4810.04
+          "total_usd": 4804.04
         },
         "C5": {
           "delay_min": 20.0,
@@ -8165,9 +8217,9 @@
         "C6": {
           "delay_min": 20.0,
           "holding_fuel_kg": 800.0,
-          "overtime_min": 30.0,
+          "overtime_min": 26.0,
           "missed_connections": 17,
-          "total_usd": 6990.2
+          "total_usd": 6984.2
         }
       },
       "cost_errors": [],
@@ -8194,7 +8246,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 2.92
+      "execution_ms": 9.28
     },
     {
       "scenario_id": "S191228",
@@ -8424,7 +8476,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.38
+      "execution_ms": 6.5
     },
     {
       "scenario_id": "S220337",
@@ -8655,7 +8707,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.42
+      "execution_ms": 4.6
     },
     {
       "scenario_id": "S235366",
@@ -8944,7 +8996,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 2.81
+      "execution_ms": 8.2
     },
     {
       "scenario_id": "S238783",
@@ -8990,14 +9042,14 @@
       "feasible_count": 2,
       "outcome": "fallback",
       "selected": "C2",
-      "reason": "C2 is the lowest-cost feasible candidate (296.52 USD-equivalent).",
+      "reason": "C2 is the lowest-cost feasible candidate (269.52 USD-equivalent).",
       "solver_base": {
         "candidate": "C4",
-        "total_usd": 10454.16
+        "total_usd": 10422.66
       },
       "solver": {
         "candidate": "C2",
-        "total_usd": 296.52
+        "total_usd": 269.52
       },
       "rules_before": {
         "C1": {
@@ -9058,7 +9110,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C7": {
           "F-1": false,
@@ -9078,7 +9130,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "rules_after": {
@@ -9140,7 +9192,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C7": {
           "F-1": false,
@@ -9160,7 +9212,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "costs": {
@@ -9174,9 +9226,9 @@
         "C2": {
           "delay_min": 2.0,
           "holding_fuel_kg": 80.0,
-          "overtime_min": 18.0,
+          "overtime_min": 0.0,
           "missed_connections": 0,
-          "total_usd": 296.52
+          "total_usd": 269.52
         },
         "C3": {
           "delay_min": 16.0,
@@ -9188,9 +9240,9 @@
         "C4": {
           "delay_min": 16.0,
           "holding_fuel_kg": 640.0,
-          "overtime_min": 32.0,
+          "overtime_min": 11.0,
           "missed_connections": 33,
-          "total_usd": 10454.16
+          "total_usd": 10422.66
         },
         "C5": {
           "delay_min": 26.0,
@@ -9202,9 +9254,9 @@
         "C6": {
           "delay_min": 26.0,
           "holding_fuel_kg": 1040.0,
-          "overtime_min": 0.0,
+          "overtime_min": 21.0,
           "missed_connections": 33,
-          "total_usd": 11753.76
+          "total_usd": 11785.26
         },
         "C7": {
           "delay_min": 28.0,
@@ -9216,9 +9268,9 @@
         "C8": {
           "delay_min": 28.0,
           "holding_fuel_kg": 1120.0,
-          "overtime_min": 0.0,
+          "overtime_min": 23.0,
           "missed_connections": 33,
-          "total_usd": 12023.28
+          "total_usd": 12057.78
         }
       },
       "cost_errors": [],
@@ -9246,7 +9298,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.83
+      "execution_ms": 11.01
     },
     {
       "scenario_id": "S256904",
@@ -9259,31 +9311,57 @@
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
           "target": "10"
+        },
+        {
+          "agent": "atc",
+          "id": "ATC_EARLIER_SLOT",
+          "target": "C1"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7"
         }
       ],
       "concessions_applied": [
+        {
+          "agent": "atc",
+          "id": "ATC_EARLIER_SLOT",
+          "target": "C1",
+          "note": "moved UA2416 from SL-1644 to SL-1658"
+        },
         {
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
           "target": "10",
           "note": "accepted holding limit 5 -> 10 min (fuel-safe limit 10 min)"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7",
+          "note": "moved CRW-B4 from B4 to B7"
         }
       ],
       "concessions_rejected": [],
       "candidates": 8,
       "feasible_before": [],
-      "feasible_after": [],
-      "feasible_count": 0,
-      "outcome": "escalation",
-      "selected": null,
-      "reason": "No feasible plan within the modelled options. 8 candidate(s) evaluated, none passed every check. Escalate to the duty manager.",
+      "feasible_after": [
+        "C2",
+        "C4",
+        "C6"
+      ],
+      "feasible_count": 3,
+      "outcome": "fallback",
+      "selected": "C2",
+      "reason": "C2 is the lowest-cost feasible candidate (440.28 USD-equivalent).",
       "solver_base": {
         "candidate": null,
         "total_usd": null
       },
       "solver": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C2",
+        "total_usd": 440.28
       },
       "rules_before": {
         "C1": {
@@ -9371,22 +9449,22 @@
         "C1": {
           "F-1": true,
           "W-1": true,
-          "R-1": false,
+          "R-1": true,
           "T-1": true,
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C2": {
           "F-1": true,
           "W-1": true,
-          "R-1": false,
+          "R-1": true,
           "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -9396,7 +9474,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C4": {
           "F-1": true,
@@ -9406,7 +9484,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C5": {
           "F-1": true,
@@ -9416,7 +9494,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C6": {
           "F-1": true,
@@ -9426,7 +9504,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C7": {
           "F-1": false,
@@ -9436,7 +9514,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C8": {
           "F-1": false,
@@ -9453,51 +9531,51 @@
         "C1": {
           "delay_min": 3.0,
           "holding_fuel_kg": 120.0,
-          "overtime_min": 22.0,
-          "missed_connections": 0,
-          "total_usd": 437.28
-        },
-        "C2": {
-          "delay_min": 3.0,
-          "holding_fuel_kg": 120.0,
           "overtime_min": 0.0,
           "missed_connections": 0,
           "total_usd": 404.28
         },
-        "C3": {
-          "delay_min": 5.0,
-          "holding_fuel_kg": 200.0,
+        "C2": {
+          "delay_min": 3.0,
+          "holding_fuel_kg": 120.0,
           "overtime_min": 24.0,
           "missed_connections": 0,
-          "total_usd": 709.8
+          "total_usd": 440.28
         },
-        "C4": {
+        "C3": {
           "delay_min": 5.0,
           "holding_fuel_kg": 200.0,
           "overtime_min": 0.0,
           "missed_connections": 0,
           "total_usd": 673.8
         },
-        "C5": {
-          "delay_min": 9.0,
-          "holding_fuel_kg": 360.0,
-          "overtime_min": 28.0,
+        "C4": {
+          "delay_min": 5.0,
+          "holding_fuel_kg": 200.0,
+          "overtime_min": 26.0,
           "missed_connections": 0,
-          "total_usd": 1254.84
+          "total_usd": 712.8
         },
-        "C6": {
+        "C5": {
           "delay_min": 9.0,
           "holding_fuel_kg": 360.0,
           "overtime_min": 0.0,
           "missed_connections": 0,
           "total_usd": 1212.84
         },
+        "C6": {
+          "delay_min": 9.0,
+          "holding_fuel_kg": 360.0,
+          "overtime_min": 30.0,
+          "missed_connections": 0,
+          "total_usd": 1257.84
+        },
         "C7": {
           "delay_min": 15.0,
           "holding_fuel_kg": 600.0,
-          "overtime_min": 34.0,
+          "overtime_min": 0.0,
           "missed_connections": 0,
-          "total_usd": 2072.4
+          "total_usd": 2021.4
         },
         "C8": {
           "delay_min": 15.0,
@@ -9531,7 +9609,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.61
+      "execution_ms": 18.44
     },
     {
       "scenario_id": "S284522",
@@ -9817,7 +9895,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.74
+      "execution_ms": 11.12
     },
     {
       "scenario_id": "S298215",
@@ -9843,12 +9921,14 @@
       "concessions_rejected": [],
       "candidates": 8,
       "feasible_before": [
-        "C6"
+        "C6",
+        "C5"
       ],
       "feasible_after": [
-        "C6"
+        "C6",
+        "C5"
       ],
-      "feasible_count": 1,
+      "feasible_count": 2,
       "outcome": "fallback",
       "selected": "C6",
       "reason": "C6 is the lowest-cost feasible candidate (404.28 USD-equivalent).",
@@ -9879,7 +9959,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -9909,7 +9989,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C6": {
           "F-1": true,
@@ -9939,7 +10019,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "rules_after": {
@@ -9961,7 +10041,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -9991,7 +10071,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C6": {
           "F-1": true,
@@ -10021,7 +10101,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "costs": {
@@ -10035,9 +10115,9 @@
         "C2": {
           "delay_min": 1.0,
           "holding_fuel_kg": 40.0,
-          "overtime_min": 0.0,
+          "overtime_min": 20.0,
           "missed_connections": 0,
-          "total_usd": 134.76
+          "total_usd": 164.76
         },
         "C3": {
           "delay_min": 1.0,
@@ -10056,9 +10136,9 @@
         "C5": {
           "delay_min": 3.0,
           "holding_fuel_kg": 120.0,
-          "overtime_min": 0.0,
+          "overtime_min": 22.0,
           "missed_connections": 0,
-          "total_usd": 404.28
+          "total_usd": 437.28
         },
         "C6": {
           "delay_min": 3.0,
@@ -10077,9 +10157,9 @@
         "C8": {
           "delay_min": 9.0,
           "holding_fuel_kg": 360.0,
-          "overtime_min": 0.0,
+          "overtime_min": 28.0,
           "missed_connections": 0,
-          "total_usd": 1212.84
+          "total_usd": 1254.84
         }
       },
       "cost_errors": [],
@@ -10107,7 +10187,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.82
+      "execution_ms": 5.5
     },
     {
       "scenario_id": "S310443",
@@ -10145,20 +10225,17 @@
       "candidates": 8,
       "feasible_before": [
         "C5",
-        "C6",
         "C8"
       ],
       "feasible_after": [
         "C2",
-        "C3",
         "C5",
-        "C6",
         "C8"
       ],
-      "feasible_count": 5,
+      "feasible_count": 3,
       "outcome": "fallback",
       "selected": "C2",
-      "reason": "C2 is the lowest-cost feasible candidate (0.00 USD-equivalent). Tie between ['C2', 'C3'] broken by candidate ID.",
+      "reason": "C2 is the lowest-cost feasible candidate (0.00 USD-equivalent).",
       "solver_base": {
         "candidate": "C5",
         "total_usd": 808.56
@@ -10196,7 +10273,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C4": {
           "F-1": true,
@@ -10226,7 +10303,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C7": {
           "F-1": true,
@@ -10278,7 +10355,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C4": {
           "F-1": true,
@@ -10308,7 +10385,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C7": {
           "F-1": true,
@@ -10414,7 +10491,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 5.49
+      "execution_ms": 26.89
     },
     {
       "scenario_id": "S317755",
@@ -10427,6 +10504,11 @@
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
           "target": "20"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7"
         }
       ],
       "concessions_applied": [
@@ -10435,27 +10517,32 @@
           "id": "PILOT_EXTRA_HOLDING",
           "target": "20",
           "note": "accepted holding limit 10 -> 20 min (fuel-safe limit 20 min)"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7",
+          "note": "moved CRW-B4 from B4 to B7"
         }
       ],
       "concessions_rejected": [],
       "candidates": 6,
-      "feasible_before": [
-        "C2"
-      ],
+      "feasible_before": [],
       "feasible_after": [
-        "C2"
+        "C2",
+        "C6"
       ],
-      "feasible_count": 1,
+      "feasible_count": 2,
       "outcome": "fallback",
       "selected": "C2",
-      "reason": "C2 is the lowest-cost feasible candidate (48.00 USD-equivalent).",
+      "reason": "C2 is the lowest-cost feasible candidate (0.00 USD-equivalent).",
       "solver_base": {
-        "candidate": "C2",
-        "total_usd": 48.0
+        "candidate": null,
+        "total_usd": null
       },
       "solver": {
         "candidate": "C2",
-        "total_usd": 48.0
+        "total_usd": 0.0
       },
       "rules_before": {
         "C1": {
@@ -10476,7 +10563,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": true,
@@ -10528,7 +10615,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C2": {
           "F-1": true,
@@ -10548,7 +10635,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C4": {
           "F-1": true,
@@ -10558,7 +10645,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C5": {
           "F-1": true,
@@ -10568,7 +10655,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C6": {
           "F-1": true,
@@ -10578,7 +10665,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "costs": {
@@ -10592,9 +10679,9 @@
         "C2": {
           "delay_min": 0.0,
           "holding_fuel_kg": 0.0,
-          "overtime_min": 32.0,
+          "overtime_min": 0.0,
           "missed_connections": 0,
-          "total_usd": 48.0
+          "total_usd": 0.0
         },
         "C3": {
           "delay_min": 4.0,
@@ -10649,7 +10736,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.46
+      "execution_ms": 6.14
     },
     {
       "scenario_id": "S331011",
@@ -10662,6 +10749,11 @@
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
           "target": "33"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7"
         }
       ],
       "concessions_applied": [
@@ -10670,23 +10762,33 @@
           "id": "PILOT_EXTRA_HOLDING",
           "target": "33",
           "note": "accepted holding limit 16 -> 33 min (fuel-safe limit 33 min)"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7",
+          "note": "moved CRW-B4 from B4 to B7"
         }
       ],
       "concessions_rejected": [],
       "candidates": 6,
       "feasible_before": [],
-      "feasible_after": [],
-      "feasible_count": 0,
-      "outcome": "escalation",
-      "selected": null,
-      "reason": "No feasible plan within the modelled options. 6 candidate(s) evaluated, none passed every check. Escalate to the duty manager.",
+      "feasible_after": [
+        "C2",
+        "C4",
+        "C6"
+      ],
+      "feasible_count": 3,
+      "outcome": "fallback",
+      "selected": "C2",
+      "reason": "C2 is the lowest-cost feasible candidate (673.80 USD-equivalent).",
       "solver_base": {
         "candidate": null,
         "total_usd": null
       },
       "solver": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C2",
+        "total_usd": 673.8
       },
       "rules_before": {
         "C1": {
@@ -10759,7 +10861,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C2": {
           "F-1": true,
@@ -10769,7 +10871,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -10779,7 +10881,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C4": {
           "F-1": true,
@@ -10789,7 +10891,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C5": {
           "F-1": true,
@@ -10799,7 +10901,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C6": {
           "F-1": true,
@@ -10809,7 +10911,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "costs": {
@@ -10879,7 +10981,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.4
+      "execution_ms": 6.3
     },
     {
       "scenario_id": "S9943",
@@ -10897,11 +10999,6 @@
           "agent": "atc",
           "id": "ATC_EARLIER_SLOT",
           "target": "C1"
-        },
-        {
-          "agent": "ground",
-          "id": "GROUND_REASSIGN_CREW",
-          "target": "B7"
         }
       ],
       "concessions_applied": [
@@ -10916,21 +11013,16 @@
           "id": "PILOT_EXTRA_HOLDING",
           "target": "8",
           "note": "accepted holding limit 4 -> 8 min (fuel-safe limit 8 min)"
-        },
-        {
-          "agent": "ground",
-          "id": "GROUND_REASSIGN_CREW",
-          "target": "B7",
-          "note": "moved CRW-B9 from B9 to B7"
         }
       ],
       "concessions_rejected": [],
       "candidates": 3,
       "feasible_before": [],
       "feasible_after": [
-        "C2"
+        "C2",
+        "C3"
       ],
-      "feasible_count": 1,
+      "feasible_count": 2,
       "outcome": "fallback",
       "selected": "C2",
       "reason": "C2 is the lowest-cost feasible candidate (0.00 USD-equivalent).",
@@ -10961,7 +11053,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -10969,7 +11061,7 @@
           "R-1": false,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         }
@@ -11001,9 +11093,9 @@
           "R-1": true,
           "T-1": true,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "costs": {
@@ -11024,9 +11116,9 @@
         "C3": {
           "delay_min": 0.0,
           "holding_fuel_kg": 0.0,
-          "overtime_min": 0.0,
+          "overtime_min": 10.0,
           "missed_connections": 0,
-          "total_usd": 0.0
+          "total_usd": 15.0
         }
       },
       "cost_errors": [],
@@ -11053,7 +11145,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.44
+      "execution_ms": 6.04
     },
     {
       "scenario_id": "S46686",
@@ -11066,9 +11158,20 @@
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
           "target": "16"
+        },
+        {
+          "agent": "atc",
+          "id": "ATC_EARLIER_SLOT",
+          "target": "C1"
         }
       ],
       "concessions_applied": [
+        {
+          "agent": "atc",
+          "id": "ATC_EARLIER_SLOT",
+          "target": "C1",
+          "note": "moved DL2636 from SL-1933 to SL-2006"
+        },
         {
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
@@ -11078,19 +11181,24 @@
       ],
       "concessions_rejected": [],
       "candidates": 4,
-      "feasible_before": [],
-      "feasible_after": [],
-      "feasible_count": 0,
-      "outcome": "escalation",
-      "selected": null,
-      "reason": "No feasible plan within the modelled options. 4 candidate(s) evaluated, none passed every check. Escalate to the duty manager.",
+      "feasible_before": [
+        "C4"
+      ],
+      "feasible_after": [
+        "C2",
+        "C4"
+      ],
+      "feasible_count": 2,
+      "outcome": "fallback",
+      "selected": "C2",
+      "reason": "C2 is the lowest-cost feasible candidate (134.76 USD-equivalent).",
       "solver_base": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C4",
+        "total_usd": 1751.88
       },
       "solver": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C2",
+        "total_usd": 134.76
       },
       "rules_before": {
         "C1": {
@@ -11111,7 +11219,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -11131,14 +11239,14 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "rules_after": {
         "C1": {
           "F-1": true,
           "W-1": true,
-          "R-1": false,
+          "R-1": true,
           "T-1": true,
           "G-1": true,
           "G-2": false,
@@ -11148,12 +11256,12 @@
         "C2": {
           "F-1": true,
           "W-1": true,
-          "R-1": false,
+          "R-1": true,
           "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -11173,7 +11281,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "costs": {
@@ -11230,7 +11338,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.88
+      "execution_ms": 5.71
     },
     {
       "scenario_id": "S55945",
@@ -11464,7 +11572,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.68
+      "execution_ms": 10.5
     },
     {
       "scenario_id": "S68904",
@@ -11477,6 +11585,11 @@
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
           "target": "29"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7"
         }
       ],
       "concessions_applied": [
@@ -11485,23 +11598,32 @@
           "id": "PILOT_EXTRA_HOLDING",
           "target": "29",
           "note": "accepted holding limit 14 -> 29 min (fuel-safe limit 29 min)"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7",
+          "note": "moved CRW-B4 from B4 to B7"
         }
       ],
       "concessions_rejected": [],
       "candidates": 6,
       "feasible_before": [],
-      "feasible_after": [],
-      "feasible_count": 0,
-      "outcome": "escalation",
-      "selected": null,
-      "reason": "No feasible plan within the modelled options. 6 candidate(s) evaluated, none passed every check. Escalate to the duty manager.",
+      "feasible_after": [
+        "C2",
+        "C4"
+      ],
+      "feasible_count": 2,
+      "outcome": "fallback",
+      "selected": "C2",
+      "reason": "C2 is the lowest-cost feasible candidate (305.52 USD-equivalent).",
       "solver_base": {
         "candidate": null,
         "total_usd": null
       },
       "solver": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C2",
+        "total_usd": 305.52
       },
       "rules_before": {
         "C1": {
@@ -11574,7 +11696,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C2": {
           "F-1": true,
@@ -11584,7 +11706,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -11594,7 +11716,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C4": {
           "F-1": true,
@@ -11604,7 +11726,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C5": {
           "F-1": true,
@@ -11631,30 +11753,30 @@
         "C1": {
           "delay_min": 2.0,
           "holding_fuel_kg": 80.0,
-          "overtime_min": 18.0,
-          "missed_connections": 0,
-          "total_usd": 296.52
-        },
-        "C2": {
-          "delay_min": 2.0,
-          "holding_fuel_kg": 80.0,
           "overtime_min": 0.0,
           "missed_connections": 0,
           "total_usd": 269.52
         },
-        "C3": {
-          "delay_min": 8.0,
-          "holding_fuel_kg": 320.0,
+        "C2": {
+          "delay_min": 2.0,
+          "holding_fuel_kg": 80.0,
           "overtime_min": 24.0,
           "missed_connections": 0,
-          "total_usd": 1114.08
+          "total_usd": 305.52
         },
-        "C4": {
+        "C3": {
           "delay_min": 8.0,
           "holding_fuel_kg": 320.0,
           "overtime_min": 0.0,
           "missed_connections": 0,
           "total_usd": 1078.08
+        },
+        "C4": {
+          "delay_min": 8.0,
+          "holding_fuel_kg": 320.0,
+          "overtime_min": 30.0,
+          "missed_connections": 0,
+          "total_usd": 1123.08
         },
         "C5": {
           "delay_min": 23.0,
@@ -11695,7 +11817,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.32
+      "execution_ms": 5.64
     },
     {
       "scenario_id": "S123707",
@@ -11720,19 +11842,27 @@
       ],
       "concessions_rejected": [],
       "candidates": 6,
-      "feasible_before": [],
-      "feasible_after": [],
-      "feasible_count": 0,
-      "outcome": "escalation",
-      "selected": null,
-      "reason": "No feasible plan within the modelled options. 6 candidate(s) evaluated, none passed every check. Escalate to the duty manager.",
+      "feasible_before": [
+        "C2",
+        "C4",
+        "C6"
+      ],
+      "feasible_after": [
+        "C2",
+        "C4",
+        "C6"
+      ],
+      "feasible_count": 3,
+      "outcome": "fallback",
+      "selected": "C2",
+      "reason": "C2 is the lowest-cost feasible candidate (4404.28 USD-equivalent).",
       "solver_base": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C2",
+        "total_usd": 4404.28
       },
       "solver": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C2",
+        "total_usd": 4404.28
       },
       "rules_before": {
         "C1": {
@@ -11753,7 +11883,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -11773,7 +11903,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C5": {
           "F-1": true,
@@ -11793,7 +11923,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "rules_after": {
@@ -11815,7 +11945,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -11835,7 +11965,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C5": {
           "F-1": true,
@@ -11855,7 +11985,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "costs": {
@@ -11928,7 +12058,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.45
+      "execution_ms": 6.08
     },
     {
       "scenario_id": "S147053",
@@ -11971,14 +12101,14 @@
       "feasible_count": 1,
       "outcome": "fallback",
       "selected": "C2",
-      "reason": "C2 is the lowest-cost feasible candidate (0.00 USD-equivalent).",
+      "reason": "C2 is the lowest-cost feasible candidate (21.00 USD-equivalent).",
       "solver_base": {
         "candidate": null,
         "total_usd": null
       },
       "solver": {
         "candidate": "C2",
-        "total_usd": 0.0
+        "total_usd": 21.0
       },
       "rules_before": {
         "C1": {
@@ -12115,9 +12245,9 @@
         "C2": {
           "delay_min": 0.0,
           "holding_fuel_kg": 0.0,
-          "overtime_min": 0.0,
+          "overtime_min": 14.0,
           "missed_connections": 0,
-          "total_usd": 0.0
+          "total_usd": 21.0
         },
         "C3": {
           "delay_min": 0.0,
@@ -12136,9 +12266,9 @@
         "C5": {
           "delay_min": 21.0,
           "holding_fuel_kg": 840.0,
-          "overtime_min": 0.0,
+          "overtime_min": 35.0,
           "missed_connections": 0,
-          "total_usd": 2829.96
+          "total_usd": 2882.46
         },
         "C6": {
           "delay_min": 21.0,
@@ -12173,7 +12303,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.58
+      "execution_ms": 10.76
     },
     {
       "scenario_id": "S180066",
@@ -12198,19 +12328,25 @@
       ],
       "concessions_rejected": [],
       "candidates": 6,
-      "feasible_before": [],
-      "feasible_after": [],
-      "feasible_count": 0,
-      "outcome": "escalation",
-      "selected": null,
-      "reason": "No feasible plan within the modelled options. 6 candidate(s) evaluated, none passed every check. Escalate to the duty manager.",
+      "feasible_before": [
+        "C2",
+        "C4"
+      ],
+      "feasible_after": [
+        "C2",
+        "C4"
+      ],
+      "feasible_count": 2,
+      "outcome": "fallback",
+      "selected": "C2",
+      "reason": "C2 is the lowest-cost feasible candidate (269.52 USD-equivalent).",
       "solver_base": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C2",
+        "total_usd": 269.52
       },
       "solver": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C2",
+        "total_usd": 269.52
       },
       "rules_before": {
         "C1": {
@@ -12231,7 +12367,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -12251,7 +12387,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C5": {
           "F-1": false,
@@ -12271,7 +12407,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "rules_after": {
@@ -12293,7 +12429,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C3": {
           "F-1": true,
@@ -12313,7 +12449,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         },
         "C5": {
           "F-1": false,
@@ -12333,7 +12469,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": false
+          "C-1": true
         }
       },
       "costs": {
@@ -12403,7 +12539,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.34
+      "execution_ms": 3.9
     },
     {
       "scenario_id": "S204630",
@@ -12503,7 +12639,7 @@
           "R-1": true,
           "T-1": false,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         }
@@ -12565,7 +12701,7 @@
           "R-1": true,
           "T-1": false,
           "G-1": true,
-          "G-2": false,
+          "G-2": true,
           "G-3": true,
           "C-1": true
         }
@@ -12638,7 +12774,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.33
+      "execution_ms": 4.28
     },
     {
       "scenario_id": "S283429",
@@ -12651,6 +12787,11 @@
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
           "target": "21"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B9"
         }
       ],
       "concessions_applied": [
@@ -12659,14 +12800,18 @@
           "id": "PILOT_EXTRA_HOLDING",
           "target": "21",
           "note": "accepted holding limit 10 -> 21 min (fuel-safe limit 21 min)"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B9",
+          "note": "moved CRW-B4 from B4 to B9"
         }
       ],
       "concessions_rejected": [],
       "candidates": 8,
       "feasible_before": [
-        "C3",
         "C2",
-        "C6",
         "C5",
         "C8"
       ],
@@ -12682,8 +12827,8 @@
       "selected": "C3",
       "reason": "C3 is the lowest-cost feasible candidate (404.28 USD-equivalent).",
       "solver_base": {
-        "candidate": "C3",
-        "total_usd": 404.28
+        "candidate": "C2",
+        "total_usd": 417.78
       },
       "solver": {
         "candidate": "C3",
@@ -12718,7 +12863,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C4": {
           "F-1": true,
@@ -12748,7 +12893,7 @@
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C7": {
           "F-1": true,
@@ -12780,7 +12925,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C2": {
           "F-1": true,
@@ -12810,7 +12955,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C5": {
           "F-1": true,
@@ -12840,7 +12985,7 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C8": {
           "F-1": true,
@@ -12864,9 +13009,9 @@
         "C2": {
           "delay_min": 3.0,
           "holding_fuel_kg": 120.0,
-          "overtime_min": 12.0,
+          "overtime_min": 9.0,
           "missed_connections": 0,
-          "total_usd": 422.28
+          "total_usd": 417.78
         },
         "C3": {
           "delay_min": 3.0,
@@ -12885,9 +13030,9 @@
         "C5": {
           "delay_min": 6.0,
           "holding_fuel_kg": 240.0,
-          "overtime_min": 15.0,
+          "overtime_min": 12.0,
           "missed_connections": 0,
-          "total_usd": 831.06
+          "total_usd": 826.56
         },
         "C6": {
           "delay_min": 6.0,
@@ -12899,16 +13044,16 @@
         "C7": {
           "delay_min": 18.0,
           "holding_fuel_kg": 720.0,
-          "overtime_min": 5.0,
+          "overtime_min": 0.0,
           "missed_connections": 0,
-          "total_usd": 2433.18
+          "total_usd": 2425.68
         },
         "C8": {
           "delay_min": 18.0,
           "holding_fuel_kg": 720.0,
-          "overtime_min": 27.0,
+          "overtime_min": 24.0,
           "missed_connections": 0,
-          "total_usd": 2466.18
+          "total_usd": 2461.68
         }
       },
       "cost_errors": [],
@@ -12935,7 +13080,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.75
+      "execution_ms": 7.81
     },
     {
       "scenario_id": "S287847",
@@ -12948,31 +13093,57 @@
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
           "target": "37"
+        },
+        {
+          "agent": "atc",
+          "id": "ATC_EARLIER_SLOT",
+          "target": "C1"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7"
         }
       ],
       "concessions_applied": [
+        {
+          "agent": "atc",
+          "id": "ATC_EARLIER_SLOT",
+          "target": "C1",
+          "note": "moved WN2548 from SL-2306 to SL-0000"
+        },
         {
           "agent": "pilot",
           "id": "PILOT_EXTRA_HOLDING",
           "target": "37",
           "note": "accepted holding limit 18 -> 37 min (fuel-safe limit 37 min)"
+        },
+        {
+          "agent": "ground",
+          "id": "GROUND_REASSIGN_CREW",
+          "target": "B7",
+          "note": "moved CRW-B4 from B4 to B7"
         }
       ],
       "concessions_rejected": [],
       "candidates": 8,
       "feasible_before": [],
-      "feasible_after": [],
-      "feasible_count": 0,
-      "outcome": "escalation",
-      "selected": null,
-      "reason": "No feasible plan within the modelled options. 8 candidate(s) evaluated, none passed every check. Escalate to the duty manager.",
+      "feasible_after": [
+        "C2",
+        "C5",
+        "C8"
+      ],
+      "feasible_count": 3,
+      "outcome": "fallback",
+      "selected": "C2",
+      "reason": "C2 is the lowest-cost feasible candidate (3438.80 USD-equivalent).",
       "solver_base": {
         "candidate": null,
         "total_usd": null
       },
       "solver": {
-        "candidate": null,
-        "total_usd": null
+        "candidate": "C2",
+        "total_usd": 3438.8
       },
       "rules_before": {
         "C1": {
@@ -12989,11 +13160,11 @@
           "F-1": true,
           "W-1": true,
           "R-1": false,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C3": {
           "F-1": true,
@@ -13019,11 +13190,11 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C6": {
           "F-1": true,
@@ -13049,29 +13220,29 @@
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         }
       },
       "rules_after": {
         "C1": {
           "F-1": true,
           "W-1": true,
-          "R-1": false,
+          "R-1": true,
           "T-1": true,
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C2": {
           "F-1": true,
           "W-1": true,
-          "R-1": false,
-          "T-1": false,
+          "R-1": true,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -13080,7 +13251,7 @@
         "C3": {
           "F-1": true,
           "W-1": true,
-          "R-1": false,
+          "R-1": true,
           "T-1": true,
           "G-1": true,
           "G-2": false,
@@ -13095,13 +13266,13 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C5": {
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -13125,13 +13296,13 @@
           "G-1": true,
           "G-2": false,
           "G-3": true,
-          "C-1": true
+          "C-1": false
         },
         "C8": {
           "F-1": true,
           "W-1": true,
           "R-1": true,
-          "T-1": false,
+          "T-1": true,
           "G-1": true,
           "G-2": true,
           "G-3": true,
@@ -13142,16 +13313,16 @@
         "C1": {
           "delay_min": 5.0,
           "holding_fuel_kg": 200.0,
-          "overtime_min": 10.0,
+          "overtime_min": 0.0,
           "missed_connections": 11,
-          "total_usd": 3438.8
+          "total_usd": 3423.8
         },
         "C2": {
           "delay_min": 5.0,
           "holding_fuel_kg": 200.0,
-          "overtime_min": 0.0,
+          "overtime_min": 10.0,
           "missed_connections": 11,
-          "total_usd": 3423.8
+          "total_usd": 3438.8
         },
         "C3": {
           "delay_min": 5.0,
@@ -13163,16 +13334,16 @@
         "C4": {
           "delay_min": 8.0,
           "holding_fuel_kg": 320.0,
-          "overtime_min": 13.0,
+          "overtime_min": 0.0,
           "missed_connections": 11,
-          "total_usd": 3847.58
+          "total_usd": 3828.08
         },
         "C5": {
           "delay_min": 8.0,
           "holding_fuel_kg": 320.0,
-          "overtime_min": 0.0,
+          "overtime_min": 13.0,
           "missed_connections": 11,
-          "total_usd": 3828.08
+          "total_usd": 3847.58
         },
         "C6": {
           "delay_min": 8.0,
@@ -13184,16 +13355,16 @@
         "C7": {
           "delay_min": 23.0,
           "holding_fuel_kg": 920.0,
-          "overtime_min": 28.0,
+          "overtime_min": 0.0,
           "missed_connections": 11,
-          "total_usd": 5891.48
+          "total_usd": 5849.48
         },
         "C8": {
           "delay_min": 23.0,
           "holding_fuel_kg": 920.0,
-          "overtime_min": 0.0,
+          "overtime_min": 28.0,
           "missed_connections": 11,
-          "total_usd": 5849.48
+          "total_usd": 5891.48
         }
       },
       "cost_errors": [],
@@ -13220,7 +13391,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.64
+      "execution_ms": 25.17
     }
   ],
   "agent_runs": [
