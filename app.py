@@ -23,35 +23,75 @@ AGENTS = {"atc": ("Ava", "ATC"), "pilot": ("Pip", "Pilot"), "ground": ("Gus", "G
 COST_PER_MIN_SOURCE = ("Airlines for America: U.S. Passenger Carrier Delay Costs",
                        "https://www.airlines.org/dataset/u-s-passenger-carrier-delay-costs/")
 
-st.set_page_config(page_title="Sky Huddle", page_icon="✈️", layout="wide")
+def _load_dotenv(path):
+    """Read KEY=value lines from a local .env (gitignored, see .env.example) into the environment.
+    Values already set in the environment win; the key never leaves this machine."""
+    if path.exists():
+        for line in path.read_text().splitlines():
+            k, sep, v = line.strip().partition("=")
+            if sep and k and not k.startswith("#") and v.strip():
+                os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+_load_dotenv(ROOT / ".env")
+
+st.set_page_config(page_title="Sky Huddle", page_icon="✈️", layout="wide", initial_sidebar_state="collapsed")
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jersey+15&family=Poppins:wght@400;500;600;700&display=swap');
 html, body, [class*="css"], .stMarkdown, p, li, label {font-family: 'Poppins', sans-serif;}
-h1, h2, h3 {font-family: 'Pixelify Sans', monospace !important; letter-spacing: .02em;}
-header[data-testid="stHeader"] {display:none;} footer {display:none;}
-.block-container {padding-top: 1.6rem; max-width: 1500px;}
-section[data-testid="stSidebar"] {border-right: 3px solid #1b1f3b;}
-section[data-testid="stSidebar"] input {border: 2px solid #1b1f3b !important; border-radius: 3px !important; background: #fff !important;}
-section[data-testid="stSidebar"] .stButton button {font-family:'Pixelify Sans',monospace; font-weight:700; border:3px solid #1b1f3b; border-radius:4px; box-shadow:3px 3px 0 #1b1f3b; background:#fff; color:#1b1f3b;}
-section[data-testid="stSidebar"] .stButton button:hover {background:#ffd447; color:#1b1f3b;}
-section[data-testid="stSidebar"] .stButton button:active {transform:translate(2px,2px); box-shadow:1px 1px 0 #1b1f3b;}
-[data-testid="stMain"] .stButton button {font-family:'Pixelify Sans',monospace; font-weight:700; font-size:17px; border:3px solid #1b1f3b; border-radius:4px; box-shadow:3px 3px 0 #1b1f3b; background:#fff; color:#1b1f3b;}
-[data-testid="stMain"] .stButton button[data-testid="stBaseButton-primary"] {background:#ff8a3d;}
+h1, h2, h3, h4 {font-family: 'Jersey 15', monospace !important; font-weight:400 !important; letter-spacing:.02em; line-height:1.15 !important;}
+h1 {font-size:2.7rem !important;} h2 {font-size:2.1rem !important;} h3 {font-size:1.7rem !important;}
+.stApp {background: linear-gradient(180deg, #b5e1fa 0%, #dcf0fc 30%, #eef7fd 60%) fixed;}
+header[data-testid="stHeader"] {background: rgba(233,245,253,.92); border-bottom: 3px solid #1b1f3b;}
+footer {display:none;}
+section[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"] {display:none;}
+.block-container {padding-top: 4.2rem; max-width: 1500px;}
+[data-testid="InputInstructions"] {display:none;}
+[data-testid="stImage"] img {image-rendering: pixelated;}
+[data-testid="stMain"] .stButton button, [data-testid="stMain"] .stFormSubmitButton button, [data-testid="stPopover"] button {font-family:'Jersey 15',monospace; font-size:19px; font-weight:400; border:3px solid #1b1f3b; border-radius:4px; box-shadow:3px 3px 0 #1b1f3b; background:#fff; color:#1b1f3b;}
+[data-testid="stMain"] button[data-testid="stBaseButton-primary"], [data-testid="stMain"] button[data-testid="stBaseButton-primaryFormSubmit"] {background:#ff8a3d; color:#1b1f3b;}
 [data-testid="stMain"] .stButton button:hover {background:#ffd447; color:#1b1f3b;}
-[data-testid="stMain"] .stButton button:disabled {background:#eef0f5; color:#9aa3c2; box-shadow:none;}
+[data-testid="stMain"] .stButton button:disabled {background:#eef0f5; color:#5b6487; box-shadow:none;}
 [data-testid="stMain"] input {border: 2px solid #1b1f3b !important; border-radius: 3px !important; background: #fff !important;}
 .mo {border:3px solid #1b1f3b; background:#fff8e1; box-shadow:4px 4px 0 #1b1f3b; padding:12px 16px; margin:4px 0 12px;}
 [data-testid="stMetric"] {background:#f3f8fd; border:3px solid #1b1f3b; box-shadow:3px 3px 0 #1b1f3b; padding:8px 12px;}
-.badge {display:inline-block;padding:2px 10px;border:3px solid #1b1f3b;font-family:'Pixelify Sans',monospace;font-size:16px;box-shadow:3px 3px 0 #1b1f3b;}
-.b-consensus {background:#bff0c8;} .b-fallback {background:#ffc2c4;} .b-escalation {background:#e5484d;color:#fff;}
+.badge {display:inline-block;padding:3px 8px;border:3px solid #1b1f3b;font-family:'Jersey 15',monospace;font-size:18px;box-shadow:3px 3px 0 #1b1f3b;}
+.b-consensus {background:#bff0c8;} .b-fallback {background:#ffc2c4;} .b-escalation {background:#b42318;color:#fff;}
 .card {border:3px solid #1b1f3b;padding:10px 12px;margin-bottom:8px;background:#fff;box-shadow:3px 3px 0 #1b1f3b;}
 .ok {background:#e9f9ec;border-color:#1b1f3b;} .no {background:#ffecec;}
-.sim {color:#7c3aed;font-weight:600;font-size:12px;} .real {color:#1e7d34;font-weight:600;font-size:12px;}
+.sim {color:#6d28d9;font-weight:600;font-size:12px;} .real {color:#1e7d34;font-weight:600;font-size:12px;}
+/* brand and boarding-pass incident bar (from the Sky Huddle design artifact) */
+.brand {display:flex;align-items:center;gap:12px}
+.brand img {height:96px;width:auto}
+.brand h1 {font-size:46px !important;margin:0;padding:0;color:#1b1f3b}
+.brand small {display:block;font-size:13px;color:#3b4366}
+.incident {display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;gap:12px 22px;padding:16px 20px;margin:4px 0 10px;background:#f3f8fd;border:3px solid #1b1f3b;box-shadow:4px 4px 0 #1b1f3b;border-radius:4px}
+.incident .tag {font-family:'Jersey 15',monospace;background:#b42318;color:#fff;padding:2px 10px;border:2px solid #1b1f3b;font-size:19px}
+.incident .facts {display:grid;grid-template-columns:repeat(2,max-content);gap:10px 12px}
+.incident .facts .chip {font-size:15px;padding:5px 12px}
+.incident .verdict {display:grid;justify-items:end;gap:8px;text-align:right}
+.incident .verdict small {font-size:12px;color:#3b4366}
+@media (max-width:1100px) {.incident {grid-template-columns:auto 1fr} .incident .verdict {justify-items:start;text-align:left}}
+.chip {display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:2px 8px;border:2px solid #1b1f3b;background:#fff;border-radius:3px}
+.ticket {display:inline-flex;align-items:stretch;background:#fff;border:3px solid #1b1f3b;box-shadow:3px 3px 0 #1b1f3b;border-radius:6px}
+.tk-body {display:flex;align-items:center;gap:12px;padding:4px 14px}
+.tk-port small,.tk-port span {display:block;font-size:11px;color:#3b4366;line-height:1.15}
+.tk-port b {display:block;font-family:'Jersey 15',monospace;font-size:34px;line-height:1}
+.tk-fly {display:flex;flex-direction:column;align-items:center;font-size:11px;color:#3b4366;min-width:84px}
+.tk-stub {border-left:3px dashed #1b1f3b;padding:4px 14px;background:#ffd447;display:grid;align-content:center;font-size:11px;line-height:1.3;border-radius:0 3px 3px 0}
+.tk-stub b {font-family:'Jersey 15',monospace;font-size:24px;line-height:1.1}
+/* agent pages */
+.inv {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.cell {border:3px solid #1b1f3b;padding:6px 8px;font-size:12.5px;line-height:1.3;position:relative;box-shadow:inset -3px -3px 0 rgba(0,0,0,.12)}
+.cell b {font-family:'Jersey 15',monospace;font-size:21px;display:block;line-height:1}
+.cell.like {background:#bff0c8}.cell.meh {background:#fff1b8}.cell.bad {background:#3a3f5c;color:#ffd0d2}
+.cell.pref {outline:3px solid #ffd447;outline-offset:2px}
+.cell.final::after {content:"FINAL";position:absolute;right:4px;top:3px;font-family:'Jersey 15',monospace;font-size:14px;background:#1b1f3b;color:#fff;padding:0 5px}
+.thought {display:grid;grid-template-columns:62px 1fr;gap:8px;font-size:13px;margin-bottom:8px}
+.thought .k {font-family:'Jersey 15',monospace;font-size:15px;padding:0;text-align:center;border:2px solid #1b1f3b;background:#ffd447;height:max-content}
 </style>
 """, unsafe_allow_html=True)
-
-
 
 # ---------- adapters: team format -> shape the UI and ui/replay.py expect ----------
 def _as_list(x):
@@ -195,44 +235,47 @@ def outcome_badge(out):
     return f'<span class="badge b-{t}">{text}</span>'
 
 
-def try_pipeline_run(mode, flight=None, date=None):
-    """Calls Damien's coordinator.run(random, flight, date, scenario_id, fake_agents).
-    Without ANTHROPIC_API_KEY it runs with fake_agents=True (random agents, real checker)."""
+
+def try_pipeline_run(mode, flight=None, date=None, slot=None):
+    """Run one negotiation. While it runs, the airport scene in `slot` shows who is thinking (live mode).
+    Without a working key it runs with fake agents (random choices, real checker)."""
+    if KEY_STATUS == "rejected":  # live calls would all 401 and look like a real escalation
+        st.error("The server's API key was rejected, so the agents can't answer. Fix ANTHROPIC_API_KEY in the "
+                 "server's .env and restart it, or remove it to run with fake agents.")
+        return None
     try:
         import coordinator  # noqa: WPS433
+        import scenario as sc
     except ImportError:
-        st.info("The pipeline isn't in the repo yet (no coordinator.py). Showing saved runs only.")
+        st.info("The pipeline isn't in the repo yet. Showing saved runs only.")
         return None
-    if KEY_STATUS == "rejected":  # live calls would all 401 and look like a real escalation
-        st.error("Your API key was rejected, so the agents can't answer. Paste a working key under "
-                 "**Set Claude API key** in the sidebar, or remove it to run with fake agents.")
+    s = sc.random_scenario() if mode == "random" else sc.find_scenario(flight, date)
+    if s is None:
+        st.error(f"No qualifying delayed flight {flight} on {date}. Try AA1344 on 2015-01-01.")
         return None
     fake = not os.environ.get("ANTHROPIC_API_KEY")
-    with st.status("Starting the negotiation…", expanded=True) as status:
-        def progress(msg):  # called by coordinator.negotiate at each stage
-            status.update(label=msg)
-            st.write(msg)
+    stub = {"scenario": {"scenario_id": s.scenario_id, "historical": json.loads(s.model_dump_json())["historical"],
+                         "simulated": {}}, "candidates": [], "checks": {}, "costs": {}, "outcome": {}, "rounds": [],
+            "stats": {}}
+    lines = []
 
-        try:
-            if mode == "random":
-                res = coordinator.run(random=True, fake_agents=fake, progress=progress)
-            else:
-                res = coordinator.run(flight=flight, date=date, fake_agents=fake, progress=progress)
-        except NotImplementedError:
-            status.update(label="Pipeline is still a stub", state="error")
-            st.warning("coordinator.run is still a stub. Showing saved runs only.")
-            return None
-        except Exception as e:  # show the failure, never crash the demo
-            status.update(label="Run failed", state="error")
-            st.error(f"Run failed: {e}. The saved runs below still work.")
-            return None
-        status.update(label=f"Done: {res['run_id']} ({res['outcome']['type']}). Opening the replay…",
-                      state="complete", expanded=False)
-    return res
+    def progress(msg):  # called by coordinator.negotiate at each stage; redraw the scene in live mode
+        lines.append(msg)
+        phase = (4 if msg.startswith("Final") else 3 if "Round 2" in msg else 2 if msg.startswith("Round 1 done")
+                 else 1 if "Round 1" in msg else 0)
+        if slot is not None:
+            with slot.container():
+                st.iframe(replay_html(stub, live={"phase": phase, "lines": lines, "fake": fake}, view="airport"))
+
+    try:
+        return coordinator.run(scenario_id=s.scenario_id, fake_agents=fake, progress=progress)
+    except Exception as e:  # show the failure, never crash the demo
+        st.error(f"Run failed: {e}. The saved runs still work.")
+        return None
 
 
 def open_new_run(res):
-    """Open the new run on the Run a flight page and autoplay its replay (applied on the next script run)."""
+    """Show the new run and autoplay its replay (applied on the next script run)."""
     list_logs.clear()
     st.session_state["_goto_run"] = res["run_id"]
     st.rerun()
@@ -252,14 +295,83 @@ def check_key(key):
 
 
 
-# ---------- shared pieces ----------
-def run_picker(label):
-    names, key = list(logs), f"current_run_{MODE}"
-    pick = st.selectbox(label, names, index=names.index(st.session_state[key]))
-    if pick != st.session_state[key]:
-        st.session_state[key] = pick
-        st.rerun()
 
+# ---------- shared pieces ----------
+CITY = {"DEN": "Denver", "DFW": "Dallas/Fort Worth", "ORD": "Chicago O'Hare", "LAX": "Los Angeles", "SFO": "San Francisco",
+        "JFK": "New York JFK", "LGA": "New York LaGuardia", "BOS": "Boston", "ATL": "Atlanta", "MIA": "Miami",
+        "SEA": "Seattle", "PHX": "Phoenix", "LAS": "Las Vegas", "IAH": "Houston", "MSP": "Minneapolis",
+        "DTW": "Detroit", "PHL": "Philadelphia", "EWR": "Newark", "CLT": "Charlotte", "MCO": "Orlando",
+        "OAK": "Oakland", "SAN": "San Diego", "BWI": "Baltimore", "DCA": "Washington National", "SLC": "Salt Lake City"}
+ROLE = {"atc": ("Ava", "Air traffic control", "Owns the runway: slots, wake spacing, taxi routes."),
+        "pilot": ("Pip", "Pilot in command", "Owns the aircraft: fuel at landing."),
+        "ground": ("Gus", "Ground operations", "Owns the ramp: gates, turnaround, crew."),
+        "mod": ("Coco", "Coordinator", "Plain code, no AI: applies concessions, rechecks, freezes one plan.")}
+
+
+def png(agent, scale=3):
+    """Pixel sprite at an exact integer scale (20 x 27 grid), shown at that size so it stays crisp."""
+    from ui.sprites import sprite_png
+    return sprite_png(agent, scale)
+
+
+@st.cache_data
+def logo_b64(height=120):
+    """The Sky Huddle logo (ui/assets/logo.png), resized once for the header."""
+    import base64
+    import io
+    from PIL import Image
+    im = Image.open(ROOT / "ui" / "assets" / "logo.png")
+    im = im.resize((round(im.width * height * 2 / im.height), height * 2), Image.LANCZOS)  # 2x for sharp retina
+    buf = io.BytesIO()
+    im.save(buf, "PNG", optimize=True)
+    return base64.b64encode(buf.getvalue()).decode()
+
+
+def key_box():
+    """Read-only key status. The key comes from ANTHROPIC_API_KEY in the server's .env; the page cannot change it."""
+    k = os.environ.get("ANTHROPIC_API_KEY", "")
+    if KEY_STATUS == "ok":
+        st.badge(f"Live Claude agents · key …{k[-4:]}", icon=":material/check_circle:", color="green")
+    elif KEY_STATUS == "rejected":
+        st.badge(f"Key …{k[-4:]} rejected: fix .env on the server", icon=":material/error:", color="red")
+    elif KEY_STATUS:
+        st.badge(f"Key …{k[-4:]}: {KEY_STATUS}", icon=":material/warning:", color="orange")
+    else:
+        st.badge("No key in .env: fake agents", icon=":material/key_off:", color="gray")
+
+
+def frame(ticket=True):
+    """Brand, key status and the boarding-pass bar for the flight on screen: the same on every page."""
+    import base64
+    c1, c2 = st.columns([3, 2], vertical_alignment="center")
+    img = f'<img src="data:image/png;base64,{logo_b64()}" alt="Sky Huddle logo">'
+    c1.html(f'<div class="brand">{img}<div><h1>Sky Huddle</h1><small>Three AI agents settle one flight '
+            f'disruption in two rounds. Coco coordinates. You make the call.</small></div></div>')
+    with c2:
+        key_box()
+    if not ticket:
+        return
+    plane = ('<svg viewBox="0 0 16 10" width="34" height="22" shape-rendering="crispEdges" aria-hidden="true">'
+             '<path fill="#1b1f3b" d="M0 3h2v1h4V1h2v3h5l2 1v1l-2 1H8v2H6V6H2v1H0z"/></svg>')
+    st.html(f"""<div class="incident"><span class="tag">Disruption</span>
+<span class="ticket"><span class="tk-body">
+ <span class="tk-port"><small>From</small><b>{H['origin']}</b><span>{CITY.get(H['origin'], '')}</span></span>
+ <span class="tk-fly">{plane}{H.get('distance_mi', '?')} mi</span>
+ <span class="tk-port"><small>To</small><b>{H['destination']}</b><span>{CITY.get(H['destination'], '')}</span></span>
+</span><span class="tk-stub"><span>Flight</span><b>{H['carrier']} {H['flight']}</b><span>Sched {H['scheduled_arrival']} · {H['date']}</span></span></span>
+<div class="facts"><span class="chip">Arrived <b>{H.get('arrival_delay_min', '?')} min</b> late</span>
+<span class="chip">Weather <b>{H.get('weather_delay_min', 0)} min</b></span>
+<span class="chip">Late aircraft <b>{H.get('late_aircraft_delay_min', 0)} min</b></span>
+<span class="chip">Tail <b>{H.get('tail', '?')}</b></span></div>
+<div class="verdict">{outcome_badge(out) if out.get('type') else ''}<small>Real 2015 data · flights.csv</small></div></div>""")
+
+
+def run_picker(label):
+    names = list(logs)
+    pick = st.selectbox(label, names, index=names.index(st.session_state["current_run"]))
+    if pick != st.session_state["current_run"]:
+        st.session_state["current_run"] = pick
+        st.rerun()
 
 
 def decision_buttons(fc):
@@ -271,7 +383,7 @@ def decision_buttons(fc):
         dsn = st.session_state[key]
         (st.success if dsn["approved"] else st.error)(f"{'Approved' if dsn['approved'] else 'Rejected'} at {dsn['at']}. {dsn.get('note', '')}")
         return True
-    x, y, _ = st.columns([1, 1, 4])
+    x, y = st.columns(2)
     for btn, ok in [(x, True), (y, False)]:
         if btn.button("Approve" if ok else "Reject", type="primary" if ok else "secondary", disabled=not fc and ok,
                       width="stretch"):
@@ -285,64 +397,19 @@ def decision_buttons(fc):
     return False
 
 
-def show_replay():
-    view = dict(log)
+def show_replay(view):
+    v = dict(log)
     key = f"decision-{log['run_id']}"
     if key in st.session_state:
-        view["human_decision"] = {"approved": st.session_state[key]["approved"], "by": "duty manager",
-                                  "note": st.session_state[key].get("note", "")}
+        v["human_decision"] = {"approved": st.session_state[key]["approved"], "by": "duty manager",
+                               "note": st.session_state[key].get("note", "")}
     autoplay = st.session_state.get("_autoplay") == log["run_id"]
     if autoplay:
         st.session_state.pop("_autoplay")
-    components.html(replay_html(normalize_log(view), autoplay=autoplay), height=1060, scrolling=True)
+    st.iframe(replay_html(normalize_log(v), autoplay=autoplay, view=view))
 
 
-# ---------- pages ----------
-def page_run():
-    st.title("Run a flight")
-    st.badge("LIVE · Claude agents" if KEY_STATUS == "ok" else "FAKE AGENTS · no working key",
-             color="green" if KEY_STATUS == "ok" else "gray")
-    st.markdown("A real delayed flight from 2015 needs a landing time, extra holding and a gate. Three AI agents "
-                "negotiate it: **Ava** in the tower, **Pip** the pilot and **Gus** on the ground. Plain code checks "
-                "every plan is safe. **You are Mo, the duty manager: you approve or reject the result.**")
-
-    st.subheader("1. Pick a flight")
-    c = st.columns([2, 2, 1.5, 1.5], vertical_alignment="bottom")
-    flight_in = c[0].text_input("Flight number", value="AA1344", key="flight_in",
-                                help="Airline code and number from the 2015 data, for example AA1344 or DL2681.")
-    date_in = c[1].text_input("Date", value="2015-01-01", key="date_in", help="YYYY-MM-DD, in 2015.")
-    go = c[2].button("Run this flight", type="primary", width="stretch")
-    rnd = c[3].button("Random flight", width="stretch", help="Run a random delayed flight from the 2015 data.")
-    st.caption("Try AA1344 on 2015-01-01, AA1090 on 2015-06-28 or MQ2950 on 2015-01-06. A run takes about 10 seconds.")
-    if KEY_STATUS != "ok":
-        st.info("No working API key, so runs use fake agents with random choices. Set a key under "
-                "**Claude API key** in the sidebar for live Claude agents.", icon=":material/key:")
-    if go:
-        if not flight_in.strip():
-            st.warning("Type a flight number first, for example AA1344.")
-        else:
-            new = try_pipeline_run("search", flight_in.strip().upper(), date_in.strip())
-            if new:
-                open_new_run(new)
-    if rnd:
-        new = try_pipeline_run("random")
-        if new:
-            open_new_run(new)
-    run_picker("Or open a saved run")
-    show_run()
-
-
-def page_sample():
-    st.title("Watch a sample run")
-    st.badge("SAMPLE · not a live run", color="orange")
-    st.markdown("New here? This is a saved example, so it needs no API key. Read the plan in step 2, try "
-                "**Approve** or **Reject**, and watch the replay in step 3. When you are ready, go to **Run a flight**.")
-    run_picker("Sample run")
-    show_run()
-
-
-def show_run():
-    st.subheader("2. Your decision")
+def decision_panel():
     fc = out.get("final_candidate")
     st.markdown(f"**{H['carrier']} {H['flight']}** {H['origin']} → {H['destination']} on {H['date']}, "
                 f"{H.get('arrival_delay_min', '?')} min late in real life &nbsp; " + outcome_badge(out),
@@ -355,7 +422,7 @@ def show_run():
         if any("401" in e or "authentication" in e.lower() for e in errs):
             made = log.get("created_at", "")[11:16]
             fix = ("Your current key works, so click **Run this flight** again." if KEY_STATUS == "ok"
-                   else "Set a working key with **Claude API key** in the sidebar, then run the flight again.")
+                   else "Fix ANTHROPIC_API_KEY in the server's .env, restart it, then run the flight again.")
             st.error(f"This run (made at {made}) used an API key that was rejected (401), so the agents never "
                      f"answered. The outcome reflects the failed calls, not the flight. {fix}")
         else:
@@ -373,66 +440,157 @@ def show_run():
                     'nothing to approve. Reject to close this case and handle the flight by hand, or run another '
                     'flight.</div>', unsafe_allow_html=True)
     if decision_buttons(fc):
-        st.caption("Done. Run another flight above, or open **Every round and safety check** below.")
-
-    st.subheader("3. See how the agents agreed")
-    replay_tab, audit_tab = st.tabs(["Replay", "Every round and safety check"])
-    with replay_tab:
-        st.caption("The replay plays by itself after a new run. Press Play to watch it again.")
-        show_replay()
-    with audit_tab:
-        audit()
+        st.caption("Done. Run another flight, or open **Huddle** for every message and safety check.")
 
 
-def page_story():
-    st.title("Sky Huddle")
-    st.subheader("Three AI agents settle a flight disruption in two rounds. Code keeps it safe.")
-    c1, c2 = st.columns([3, 2])
-    with c1:
-        st.markdown(f"""
-**Who it's for.** The airline hub duty manager. Today, when weather or a late aircraft hits, they phone the
-tower, the crew and ramp control one by one to agree a landing slot, holding and a gate.
 
-**Why it matters.** Every minute of aircraft time costs U.S. airlines about **$100.76** (2024 average for taxi plus
-airborne time), per [{COST_PER_MIN_SOURCE[0]}]({COST_PER_MIN_SOURCE[1]}). Slow phone calls mean more holding and knock-on delays.
+# ---------- pages ----------
+def page_airport():
+    frame()
+    # One box: pick a saved run to open it, or type a new flight number to run it.
+    names = list(logs)
+    c = st.columns([3.2, 1.6, 1.4, 1.4], vertical_alignment="bottom")
+    pick = c[0].selectbox("Flight", names, index=names.index(st.session_state["current_run"]),
+                          accept_new_options=True, placeholder="Type a flight number, e.g. AA1090",
+                          help="Open a saved run from the list, or type a new flight number (e.g. AA1090) "
+                               "and press Enter, then Run.")
+    saved = pick in logs
+    if saved and pick != st.session_state["current_run"]:
+        st.session_state["current_run"] = pick
+        st.rerun()
+    flight_in = f"{H['carrier']}{H['flight']}" if saved else (pick or "").strip().upper()
+    date_in = c[1].text_input("Date", value=H["date"] if saved else "2015-01-01", key=f"date_in_{pick}",
+                              help="YYYY-MM-DD, in 2015.")
+    go = c[2].button("Run this flight", type="primary", width="stretch",
+                     help="Run the flight in the box on this date" + (" again" if saved else ""))
+    rnd = c[3].button("Random flight", width="stretch", help="Run a random delayed flight from the 2015 data.")
+    st.caption("Click the box to open a saved run, or type a new flight number such as AA1090 (2015-06-28) or "
+               "MQ2950 (2015-01-06). A run takes about 10 s. "
+               + ("" if KEY_STATUS == "ok" else "No working key, so new runs use fake agents."))
+    scene, desk = st.columns([1.75, 1])
+    with scene:
+        st.subheader("The huddle")
+        slot = st.empty()
+        new = None
+        if go:
+            new = try_pipeline_run("search", flight_in.strip().upper(), date_in.strip(), slot) if flight_in.strip() \
+                else st.warning("Type a flight number first, for example AA1344.")
+        if rnd:
+            new = try_pipeline_run("random", slot=slot)
+        if new:
+            open_new_run(new)
+        with slot.container():
+            show_replay("airport")
+    with desk:
+        st.subheader("Your desk")
+        decision_panel()
+        st.page_link(HUDDLE, label="Every message and safety check", icon=":material/forum:")
+    st.subheader("Meet the team")
+    cols = st.columns(4)
+    for col, aid in zip(cols, ["atc", "pilot", "ground", "mod"]):
+        name, role, owns = ROLE[aid]
+        with col.container(border=True):
+            i, t = st.columns([1, 3], vertical_alignment="center")
+            i.image(png(aid, 3), width=60)
+            t.markdown(f"**{name}** · {role}  \n{owns}")
+            if aid in AGENT_PAGES:
+                st.page_link(AGENT_PAGES[aid], label=f"Open {name}'s brain", icon=":material/psychology:")
+            else:
+                st.page_link(HUDDLE, label="See Coco's log", icon=":material/forum:")
+    with st.container(border=True):
+        st.markdown("**How the huddle works**  \n1. A real delayed 2015 flight arrives.  \n2. Round 1: each agent "
+                    "offers plans and a concession.  \n3. Coco (plain code) applies them, rechecks, freezes one plan.  \n"
+                    "4. Round 2: the agents vote.  \n5. You approve, or the rulebook / escalation steps in.")
 
-**What we built.** ATC, Pilot and Ground agents each get their own prompt and private state. They offer plans and
-concessions in round 1. A plain-code coordinator applies the concessions and freezes one proposal. They vote in round 2.
-A deterministic checker blocks anything unsafe, a rulebook decides if they don't agree, and the duty manager approves.
-""")
-    with c2:
-        st.graphviz_chart("""
-digraph G { rankdir=LR; node [shape=box, style="filled", fontname="Helvetica", fillcolor="#f3f8fd"];
- data [label="flights.csv row\\n(real)", fillcolor="#bff0c8"]; sim [label="Simulated state\\n(gates, fuel, crew)", fillcolor="#e9d5ff"];
- cand [label="Candidates (max 8)"]; chk [label="Checker\\n(hard rules)", fillcolor="#ffe2a8"];
- atc [label="ATC agent"]; pil [label="Pilot agent"]; gnd [label="Ground agent"];
- coord [label="Coordinator\\n2 rounds", fillcolor="#ffe2a8"]; fb [label="Rulebook\\nfallback", fillcolor="#ffc2c4"]; hum [label="Duty manager\\napproves", fillcolor="#bff0c8"];
- data -> cand; sim -> cand; cand -> chk; chk -> atc; chk -> pil; chk -> gnd; atc -> coord; pil -> coord; gnd -> coord;
- coord -> chk [style=dashed, label="recheck"]; coord -> hum; coord -> fb [label="no deal"]; fb -> hum; }
-""")
-    b, bp = benchmark()
-    if b:
-        st.subheader("Results")
-        if b.get("sample"):
-            st.warning(b.get("note", "Sample numbers"))
-        a = b["agents"]
-        dt = b["deterministic"]
-        if dt.get("runs"):
-            base, after = dt.get("feasible_on_base_state", 0), dt.get("fallback_feasible", 0)
-            t = st.columns(3)
-            t[0].metric("Safe plan before concessions", f"{base}/{dt['runs']}")
-            t[1].metric("Safe plan after agent concessions", f"{after}/{dt['runs']}", f"+{after - base} rescued")
-            t[2].metric("No safe plan: escalated to human", dt.get("escalations", 0))
-        if a.get("fake_agents"):
-            st.caption("Agent-run numbers below come from fake agents. Run `python benchmark.py --agents 10 --live` for live Claude runs.")
-        m = st.columns(5)
-        m[0].metric("Consensus in 2 rounds", f"{a['consensus']}/{a['completed']}")
-        m[1].metric("Fallback", a["fallback"])
-        m[2].metric("Accepted unsafe plans", a["accepted_violations"])
-        m[3].metric(b["gap_label"], f"{b['cost_vs_solver_gap_pct']}%")
-        m[4].metric("Simple heuristic infeasible", f"{b['heuristic']['infeasible_rate_pct']}%")
-    st.caption("Real: the flight row from flights.csv. Simulated and labelled: gates, fuel, crew, slots. "
-               "Checks are simplified and are not full FAA compliance.")
+
+def agent_page(aid):
+    def page():
+        import agents as A
+        frame()
+        name, role, owns = ROLE[aid]
+        o = next((x for x in (r1 or {}).get("offers", []) if x["agent"] == aid), None)
+        v = next((x for x in (r2 or {}).get("votes", []) if x["agent"] == aid), None)
+        fc = out.get("final_candidate")
+        mine = A.OWN_RULES[aid]
+        left, mid, right = st.columns([1, 2, 1.3])
+        with left.container(border=True):
+            st.image(png(aid, 6), width=120)
+            st.subheader(name)
+            st.caption(role)
+            st.markdown(f"{owns}  \n**Checks it owns:** {', '.join(sorted(mine))}  \n"
+                        f"**Its one concession:** `{A.OWN_CONCESSION[aid]}`")
+            st.markdown('<span class="sim">PRIVATE STATE · simulated, only this agent sees it</span>',
+                        unsafe_allow_html=True)
+            st.json(SIM.get(aid, {}), expanded=False)
+        with mid.container(border=True):
+            st.subheader(f"{name}'s option inventory")
+            before = (log.get("checks") or {}).get("before_concessions", {})
+            acc = set(o["acceptable"]) if o else set()
+            cells = []
+            for cid, c in cands.items():
+                fails = [r["rule_id"] for r in before.get(cid, []) if not r["passed"] and r["rule_id"] in mine]
+                cls = "bad" if fails else "like" if cid in acc else "meh"
+                cls += (" pref" if o and cid == o["preferred"] else "") + (" final" if cid == fc else "")
+                why = f"breaks {', '.join(fails)}" if fails else "acceptable to " + name if cid in acc else "passes, not chosen"
+                cells.append(f'<div class="cell {cls}"><b>{cid}</b>land {c["landing"]} · gate {c["gate"]}<br>'
+                             f'+{c["extra_holding_min"]} min hold · ${costs.get(cid, {}).get("total_usd", 0):,.0f}<br>'
+                             f'<small>{why}</small></div>')
+            st.html('<div class="inv">' + "".join(cells) + "</div>")
+            st.caption(f"Green: {name} accepts it. Yellow: passes {name}'s checks but not chosen. Dark: breaks a check "
+                       f"{name} owns (before concessions). Gold outline: {name}'s first choice. FINAL: the plan on your desk.")
+        with right.container(border=True):
+            st.subheader("Thought stream")
+            steps = [("READ", f"{len(cands)} candidate plans for {H['carrier']}{H['flight']}, each checked in code.")]
+            if o:
+                steps += [("RULES", f"Cites {', '.join(o['constraints_cited']) or 'nothing'}."),
+                          ("OFFER", f"Prefers {o['preferred']}; accepts {', '.join(o['acceptable']) or 'none'}."),
+                          ("CONCEDE", ", ".join(f"{c['id']} for {c['target']}" for c in o["concessions"]) or "Nothing to concede."),
+                          ("WHY", o["rationale"])]
+            elif r1:
+                steps.append(("ERROR", "No valid offer in round 1."))
+            else:
+                steps.append(("SKIP", "Nothing passed the checks, so there were no rounds."))
+            if v:
+                steps.append(("VOTE", f"{v['vote'].upper()}: {v['rationale']}"))
+            st.html("".join(f'<div class="thought"><span class="k">{k}</span><span>{t}</span></div>' for k, t in steps))
+            st.caption("Outbox: the exact messages this agent sent")
+            st.json({"round_1": o, "round_2": v}, expanded=False)
+        with st.expander(f"{name}'s skill file: the prompt it runs on ({log.get('stats', {}).get('model') or 'model from config.yaml'})"):
+            st.code(A.COMMON.format(role=A.ROLES[aid]) + "\n\n" + A.ROUND1 + "\n\n" + A.ROUND2, language="markdown")
+    page.__name__ = f"page_{aid}"
+    return page
+
+
+def page_huddle():
+    frame()
+    run_picker("Run")
+    show_replay("huddle")
+    st.subheader("Final plan and every safety check")
+    audit()
+
+
+def page_mo():
+    frame()
+    st.subheader("Your desk · duty manager")
+    st.markdown("The agents only propose. Coco, the coordinator, checks every plan in plain code. **You approve or reject it.**")
+    a, b = st.columns([1.3, 1])
+    with a.container(border=True):
+        run_picker("Flight on your desk")
+        decision_panel()
+    with b.container(border=True):
+        st.markdown("**What the agents are told to care about** (from `config.yaml`, read only)")
+        try:
+            import agents as A
+            cfg = A.config()
+            st.json({"cost_weights": cfg.get("costs"), "protocol": cfg.get("protocol")}, expanded=False)
+        except Exception as e:  # config is optional for the UI
+            st.caption(f"Config not available ({type(e).__name__}).")
+        st.markdown("**Your decisions so far**")
+        rows = [json.loads(p.read_text()) for p in sorted(DECISIONS.glob("*.json"))] if DECISIONS.exists() else []
+        if rows:
+            st.dataframe(pd.DataFrame(rows)[["run_id", "plan", "approved", "at"]], hide_index=True, width="stretch")
+        else:
+            st.caption("None yet.")
 
 
 def audit():
@@ -669,6 +827,7 @@ def page_benchmark():
 
 
 def page_results():
+    frame(ticket=False)
     st.title("Results")
     st.caption("Measured inside the simulation. Costs are USD-equivalent scores, not measured savings.")
     t1, t2 = st.tabs(["Benchmark: 51 scenarios and 10 live runs", "Charts across the saved runs"])
@@ -678,48 +837,23 @@ def page_results():
         page_metrics()
 
 
-# ---------- navigation, sidebar and the run on screen ----------
-RUN = st.Page(page_run, title="Run a flight", icon=":material/flight_land:", url_path="run", default=True)
-pg = st.navigation({
-    "How to use": [st.Page(page_story, title="How it works", icon=":material/help:", url_path="how"),
-                   st.Page(page_sample, title="Watch a sample run", icon=":material/play_circle:", url_path="sample")],
-    "Live": [RUN, st.Page(page_results, title="Results", icon=":material/bar_chart:", url_path="results")],
-})
-MODE = "sample" if pg.url_path == "sample" else "live"
 
-# Claude API key: set for this server process (agents._client reads the environment), never written to disk.
+# ---------- navigation and the run on screen ----------
+AGENT_PAGES = {aid: st.Page(agent_page(aid), title=ROLE[aid][0], icon=":material/person:", url_path=ROLE[aid][0].lower())
+               for aid in ["atc", "pilot", "ground"]}  # Coco is plain code, so it has no brain page
+HUDDLE = st.Page(page_huddle, title="Huddle", icon=":material/forum:", url_path="huddle")
+pg = st.navigation([st.Page(page_airport, title="Airport", icon=":material/flight_land:", url_path="airport", default=True),
+                    *AGENT_PAGES.values(), HUDDLE,
+                    st.Page(page_mo, title="Your desk", icon=":material/gavel:", url_path="desk"),
+                    st.Page(page_results, title="Results", icon=":material/bar_chart:", url_path="results")],
+                   position="top")
+
 _key = os.environ.get("ANTHROPIC_API_KEY", "")
 KEY_STATUS = check_key(_key) if _key else None
-st.sidebar.markdown("**Claude API key**")
-if KEY_STATUS == "ok":
-    st.sidebar.badge(f"Live agents · key …{_key[-4:]}", icon=":material/check_circle:", color="green")
-elif KEY_STATUS == "rejected":
-    st.sidebar.badge(f"Key …{_key[-4:]} rejected", icon=":material/error:", color="red")
-elif KEY_STATUS:
-    st.sidebar.badge(f"Key …{_key[-4:]}: {KEY_STATUS}", icon=":material/warning:", color="orange")
-else:
-    st.sidebar.badge("No key: fake agents", icon=":material/key_off:", color="gray")
-with st.sidebar.popover("Set Claude API key", icon=":material/key:", width="stretch"):
-    with st.form("api_key_form", clear_on_submit=True, border=False):
-        new_key = st.text_input("Paste a key", type="password", placeholder="sk-ant-...",
-                                help="From platform.claude.com > API keys. Stays on this server, not saved to disk.")
-        save, remove = st.columns(2)
-        if save.form_submit_button("Use key", type="primary", width="stretch") and new_key.strip():
-            os.environ["ANTHROPIC_API_KEY"] = new_key.strip()
-            st.rerun()
-        if remove.form_submit_button("Remove", width="stretch", disabled=not _key):
-            os.environ.pop("ANTHROPIC_API_KEY", None)
-            st.rerun()
-st.sidebar.caption("Sample runs need no key.")
-st.sidebar.divider()
-st.sidebar.caption("**You are Mo**, the duty manager. Ava = tower · Pip = pilot · Gus = ground.  \n"
-                   "Real: 2015 flight rows. Simulated: gates, fuel, crew.")
 
-# Runs on screen: samples on the sample page, real runs everywhere else (samples only if no real run exists).
+# Real runs first; sample runs (labelled SAMPLE) at the end of the same list.
 all_logs = list_logs()
-real = {k: v[0] for k, v in all_logs.items() if not v[1]}
-samples = {k: v[0] for k, v in all_logs.items() if v[1]}
-logs = samples if MODE == "sample" else (real or samples)
+logs = {k: v[0] for k, v in all_logs.items() if not v[1]} | {k: v[0] for k, v in all_logs.items() if v[1]}
 if not logs:
     st.error("No audit logs found. Run `python fixtures/make_sample_logs.py`.")
     st.stop()
@@ -727,11 +861,11 @@ _goto = st.session_state.pop("_goto_run", None)
 if _goto:
     _match = next((k for k in logs if k.endswith(f", {_goto})")), None)
     if _match:
-        st.session_state["current_run_live"] = _match
+        st.session_state["current_run"] = _match
         st.session_state["_autoplay"] = _goto
-if st.session_state.get(f"current_run_{MODE}") not in logs:
-    st.session_state[f"current_run_{MODE}"] = next(iter(logs))
-log = load(logs[st.session_state[f"current_run_{MODE}"]])
+if st.session_state.get("current_run") not in logs:
+    st.session_state["current_run"] = next(iter(logs))
+log = load(logs[st.session_state["current_run"]])
 H = log["scenario"]["historical"]
 SIM = log["scenario"].get("simulated", {})
 out = log["outcome"]
