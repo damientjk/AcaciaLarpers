@@ -1,0 +1,757 @@
+{
+  "run_id": "r-toy_consensus",
+  "label": "Toy world (demo), fake agents",
+  "created_at": "2026-10-31T04:26:20+00:00",
+  "sample": false,
+  "fake_agents": true,
+  "scenario": {
+    "scenario_id": "toy-demo",
+    "issue_time": "2015-01-01T19:55",
+    "historical": {
+      "carrier": "AA",
+      "carrier_name": "American Airlines Inc.",
+      "flight": "1344",
+      "tail": "N200AA",
+      "origin": "DEN",
+      "destination": "DFW",
+      "date": "2015-01-01",
+      "scheduled_arrival": "20:30",
+      "actual_arrival": "22:29",
+      "arrival_delay_min": 119,
+      "weather_delay_min": 35,
+      "late_aircraft_delay_min": 40,
+      "distance_mi": 641
+    },
+    "simulated": {
+      "atc": {
+        "earlier_slot_open": false
+      },
+      "pilot": {
+        "max_extra_holding_min": 12
+      },
+      "ground": {
+        "crew_at_B7": false,
+        "b7_compatible": true
+      }
+    }
+  },
+  "weights": {
+    "delay_usd_per_min": 100.76,
+    "holding_fuel_usd_per_kg": 0.0,
+    "overtime_usd_per_min": 0.0,
+    "missed_connection_usd": 0.0
+  },
+  "candidates": [
+    {
+      "id": "C1",
+      "landing": "20:30",
+      "extra_holding_min": 0,
+      "gate": "B4",
+      "concession": null,
+      "gate_arrival": "20:38",
+      "gate_release": "21:23"
+    },
+    {
+      "id": "C2",
+      "landing": "20:40",
+      "extra_holding_min": 25,
+      "gate": "C3",
+      "concession": null,
+      "gate_arrival": "20:48",
+      "gate_release": "21:33"
+    },
+    {
+      "id": "C3",
+      "landing": "20:52",
+      "extra_holding_min": 12,
+      "gate": "C3",
+      "concession": null,
+      "gate_arrival": "21:00",
+      "gate_release": "21:45"
+    },
+    {
+      "id": "C5",
+      "landing": "20:32",
+      "extra_holding_min": 0,
+      "gate": "B7",
+      "concession": "ATC_EARLIER_SLOT + GROUND_REASSIGN_CREW",
+      "gate_arrival": "20:40",
+      "gate_release": "21:25"
+    }
+  ],
+  "costs": {
+    "C1": {
+      "delay_min": 0.0,
+      "holding_fuel_kg": 0.0,
+      "overtime_min": 0.0,
+      "missed_connections": 0,
+      "total_usd": 150.0
+    },
+    "C2": {
+      "delay_min": 0.0,
+      "holding_fuel_kg": 0.0,
+      "overtime_min": 0.0,
+      "missed_connections": 0,
+      "total_usd": 6100.0
+    },
+    "C3": {
+      "delay_min": 0.0,
+      "holding_fuel_kg": 0.0,
+      "overtime_min": 0.0,
+      "missed_connections": 0,
+      "total_usd": 4900.0
+    },
+    "C5": {
+      "delay_min": 0.0,
+      "holding_fuel_kg": 0.0,
+      "overtime_min": 0.0,
+      "missed_connections": 0,
+      "total_usd": 232.0
+    }
+  },
+  "checks": {
+    "before_concessions": {
+      "C1": [
+        {
+          "rule_id": "F-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "F-1 passes on C1"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "W-1 passes on C1"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "R-1 passes on C1"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "T-1 passes on C1"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-1 passes on C1"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "toy",
+          "inputs": {},
+          "passed": false,
+          "explanation": "G-2 fails on C1"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-3 passes on C1"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "C-1 passes on C1"
+        }
+      ],
+      "C2": [
+        {
+          "rule_id": "F-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": false,
+          "explanation": "F-1 fails on C2"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "W-1 passes on C2"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "R-1 passes on C2"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "T-1 passes on C2"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-1 passes on C2"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-2 passes on C2"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-3 passes on C2"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "C-1 passes on C2"
+        }
+      ],
+      "C3": [
+        {
+          "rule_id": "F-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "F-1 passes on C3"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "W-1 passes on C3"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "R-1 passes on C3"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "T-1 passes on C3"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-1 passes on C3"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-2 passes on C3"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-3 passes on C3"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "C-1 passes on C3"
+        }
+      ],
+      "C5": [
+        {
+          "rule_id": "F-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "F-1 passes on C5"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "W-1 passes on C5"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": false,
+          "explanation": "R-1 fails on C5"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "T-1 passes on C5"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-1 passes on C5"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-2 passes on C5"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-3 passes on C5"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": false,
+          "explanation": "C-1 fails on C5"
+        }
+      ]
+    },
+    "after_concessions": {
+      "C1": [
+        {
+          "rule_id": "F-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "F-1 passes on C1"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "W-1 passes on C1"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "R-1 passes on C1"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "T-1 passes on C1"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-1 passes on C1"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "toy",
+          "inputs": {},
+          "passed": false,
+          "explanation": "G-2 fails on C1"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-3 passes on C1"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "C-1 passes on C1"
+        }
+      ],
+      "C2": [
+        {
+          "rule_id": "F-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": false,
+          "explanation": "F-1 fails on C2"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "W-1 passes on C2"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "R-1 passes on C2"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "T-1 passes on C2"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-1 passes on C2"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-2 passes on C2"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-3 passes on C2"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "C-1 passes on C2"
+        }
+      ],
+      "C3": [
+        {
+          "rule_id": "F-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "F-1 passes on C3"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "W-1 passes on C3"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "R-1 passes on C3"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "T-1 passes on C3"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-1 passes on C3"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-2 passes on C3"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-3 passes on C3"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "C-1 passes on C3"
+        }
+      ],
+      "C5": [
+        {
+          "rule_id": "F-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "F-1 passes on C5"
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "W-1 passes on C5"
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "R-1 passes on C5"
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "T-1 passes on C5"
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-1 passes on C5"
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-2 passes on C5"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "G-3 passes on C5"
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "toy",
+          "inputs": {},
+          "passed": true,
+          "explanation": "C-1 passes on C5"
+        }
+      ]
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "offers": [
+        {
+          "agent": "atc",
+          "run_id": "r-toy_consensus",
+          "round": 1,
+          "state_version": 1,
+          "preferred": "C2",
+          "acceptable": [
+            "C1",
+            "C2",
+            "C3",
+            "C5"
+          ],
+          "constraints_cited": [
+            "R-1",
+            "T-1",
+            "W-1"
+          ],
+          "concessions": [
+            {
+              "id": "ATC_EARLIER_SLOT",
+              "target": "20:32"
+            }
+          ],
+          "rationale": "Simulated agent: accepts every candidate that passes its own checks.",
+          "latency_s": 0.0,
+          "valid": true
+        },
+        {
+          "agent": "pilot",
+          "run_id": "r-toy_consensus",
+          "round": 1,
+          "state_version": 1,
+          "preferred": "C5",
+          "acceptable": [
+            "C1",
+            "C3",
+            "C5"
+          ],
+          "constraints_cited": [
+            "F-1"
+          ],
+          "concessions": [],
+          "rationale": "Simulated agent: accepts every candidate that passes its own checks.",
+          "latency_s": 0.0,
+          "valid": true
+        },
+        {
+          "agent": "ground",
+          "run_id": "r-toy_consensus",
+          "round": 1,
+          "state_version": 1,
+          "preferred": "C2",
+          "acceptable": [
+            "C2",
+            "C3",
+            "C5"
+          ],
+          "constraints_cited": [
+            "C-1",
+            "G-1",
+            "G-2",
+            "G-3"
+          ],
+          "concessions": [
+            {
+              "id": "GROUND_REASSIGN_CREW",
+              "target": "B7"
+            }
+          ],
+          "rationale": "Simulated agent: accepts every candidate that passes its own checks.",
+          "latency_s": 0.0,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "votes": [
+        {
+          "agent": "atc",
+          "run_id": "r-toy_consensus",
+          "round": 2,
+          "proposal_version": 2,
+          "vote": "accept",
+          "rationale": "Simulated agent: all of its own checks pass on C5.",
+          "latency_s": 0.0
+        },
+        {
+          "agent": "pilot",
+          "run_id": "r-toy_consensus",
+          "round": 2,
+          "proposal_version": 2,
+          "vote": "accept",
+          "rationale": "Simulated agent: all of its own checks pass on C5.",
+          "latency_s": 0.0
+        },
+        {
+          "agent": "ground",
+          "run_id": "r-toy_consensus",
+          "round": 2,
+          "proposal_version": 2,
+          "vote": "accept",
+          "rationale": "Simulated agent: all of its own checks pass on C5.",
+          "latency_s": 0.0
+        }
+      ]
+    }
+  ],
+  "compromise": {
+    "concessions_applied": [
+      {
+        "agent": "atc",
+        "id": "ATC_EARLIER_SLOT",
+        "target": "20:32"
+      },
+      {
+        "agent": "ground",
+        "id": "GROUND_REASSIGN_CREW",
+        "target": "B7"
+      }
+    ],
+    "feasible_before": [
+      "C3"
+    ],
+    "feasible_after": [
+      "C3",
+      "C5"
+    ],
+    "in_all_acceptable": [
+      "C3",
+      "C5"
+    ],
+    "rule": "Lowest cost among feasible candidates in all three acceptable sets",
+    "proposal": {
+      "version": 2,
+      "candidate": "C5"
+    }
+  },
+  "outcome": {
+    "type": "consensus",
+    "final_candidate": "C5",
+    "concessions_that_unlocked": [
+      "ATC_EARLIER_SLOT",
+      "GROUND_REASSIGN_CREW"
+    ],
+    "reason": "All three accepted proposal v2 and the final recheck passed.",
+    "final_recheck": {
+      "state_version": 2,
+      "passed": true
+    }
+  },
+  "fallback": null,
+  "baselines": {
+    "solver": {
+      "candidate": "C5",
+      "total_usd": 232.0
+    },
+    "heuristic": {
+      "plan": "Delay ETA by recorded delay, keep planned gate",
+      "feasible": false,
+      "failed": [
+        "G-2"
+      ]
+    }
+  },
+  "human_decision": null,
+  "stats": {
+    "api_calls": 0,
+    "retries": 0,
+    "total_latency_s": 0.0
+  }
+}

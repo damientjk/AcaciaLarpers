@@ -112,6 +112,12 @@ canvas.px{image-rendering:pixelated;display:block}
 .stamp{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) rotate(-8deg);font-family:var(--display);font-size:clamp(22px,3.6vw,42px);padding:2px 18px;border:5px solid;background:rgba(255,255,255,.92);z-index:8;animation:stampin .35s ease-out}
 @keyframes stampin{from{transform:translate(-50%,-50%) rotate(-8deg) scale(2.2);opacity:0}}
 .modelchip{background:#f1eaff}
+.spin{position:relative;display:inline-block;width:34px;height:34px;animation:spin12 1s steps(12) infinite;filter:drop-shadow(1px 1px 0 rgba(27,31,59,.6))}
+.spin i{position:absolute;left:15px;top:0;width:5px;height:11px;background:#fff;border:1.5px solid var(--ink);border-radius:3px;transform-origin:2.5px 17px}
+@keyframes spin12{to{transform:rotate(360deg)}}
+.think.spinonly{background:none;border:0;box-shadow:none;padding:0}
+.brainbox{margin-top:14px;padding:0;overflow:hidden;background:#06122e}
+.brainbox canvas{display:block;width:100%;height:240px}
 @media (max-width:900px){.grid,.below{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 </style>
@@ -142,6 +148,7 @@ canvas.px{image-rendering:pixelated;display:block}
         <span><i style="background:var(--abstain)"></i>no vote</span>
         <span><i style="background:var(--gold)"></i>concession</span>
       </div>
+      <div class="brainbox blk"><canvas id="brain" aria-label="Animated neural brain of the agents thinking"></canvas></div>
       <div class="cands blk">
         <h3>Candidate plans</h3>
         <div class="cstrip" id="cstrip"></div>
@@ -186,13 +193,16 @@ const seats={};
 if(POS.mod){seats.mod.style.width="9%"}
 
 /* helpers */
+const brain=makeBrain(document.getElementById("brain"));
+const costRank=id=>{const all=cands.map(c=>LOG.costs[c.id].total_usd).sort((a,b)=>a-b);const v=LOG.costs[id].total_usd;return Math.round(100-all.indexOf(v)/Math.max(1,all.length-1)*70)};
+function brainFor(set,who,stages,dur){const ch=checks[set]||{};brain.set({who,stages,rules:Object.values(ch).flat().map(r=>({ok:r.passed})),options:cands.map(c=>({ok:feas(set,c.id),u:costRank(c.id)}))});brain.play(dur)}
 const ST=LOG.stats||{};document.getElementById("modelchip").textContent=`Model: ${ST.model||"see config.yaml"}${ST.thinking?" · extended thinking on":""}`;
 function splash(a,b){const el=document.getElementById("splash");el.innerHTML=`${esc(a)}<small>${esc(b||"")}</small>`;el.classList.remove("go");void el.offsetWidth;el.classList.add("go")}
 function plancard(t){const pc=document.getElementById("plancard");pc.textContent=t;pc.classList.remove("flip");void pc.offsetWidth;pc.classList.add("flip")}
 function stamp(type){const s=document.createElement("div");s.className="stamp";const c=type==="consensus"?"var(--good)":"var(--bad)";s.style.borderColor=c;s.style.color=c;s.textContent=type==="consensus"?"Deal!":type==="fallback"?"Rulebook":"Human call";stage.appendChild(s)}
 function heart(full){return `<svg class="heart" viewBox="0 0 13 11" shape-rendering="crispEdges" aria-hidden="true"><path fill="#1b1f3b" d="M2 0h3v1h1v1h1V1h1V0h3v1h1v1h1v4h-1v1h-1v1h-1v1h-1v1H8v1H5v-1H4V9H3V8H2V7H1V6H0V2h1V1h1z"/><path fill="${full?"#e5484d":"#c5cbe0"}" d="M2 1h3v1h1v1h1V2h1V1h3v1h1v4h-1v1h-1v1H9v1H8v1H5V9H4V8H3V7H2V6H1V2h1z"/></svg>`}
 function setRound(r){document.getElementById("roundNo").textContent=r;document.getElementById("hearts").innerHTML=heart(r<1)+heart(r<2)}
-function think(ids,on,label){ids.forEach(id=>{const t=seats[id].querySelector(".think");t.innerHTML=label||'<span class="gear"></span><span class="dots"><i></i><i></i><i></i></span>';t.classList.toggle("show",on)})}
+function think(ids,on,label){ids.forEach(id=>{const t=seats[id].querySelector(".think");t.innerHTML=label||spinnerHTML();t.classList.toggle("spinonly",!label);t.classList.toggle("show",on)})}
 function spotlight(ids){Object.keys(seats).forEach(id=>{seats[id].classList.toggle("dim",ids&&!ids.includes(id));seats[id].classList.toggle("lit",!!ids&&ids.includes(id))})}
 function radio(from,to,type){
  const [x1,y1]=POS[from],[x2,y2]=POS[to],c=COL[type]||"var(--propose)";
@@ -226,7 +236,8 @@ const steps=[];
 steps.push(()=>{setRound(0);spotlight(null);ids.forEach(id=>radio("coord",id,"SHARE"));strip(null);
  addLog(0,"SHARE","Coordinator","Ava, Pip, Gus",`Scenario ${LOG.scenario.scenario_id} shared: ${H.carrier} ${H.flight} ${H.origin}→${H.destination}, weather delay ${H.weather_delay_min} min, late aircraft ${H.late_aircraft_delay_min} min. Each agent also gets its own private simulated state.`,null)});
 if(r1){
- steps.push(()=>{setRound(1);splash("Round 1","offers and concessions");spotlight(ids);think(ids,true);strip("before_concessions");
+ steps.push(()=>{setRound(1);splash("Round 1","offers and concessions");spotlight(ids);think(ids,true);
+  brainFor("before_concessions","Ava, Pip, Gus in parallel",[{t:"Read",v:`${H.carrier}${H.flight}`},{t:"Rules",v:`${(cp&&cp.feasible_before||[]).length}/${cands.length} pass`},{t:"Options",v:`${cands.length} plans`},{t:"Concede",v:`${(cp&&cp.concessions_applied||[]).length} offered`},{t:"Reply",v:"OFFER"}],1500*((r1.offers||[]).length+1));strip("before_concessions");
   addLog(1,"CHECK","Coordinator","",`Checker ran on ${cands.length} candidates before any concession: ${(cp&&cp.feasible_before||[]).length} pass (${(cp&&cp.feasible_before||[]).join(", ")||"none"}). All three agents think in parallel.`,null)});
  r1.offers.forEach(o=>steps.push(()=>{think([o.agent],false);radio(o.agent,"coord","OFFER");
   addLog(1,"OFFER",AG[o.agent].name,"Coordinator",`Prefers ${o.preferred}. Accepts ${o.acceptable.join(", ")}. Cites ${o.constraints_cited.join(", ")}. ${o.rationale}`,o)}));
@@ -241,7 +252,8 @@ if(cp&&cp.proposal){
   addLog(1,"PROPOSAL","Coordinator","Ava, Pip, Gus",`Frozen proposal v${cp.proposal.version}: ${c.id}, land ${c.landing}, gate ${c.gate}, ${c.extra_holding_min} min extra holding. Rule: ${cp.rule}. Simulated cost $${k.total_usd.toLocaleString()}.`,cp.proposal)});
 }
 if(r2){
- steps.push(()=>{setRound(2);splash("Round 2","final vote");spotlight(ids);think(ids,true)});
+ steps.push(()=>{setRound(2);splash("Round 2","final vote");spotlight(ids);think(ids,true);
+  brainFor("after_concessions","Ava, Pip, Gus voting",[{t:"Read",v:`proposal v${cp&&cp.proposal?cp.proposal.version:"?"}`},{t:"Rules",v:`${(cp&&cp.feasible_after||[]).length}/${cands.length} pass`},{t:"Options",v:"1 frozen"},{t:"Cost",v:cp&&cp.proposal?`$${LOG.costs[cp.proposal.candidate].total_usd}`:"-"},{t:"Reply",v:"VOTE"}],1500*((r2.votes||[]).length+1))});
  r2.votes.forEach(v=>steps.push(()=>{think([v.agent],false);const T=v.vote.toUpperCase();
   if(v.vote==="abstain"){think([v.agent],true,"⌛ timeout");setTimeout(()=>think([v.agent],false),1400)}
   radio(v.agent,"coord",T);if(v.vote!=="accept")setTimeout(()=>shield("coord"),700);
