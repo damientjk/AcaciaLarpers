@@ -83,6 +83,9 @@ canvas.px{image-rendering:pixelated;display:block}
 .t.SHARE,.t.OFFER,.t.PROPOSAL{background:#cfe2ff}.t.CONCESSION{background:var(--gold)}.t.ACCEPT,.t.CONSENSUS,.t.APPROVED{background:#bff0c8}.t.REJECT,.t.FALLBACK,.t.ESCALATE{background:#ffc2c4}.t.ABSTAIN,.t.CHECK,.t.REVIEW{background:#e6e9f5}
 .entry p{margin:3px 0 0}
 .entry details summary{font-size:11px;color:var(--muted);cursor:pointer}
+.raw summary{font-size:11px;color:var(--muted);cursor:pointer;margin-top:4px}
+.raw pre{margin:3px 0 0;font-size:10.5px;background:#0f1530;color:#c9e3ff;padding:6px;overflow:auto;max-height:220px;white-space:pre}
+.kv dd{min-width:0;overflow-wrap:anywhere}
 .entry pre{margin:3px 0 0;font-size:10.5px;background:#0f1530;color:#c9e3ff;padding:6px;overflow:auto;max-height:200px}
 .below{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .below > div{padding:10px 12px}
@@ -291,11 +294,12 @@ function resetFinal(){document.getElementById("plan").innerHTML=["Plan","Land","
 
 /* agent card */
 function showAgent(id){
+ const simSummary=(o)=>Object.entries(o).filter(([k])=>k!=="simulated").map(([k,x])=>Array.isArray(x)?`${k}: ${x.length} items`:x&&typeof x==="object"?`${k}: ${Object.keys(x).length} fields`:`${k}: ${x}`).join(" · ");
  const card=document.getElementById("agentcard");card.classList.add("show");
  const o=r1&&r1.offers.find(x=>x.agent===id),v=r2&&r2.votes.find(x=>x.agent===id),sim=(LOG.scenario.simulated||{})[id];
  card.innerHTML=`<div class="ah"><span id="acs"></span><div><h3>${AG[id].name}, ${AG[id].role}</h3><p class="note">${id==="mod"?"The human who approves or rejects the final plan.":"Its own LLM call each round, with its own prompt and private state."}</p></div></div>
  <dl class="kv">${id==="mod"?`<dt>Decision</dt><dd>${esc(LOG.human_decision?(LOG.human_decision.approved?"Approved":"Rejected"):"Pending in the app")}</dd>`:
- `<dt>Private state</dt><dd>${esc(sim?JSON.stringify(sim):"–")} <em>(simulated)</em></dd>
+ `<dt>Private state</dt><dd>${sim?`${esc(simSummary(sim))} <em>(simulated)</em><details class="raw"><summary>Full private state</summary><pre>${esc(JSON.stringify(sim,null,2))}</pre></details>`:"–"}</dd>
  <dt>Round 1 prefers</dt><dd>${esc(o?o.preferred:"–")}</dd><dt>Accepts</dt><dd>${esc(o?o.acceptable.join(", "):"–")}</dd>
  <dt>Checks cited</dt><dd>${esc(o?o.constraints_cited.join(", "):"–")}</dd><dt>Concession</dt><dd>${esc(o&&o.concessions.length?o.concessions.map(c=>c.id+" ("+c.target+")").join(", "):"none")}</dd>
  <dt>Reasoning</dt><dd>${esc(o?o.rationale:"–")}</dd><dt>Round 2 vote</dt><dd>${esc(v?v.vote+": "+v.rationale:"–")}</dd>`}</dl>`;
