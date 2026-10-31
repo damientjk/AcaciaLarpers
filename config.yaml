@@ -19,9 +19,12 @@ llm:
 
 costs:
   delay_usd_per_min: 100.76    # A4A 2024 block-minute cost, see README sources
-  holding_fuel_usd_per_kg: 0.0 # TODO: sourced figure
-  overtime_usd_per_min: 0.0    # TODO
-  missed_connection_usd: 0.0   # TODO
+  holding_fuel_usd_per_kg: 0.85 # PLACEHOLDER, not sourced: team to agree (Person B)
+  overtime_usd_per_min: 1.5     # PLACEHOLDER, not sourced: team to agree (Person B)
+  missed_connection_usd: 250    # PLACEHOLDER, not sourced: team to agree (Person B)
+  # total_usd = delay_min*delay_usd_per_min + holding_fuel_kg*holding_fuel_usd_per_kg
+  #           + overtime_min*overtime_usd_per_min + missed_connections*missed_connection_usd
+  # Units: a USD-equivalent score inside the simulation, not a measured saving.
 
 simulation:
   fuel_reserve_min: 45         # inspired by 14 CFR 121.639; verify before quoting
@@ -29,6 +32,12 @@ simulation:
   turnaround_min: 35           # narrowbody
   turnaround_min_widebody: 75
   gates_per_scenario: [2, 3]
+  # --- checker.py W-1 (Yizhuo). SIMULATED separation profile in seconds, keyed "leader-follower" with the
+  # wake categories scenario.py uses (heavy, large, small). Informed by FAA JO 7110.65 category concepts;
+  # these are not quoted regulatory minima.
+  wake_separation_s: {heavy-heavy: 240, heavy-large: 180, heavy-small: 240,
+                      large-heavy: 120, large-large: 120, large-small: 180,
+                      small-heavy: 120, small-large: 120, small-small: 120}
   # --- scenario.py (Ashvin). Every value here is SIMULATED / an assumption.
   widebody_min_distance_mi: 2000   # inferred aircraft class: distance >= this -> widebody (heavy wake)
   runway_capacity_per_hour: {normal: 30, weather: 20}   # 2-min / 3-min arrival slots

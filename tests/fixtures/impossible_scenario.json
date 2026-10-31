@@ -1,0 +1,59 @@
+{
+ "_note": "Person B fixture in scenario.py's state shape: nothing feasible, must escalate. 'historical' is the real AA8 HNL-DFW row of 2015-01-01; 'simulated' is SIMULATED and hand-built.",
+ "seed": 8,
+ "category": "late_aircraft_only",
+ "scenario": {
+  "scenario_id": "esc-001",
+  "issue_time": "2015-01-01T06:20",
+  "historical": {
+   "carrier": "AA", "carrier_name": "American Airlines Inc.", "flight": "8", "tail": "N368AA",
+   "origin": "HNL", "destination": "DFW", "date": "2015-01-01",
+   "scheduled_arrival": "05:10", "actual_arrival": "06:59", "arrival_delay_min": 109,
+   "weather_delay_min": 0, "late_aircraft_delay_min": 108, "distance_mi": 3784
+  },
+  "simulated": {
+   "atc": {
+    "simulated": true, "base_eta": "2015-01-01T06:50", "aircraft_class": "widebody", "disruption_type": "late_aircraft",
+    "runway": "ARR-1", "runway_capacity_per_hour": 30, "slot_minutes": 2, "own_wake": "heavy",
+    "slots": [
+     {"slot_id": "SL-0648", "time": "2015-01-01T06:48", "occupant": "AA1180", "occupant_wake": "heavy", "occupant_flexible": false},
+     {"slot_id": "SL-0650", "time": "2015-01-01T06:50", "occupant": null, "occupant_wake": null, "occupant_flexible": false},
+     {"slot_id": "SL-0652", "time": "2015-01-01T06:52", "occupant": "DL410", "occupant_wake": "large", "occupant_flexible": false},
+     {"slot_id": "SL-0654", "time": "2015-01-01T06:54", "occupant": null, "occupant_wake": null, "occupant_flexible": false},
+     {"slot_id": "SL-0656", "time": "2015-01-01T06:56", "occupant": "UA22", "occupant_wake": "large", "occupant_flexible": false},
+     {"slot_id": "SL-0658", "time": "2015-01-01T06:58", "occupant": null, "occupant_wake": null, "occupant_flexible": false},
+     {"slot_id": "SL-0700", "time": "2015-01-01T07:00", "occupant": null, "occupant_wake": null, "occupant_flexible": false}
+    ],
+    "closed_taxiways": ["E"]
+   },
+   "pilot": {
+    "simulated": true, "base_eta": "2015-01-01T06:50", "aircraft_class": "widebody", "disruption_type": "late_aircraft",
+    "fuel_on_board_kg": 9540, "cruise_burn_kg_per_min": 120, "holding_burn_kg_per_min": 110, "reserve_min": 45,
+    "reserve_kg": 4950, "fuel_safe_holding_min": 9, "comfortable_holding_min": 4, "connections": []
+   },
+   "ground": {
+    "simulated": true, "base_eta": "2015-01-01T06:50", "aircraft_class": "widebody", "disruption_type": "late_aircraft",
+    "planned_gate": "D2",
+    "gates": [
+     {"gate_id": "D2", "max_class": "widebody", "taxi_route": ["A", "D"], "taxi_in_min": 9,
+      "occupancy": [{"start": "2015-01-01T05:30", "end": "2015-01-01T08:30", "occupant": "AA172"}]},
+     {"gate_id": "D4", "max_class": "narrowbody", "taxi_route": ["A", "D"], "taxi_in_min": 9, "occupancy": []},
+     {"gate_id": "D6", "max_class": "widebody", "taxi_route": ["E", "D"], "taxi_in_min": 11, "occupancy": []}
+    ],
+    "crews": [
+     {"crew_id": "CRW-D2", "assigned_gate": "D2", "shift_start": "2015-01-01T00:00", "shift_end": "2015-01-01T12:00", "reassignable": false},
+     {"crew_id": "CRW-D6", "assigned_gate": "D6", "shift_start": "2015-01-01T00:00", "shift_end": "2015-01-01T12:00", "reassignable": true}
+    ],
+    "turnaround_min": 75, "gate_buffer_min": 10, "next_departure": "2015-01-01T07:00"
+   }
+  }
+ },
+ "candidates": [
+  {"id": "C1", "landing": "06:50", "extra_holding_min": 0,  "gate": "D2", "concession": null, "gate_arrival": "06:59", "gate_release": "08:14"},
+  {"id": "C2", "landing": "06:50", "extra_holding_min": 0,  "gate": "D4", "concession": null, "gate_arrival": "06:59", "gate_release": "08:14"},
+  {"id": "C3", "landing": "06:50", "extra_holding_min": 0,  "gate": "D6", "concession": null, "gate_arrival": "07:01", "gate_release": "08:16"},
+  {"id": "C4", "landing": "06:54", "extra_holding_min": 4,  "gate": "D2", "concession": null, "gate_arrival": "07:03", "gate_release": "08:18"},
+  {"id": "C5", "landing": "07:00", "extra_holding_min": 10, "gate": "D6", "concession": "PILOT_EXTRA_HOLDING", "gate_arrival": "07:11", "gate_release": "08:26"}
+ ],
+ "concessions": [{"agent": "ground", "id": "GROUND_REASSIGN_CREW", "target": "D4"}]
+}

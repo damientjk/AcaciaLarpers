@@ -1,0 +1,385 @@
+{
+ "_note": "Person B deterministic fixture generated from scenario.get_scenario('demo-001') + options.generate. 'historical' is a real flights.csv row; everything under 'simulated' is SIMULATED (seeded by Ashvin's scenario.py). Regenerate with: python -c \"import benchmark; benchmark.write_demo_fixture()\"",
+ "seed": 4245507281,
+ "category": "both",
+ "scenario": {
+  "scenario_id": "demo-001",
+  "issue_time": "2015-01-06T19:59",
+  "historical": {
+   "carrier": "US",
+   "carrier_name": "US Airways Inc.",
+   "flight": "2031",
+   "tail": "N708UW",
+   "origin": "PHL",
+   "destination": "ATL",
+   "date": "2015-01-06",
+   "scheduled_arrival": "18:42",
+   "actual_arrival": "20:28",
+   "arrival_delay_min": 106,
+   "weather_delay_min": 40,
+   "late_aircraft_delay_min": 44,
+   "distance_mi": 666
+  },
+  "simulated": {
+   "atc": {
+    "simulated": true,
+    "base_eta": "2015-01-06T20:22",
+    "aircraft_class": "narrowbody",
+    "disruption_type": "both",
+    "runway": "ARR-1",
+    "runway_capacity_per_hour": 20,
+    "slot_minutes": 3,
+    "own_wake": "large",
+    "slots": [
+     {
+      "slot_id": "SL-2012",
+      "time": "2015-01-06T20:12",
+      "occupant": "UA1147",
+      "occupant_wake": "large",
+      "occupant_flexible": true
+     },
+     {
+      "slot_id": "SL-2015",
+      "time": "2015-01-06T20:15",
+      "occupant": null,
+      "occupant_wake": null,
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2018",
+      "time": "2015-01-06T20:18",
+      "occupant": "WN2572",
+      "occupant_wake": "large",
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2021",
+      "time": "2015-01-06T20:21",
+      "occupant": "AA2210",
+      "occupant_wake": "large",
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2024",
+      "time": "2015-01-06T20:24",
+      "occupant": "DL1187",
+      "occupant_wake": "large",
+      "occupant_flexible": true
+     },
+     {
+      "slot_id": "SL-2027",
+      "time": "2015-01-06T20:27",
+      "occupant": "UA401",
+      "occupant_wake": "large",
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2030",
+      "time": "2015-01-06T20:30",
+      "occupant": "UA402",
+      "occupant_wake": "large",
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2033",
+      "time": "2015-01-06T20:33",
+      "occupant": null,
+      "occupant_wake": null,
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2036",
+      "time": "2015-01-06T20:36",
+      "occupant": "UA1863",
+      "occupant_wake": "heavy",
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2039",
+      "time": "2015-01-06T20:39",
+      "occupant": "UA1921",
+      "occupant_wake": "large",
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2042",
+      "time": "2015-01-06T20:42",
+      "occupant": null,
+      "occupant_wake": null,
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2045",
+      "time": "2015-01-06T20:45",
+      "occupant": "B61972",
+      "occupant_wake": "large",
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2048",
+      "time": "2015-01-06T20:48",
+      "occupant": "DL1132",
+      "occupant_wake": "large",
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2051",
+      "time": "2015-01-06T20:51",
+      "occupant": "AA918",
+      "occupant_wake": "large",
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2054",
+      "time": "2015-01-06T20:54",
+      "occupant": "UA1647",
+      "occupant_wake": "large",
+      "occupant_flexible": true
+     },
+     {
+      "slot_id": "SL-2057",
+      "time": "2015-01-06T20:57",
+      "occupant": null,
+      "occupant_wake": null,
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2100",
+      "time": "2015-01-06T21:00",
+      "occupant": "DL2491",
+      "occupant_wake": "small",
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2103",
+      "time": "2015-01-06T21:03",
+      "occupant": "DL262",
+      "occupant_wake": "heavy",
+      "occupant_flexible": true
+     },
+     {
+      "slot_id": "SL-2106",
+      "time": "2015-01-06T21:06",
+      "occupant": "UA1399",
+      "occupant_wake": "large",
+      "occupant_flexible": true
+     },
+     {
+      "slot_id": "SL-2109",
+      "time": "2015-01-06T21:09",
+      "occupant": null,
+      "occupant_wake": null,
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2112",
+      "time": "2015-01-06T21:12",
+      "occupant": null,
+      "occupant_wake": null,
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2115",
+      "time": "2015-01-06T21:15",
+      "occupant": "B61439",
+      "occupant_wake": "heavy",
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2118",
+      "time": "2015-01-06T21:18",
+      "occupant": null,
+      "occupant_wake": null,
+      "occupant_flexible": false
+     },
+     {
+      "slot_id": "SL-2121",
+      "time": "2015-01-06T21:21",
+      "occupant": "UA2924",
+      "occupant_wake": "small",
+      "occupant_flexible": false
+     }
+    ],
+    "closed_taxiways": [
+     "D"
+    ]
+   },
+   "pilot": {
+    "simulated": true,
+    "base_eta": "2015-01-06T20:22",
+    "aircraft_class": "narrowbody",
+    "disruption_type": "both",
+    "fuel_on_board_kg": 3395,
+    "cruise_burn_kg_per_min": 45,
+    "holding_burn_kg_per_min": 40,
+    "reserve_min": 45,
+    "reserve_kg": 1800,
+    "fuel_safe_holding_min": 14,
+    "comfortable_holding_min": 7,
+    "connections": [
+     {
+      "flight": "DL2045",
+      "departure_time": "2015-01-06T21:17",
+      "passengers": 18,
+      "min_connect_min": 40
+     }
+    ]
+   },
+   "ground": {
+    "simulated": true,
+    "base_eta": "2015-01-06T20:22",
+    "aircraft_class": "narrowbody",
+    "disruption_type": "both",
+    "planned_gate": "B4",
+    "gates": [
+     {
+      "gate_id": "B4",
+      "max_class": "narrowbody",
+      "taxi_route": [
+       "A",
+       "B"
+      ],
+      "taxi_in_min": 10,
+      "occupancy": [
+       {
+        "start": "2015-01-06T19:12",
+        "end": "2015-01-06T20:57",
+        "occupant": "DL1622"
+       }
+      ]
+     },
+     {
+      "gate_id": "B7",
+      "max_class": "narrowbody",
+      "taxi_route": [
+       "A",
+       "C"
+      ],
+      "taxi_in_min": 11,
+      "occupancy": []
+     },
+     {
+      "gate_id": "B9",
+      "max_class": "narrowbody",
+      "taxi_route": [
+       "D",
+       "E"
+      ],
+      "taxi_in_min": 12,
+      "occupancy": []
+     }
+    ],
+    "crews": [
+     {
+      "crew_id": "CRW-B4",
+      "assigned_gate": "B4",
+      "shift_start": "2015-01-06T13:59",
+      "shift_end": "2015-01-06T21:52",
+      "reassignable": false
+     },
+     {
+      "crew_id": "CRW-B9",
+      "assigned_gate": "B9",
+      "shift_start": "2015-01-06T13:59",
+      "shift_end": "2015-01-06T21:52",
+      "reassignable": true
+     }
+    ],
+    "turnaround_min": 35,
+    "gate_buffer_min": 10,
+    "next_departure": "2015-01-06T19:34"
+   }
+  }
+ },
+ "candidates": [
+  {
+   "id": "C1",
+   "landing": "20:24",
+   "extra_holding_min": 2,
+   "gate": "B4",
+   "concession": "ATC_EARLIER_SLOT",
+   "gate_arrival": "20:34",
+   "gate_release": "21:09"
+  },
+  {
+   "id": "C2",
+   "landing": "20:24",
+   "extra_holding_min": 2,
+   "gate": "B7",
+   "concession": "ATC_EARLIER_SLOT + GROUND_REASSIGN_CREW",
+   "gate_arrival": "20:35",
+   "gate_release": "21:10"
+  },
+  {
+   "id": "C3",
+   "landing": "20:24",
+   "extra_holding_min": 2,
+   "gate": "B9",
+   "concession": "ATC_EARLIER_SLOT",
+   "gate_arrival": "20:36",
+   "gate_release": "21:11"
+  },
+  {
+   "id": "C4",
+   "landing": "20:33",
+   "extra_holding_min": 11,
+   "gate": "B4",
+   "concession": "PILOT_EXTRA_HOLDING",
+   "gate_arrival": "20:43",
+   "gate_release": "21:18"
+  },
+  {
+   "id": "C5",
+   "landing": "20:33",
+   "extra_holding_min": 11,
+   "gate": "B7",
+   "concession": "PILOT_EXTRA_HOLDING + GROUND_REASSIGN_CREW",
+   "gate_arrival": "20:44",
+   "gate_release": "21:19"
+  },
+  {
+   "id": "C6",
+   "landing": "20:33",
+   "extra_holding_min": 11,
+   "gate": "B9",
+   "concession": "PILOT_EXTRA_HOLDING",
+   "gate_arrival": "20:45",
+   "gate_release": "21:20"
+  },
+  {
+   "id": "C7",
+   "landing": "20:42",
+   "extra_holding_min": 20,
+   "gate": "B4",
+   "concession": "PILOT_EXTRA_HOLDING",
+   "gate_arrival": "20:52",
+   "gate_release": "21:27"
+  },
+  {
+   "id": "C8",
+   "landing": "20:42",
+   "extra_holding_min": 20,
+   "gate": "B7",
+   "concession": "PILOT_EXTRA_HOLDING + GROUND_REASSIGN_CREW",
+   "gate_arrival": "20:53",
+   "gate_release": "21:28"
+  }
+ ],
+ "concessions": [
+  {
+   "agent": "atc",
+   "id": "ATC_EARLIER_SLOT",
+   "target": "C1"
+  },
+  {
+   "agent": "pilot",
+   "id": "PILOT_EXTRA_HOLDING",
+   "target": "14 min"
+  },
+  {
+   "agent": "ground",
+   "id": "GROUND_REASSIGN_CREW",
+   "target": "B7"
+  }
+ ]
+}
