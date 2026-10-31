@@ -1,0 +1,33 @@
+# Cost weights, timeouts and simulation bounds. Every number used in code lives here.
+
+data_dir: data
+logs_dir: logs
+
+protocol:
+  max_rounds: 2
+  max_candidates: 8
+  retries_per_call: 1
+  call_timeout_s: 20
+  run_timeout_s: 90
+
+llm:
+  model: claude-haiku-5-5      # fast model for the three agents
+  max_tokens: 1024
+  temperature: 0
+
+costs:
+  delay_usd_per_min: 100.76    # A4A 2024 block-minute cost, see README sources
+  holding_fuel_usd_per_kg: 0.0 # TODO: sourced figure
+  overtime_usd_per_min: 0.0    # TODO
+  missed_connection_usd: 0.0   # TODO
+
+simulation:
+  fuel_reserve_min: 45         # inspired by 14 CFR 121.639; verify before quoting
+  gate_buffer_min: 10
+  turnaround_min: 35
+  gates_per_scenario: [2, 3]
+
+evaluation:
+  seed: 2026
+  scenarios: {weather_only: 20, late_aircraft_only: 20, both: 10}
+  agent_runs: 10
