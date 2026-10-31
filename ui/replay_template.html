@@ -35,8 +35,8 @@ canvas.px{image-rendering:pixelated;display:block}
 .hearts{display:flex;gap:4px;align-items:center}
 .heart{width:22px;height:19px}
 .grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;align-items:start}
-.stage{position:relative;aspect-ratio:16/10;background:linear-gradient(#8ed0f7 0 60%,#5bb450 60% 62.5%,#8b5a2b 62.5%);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);overflow:hidden;border-radius:4px}
-.stage::before{content:"";position:absolute;left:0;right:0;top:62.5%;bottom:0;background:repeating-linear-gradient(90deg,transparent 0 31px,rgba(0,0,0,.18) 31px 34px),repeating-linear-gradient(0deg,transparent 0 31px,rgba(0,0,0,.18) 31px 34px)}
+.stage{position:relative;aspect-ratio:16/10;background:linear-gradient(rgba(27,31,59,.08),rgba(27,31,59,.36)),url(%%BACKDROP%%) center/cover,#8ed0f7;image-rendering:pixelated;border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);overflow:hidden;border-radius:4px}
+.stage::before{display:none;content:"";position:absolute;left:0;right:0;top:62.5%;bottom:0;background:repeating-linear-gradient(90deg,transparent 0 31px,rgba(0,0,0,.18) 31px 34px),repeating-linear-gradient(0deg,transparent 0 31px,rgba(0,0,0,.18) 31px 34px)}
 .seat{position:absolute;width:11.5%;transform:translate(-50%,-50%);text-align:center;cursor:pointer;border:0;background:none;padding:0;transition:filter .3s,opacity .3s}
 .seat canvas{width:100%}
 .seat.dim{opacity:.55;filter:grayscale(.5)}
@@ -52,7 +52,7 @@ canvas.px{image-rendering:pixelated;display:block}
 @keyframes hop{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
 .gear{display:inline-block;width:12px;height:12px;border:3px dotted var(--ink);border-radius:50%;animation:spin 1.2s linear infinite;vertical-align:-2px;margin-right:4px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.table{position:absolute;left:50%;top:57%;transform:translate(-50%,-50%);width:30%;text-align:center}
+.table{position:absolute;left:50%;top:66%;transform:translate(-50%,-50%);width:30%;text-align:center}
 .table .top{display:block;background:#b07a45;border:3px solid var(--ink);padding:5px 4px;box-shadow:inset -5px -5px 0 #8b5a2b;font-family:var(--display);color:#fff;text-shadow:1px 1px 0 var(--ink);font-size:clamp(10px,1.2vw,13px);line-height:1.25}
 .table .legs{display:flex;justify-content:space-between;padding:0 14%}
 .table .legs i{width:9px;height:14px;background:#8b5a2b;border:3px solid var(--ink);border-top:0}
@@ -102,6 +102,16 @@ canvas.px{image-rendering:pixelated;display:block}
 .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
 .legend span{display:inline-flex;gap:4px;align-items:center}
 .legend i{width:11px;height:11px;border:2px solid var(--ink);display:inline-block;transform:rotate(45deg)}
+.splash{position:absolute;left:50%;top:86%;transform:translate(-50%,-50%);font-family:var(--display);font-size:clamp(22px,3.6vw,44px);color:#fff;text-shadow:3px 3px 0 var(--ink),-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink);opacity:0;z-index:8;pointer-events:none;text-align:center;line-height:1.05;white-space:nowrap}
+.splash small{display:block;font-size:.45em}
+.splash.go{animation:splash 1.4s ease-out}
+@keyframes splash{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}75%{opacity:1}100%{opacity:0}}
+.plancard{display:block;margin:0 auto 5px;width:max-content;max-width:100%;background:#fff;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);font-family:var(--display);font-size:clamp(10px,1.2vw,13px);padding:2px 8px;color:var(--ink);text-shadow:none}
+.plancard.flip{animation:flip .5s}
+@keyframes flip{0%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+.stamp{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) rotate(-8deg);font-family:var(--display);font-size:clamp(22px,3.6vw,42px);padding:2px 18px;border:5px solid;background:rgba(255,255,255,.92);z-index:8;animation:stampin .35s ease-out}
+@keyframes stampin{from{transform:translate(-50%,-50%) rotate(-8deg) scale(2.2);opacity:0}}
+.modelchip{background:#f1eaff}
 @media (max-width:900px){.grid,.below{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 </style>
@@ -111,6 +121,7 @@ canvas.px{image-rendering:pixelated;display:block}
   <div class="bar blk">
     <h2 id="title">Sky Huddle replay</h2>
     <span class="chip" id="flight"></span>
+    <span class="chip modelchip" id="modelchip"></span>
     <span class="chip">Round <b id="roundNo">0</b> of 2</span>
     <span class="hearts" id="hearts" aria-label="Rounds left"></span>
     <span class="outcome pending" id="outcome">Ready</span>
@@ -121,7 +132,8 @@ canvas.px{image-rendering:pixelated;display:block}
   <div class="grid">
     <div>
       <div class="stage" id="stage">
-        <div class="table"><span class="top">Coordinator<br>plain code, no AI</span><span class="legs"><i></i><i></i></span><div class="locks" id="locks"></div></div>
+        <div class="splash" id="splash"></div>
+        <div class="table"><span class="plancard" id="plancard">No plan yet</span><span class="top">Coordinator<br>plain code, no AI</span><span class="legs"><i></i><i></i></span><div class="locks" id="locks"></div></div>
       </div>
       <div class="legend" style="margin-top:8px">
         <span><i style="background:var(--propose)"></i>offer or proposal</span>
@@ -153,7 +165,7 @@ canvas.px{image-rendering:pixelated;display:block}
 
 const LOG=JSON.parse(document.getElementById("skylog").textContent);
 const AG={atc:{name:"Ava",role:"ATC"},pilot:{name:"Pip",role:"Pilot"},ground:{name:"Gus",role:"Ground"},mod:{name:"Mo",role:"Duty manager"}};
-const POS={atc:[15,50],pilot:[50,24],ground:[85,50],mod:[50,86],coord:[50,55]};
+const POS={atc:[15,54],pilot:[50,25],ground:[85,54],mod:[9,84],coord:[50,62]};
 const COL={OFFER:"var(--propose)",PROPOSAL:"var(--propose)",SHARE:"var(--propose)",ACCEPT:"var(--accept)",REJECT:"var(--reject)",ABSTAIN:"var(--abstain)",CONCESSION:"var(--gold)"};
 const stage=document.getElementById("stage");
 const esc=s=>String(s??"").replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
@@ -174,6 +186,10 @@ const seats={};
 if(POS.mod){seats.mod.style.width="9%"}
 
 /* helpers */
+const ST=LOG.stats||{};document.getElementById("modelchip").textContent=`Model: ${ST.model||"see config.yaml"}${ST.thinking?" · extended thinking on":""}`;
+function splash(a,b){const el=document.getElementById("splash");el.innerHTML=`${esc(a)}<small>${esc(b||"")}</small>`;el.classList.remove("go");void el.offsetWidth;el.classList.add("go")}
+function plancard(t){const pc=document.getElementById("plancard");pc.textContent=t;pc.classList.remove("flip");void pc.offsetWidth;pc.classList.add("flip")}
+function stamp(type){const s=document.createElement("div");s.className="stamp";const c=type==="consensus"?"var(--good)":"var(--bad)";s.style.borderColor=c;s.style.color=c;s.textContent=type==="consensus"?"Deal!":type==="fallback"?"Rulebook":"Human call";stage.appendChild(s)}
 function heart(full){return `<svg class="heart" viewBox="0 0 13 11" shape-rendering="crispEdges" aria-hidden="true"><path fill="#1b1f3b" d="M2 0h3v1h1v1h1V1h1V0h3v1h1v1h1v4h-1v1h-1v1h-1v1h-1v1H8v1H5v-1H4V9H3V8H2V7H1V6H0V2h1V1h1z"/><path fill="${full?"#e5484d":"#c5cbe0"}" d="M2 1h3v1h1v1h1V2h1V1h3v1h1v4h-1v1h-1v1H9v1H8v1H5V9H4V8H3V7H2V6H1V2h1z"/></svg>`}
 function setRound(r){document.getElementById("roundNo").textContent=r;document.getElementById("hearts").innerHTML=heart(r<1)+heart(r<2)}
 function think(ids,on,label){ids.forEach(id=>{const t=seats[id].querySelector(".think");t.innerHTML=label||'<span class="gear"></span><span class="dots"><i></i><i></i><i></i></span>';t.classList.toggle("show",on)})}
@@ -210,7 +226,7 @@ const steps=[];
 steps.push(()=>{setRound(0);spotlight(null);ids.forEach(id=>radio("coord",id,"SHARE"));strip(null);
  addLog(0,"SHARE","Coordinator","Ava, Pip, Gus",`Scenario ${LOG.scenario.scenario_id} shared: ${H.carrier} ${H.flight} ${H.origin}→${H.destination}, weather delay ${H.weather_delay_min} min, late aircraft ${H.late_aircraft_delay_min} min. Each agent also gets its own private simulated state.`,null)});
 if(r1){
- steps.push(()=>{setRound(1);spotlight(ids);think(ids,true);strip("before_concessions");
+ steps.push(()=>{setRound(1);splash("Round 1","offers and concessions");spotlight(ids);think(ids,true);strip("before_concessions");
   addLog(1,"CHECK","Coordinator","",`Checker ran on ${cands.length} candidates before any concession: ${(cp&&cp.feasible_before||[]).length} pass (${(cp&&cp.feasible_before||[]).join(", ")||"none"}). All three agents think in parallel.`,null)});
  r1.offers.forEach(o=>steps.push(()=>{think([o.agent],false);radio(o.agent,"coord","OFFER");
   addLog(1,"OFFER",AG[o.agent].name,"Coordinator",`Prefers ${o.preferred}. Accepts ${o.acceptable.join(", ")}. Cites ${o.constraints_cited.join(", ")}. ${o.rationale}`,o)}));
@@ -221,11 +237,11 @@ if(r1){
 }
 if(cp&&cp.proposal){
  steps.push(()=>{spotlight(null);strip("after_concessions",cp.proposal.candidate);ids.forEach(id=>radio("coord",id,"PROPOSAL"));
-  const c=cands.find(x=>x.id===cp.proposal.candidate),k=LOG.costs[c.id];
+  const c=cands.find(x=>x.id===cp.proposal.candidate),k=LOG.costs[c.id];plancard(`v${cp.proposal.version} ${c.id}: land ${c.landing}, gate ${c.gate}`);
   addLog(1,"PROPOSAL","Coordinator","Ava, Pip, Gus",`Frozen proposal v${cp.proposal.version}: ${c.id}, land ${c.landing}, gate ${c.gate}, ${c.extra_holding_min} min extra holding. Rule: ${cp.rule}. Simulated cost $${k.total_usd.toLocaleString()}.`,cp.proposal)});
 }
 if(r2){
- steps.push(()=>{setRound(2);spotlight(ids);think(ids,true)});
+ steps.push(()=>{setRound(2);splash("Round 2","final vote");spotlight(ids);think(ids,true)});
  r2.votes.forEach(v=>steps.push(()=>{think([v.agent],false);const T=v.vote.toUpperCase();
   if(v.vote==="abstain"){think([v.agent],true,"⌛ timeout");setTimeout(()=>think([v.agent],false),1400)}
   radio(v.agent,"coord",T);if(v.vote!=="accept")setTimeout(()=>shield("coord"),700);
@@ -234,6 +250,7 @@ if(r2){
 steps.push(()=>{spotlight(null);const fc=out.final_candidate;
  const set=out.type==="fallback"?"before_concessions":"after_concessions";
  if(fc){locks(checks[set][fc]);strip(set,fc)}
+ setTimeout(()=>stamp(out.type),600);
  if(out.type==="consensus"){fireworks();addLog(null,"CONSENSUS","Coordinator","",`${out.reason} Unlocked by: ${(out.concessions_that_unlocked||[]).join(" + ")||"no concession"}.`,out)}
  else if(out.type==="fallback"){shield("coord");addLog(null,"FALLBACK","Rulebook","",`${out.reason} Rulebook picks ${fc}.`,LOG.fallback)}
  else{shield("coord");addLog(null,"ESCALATE","Rulebook","Mo",out.reason,out)}
@@ -272,7 +289,7 @@ function showAgent(id){
 
 /* player */
 let i=0,timer=null;
-function restart(){clearTimeout(timer);i=0;document.getElementById("log").dataset.fresh="1";document.getElementById("log").innerHTML='<p class="note">Press Play. Every message appears here with its JSON.</p>';
+function restart(){clearTimeout(timer);i=0;stage.querySelectorAll(".stamp").forEach(n=>n.remove());document.getElementById("plancard").textContent="No plan yet";document.getElementById("log").dataset.fresh="1";document.getElementById("log").innerHTML='<p class="note">Press Play. Every message appears here with its JSON.</p>';
  setRound(0);spotlight(null);think(["atc","pilot","ground","mod"],false);strip(null);resetFinal();const o=document.getElementById("outcome");o.className="outcome pending";o.textContent="Ready"}
 function step(){if(i>=steps.length)return false;steps[i++]();return i<steps.length}
 document.getElementById("play").addEventListener("click",()=>{restart();const tick=()=>{if(step())timer=setTimeout(tick,reduce?60:1500)};tick()});
