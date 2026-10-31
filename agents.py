@@ -114,14 +114,27 @@ def _client() -> anthropic.Anthropic:
 
 # --- briefings ---
 
+# Hard checks each concession can change, per scenario.apply_concessions and checker.py: freeing a slot can fix
+# R-1 (the neighbour moves to a later slot, so wake spacing W-1 is unchanged), moving a crew can fix C-1, and
+# the pilot's extra holding only widens a preference that no hard check reads. Nothing fixes F-1, T-1 or G-1..3.
+COVERS = {"ATC_EARLIER_SLOT": {"R-1"}, "GROUND_REASSIGN_CREW": {"C-1"}, "PILOT_EXTRA_HOLDING": set()}
+
+
 def status(c, results) -> str:
-    """Plain-language feasibility, computed in code so agents never have to infer it."""
+    """Plain-language feasibility, computed in code so agents never have to infer it. A candidate counts as
+    fixable only when every failing check is one its own concessions can change."""
     failing = [r.rule_id for r in results if not r.passed]
     if not failing:
         return "safe: passes every check"
-    if needs(c):
-        return f"safe only if {' and '.join(needs(c))} are offered and confirmed (now fails {', '.join(failing)})"
-    return f"unsafe: fails {', '.join(failing)} and no concession can fix it"
+    covered = set().union(*(COVERS.get(x, set()) for x in needs(c)))
+    stuck = [r for r in failing if r not in covered]
+    if stuck:
+        return f"unsafe: fails {', '.join(stuck)} and no concession can fix it"
+    return f"safe only if {' and '.join(needs(c))} are offered and confirmed (now fails {', '.join(failing)})"
+
+
+def fixable(row: dict) -> bool:
+    return not row["status"].startswith("unsafe")
 
 
 def needs(c) -> list[str]:
@@ -143,7 +156,7 @@ def briefing(agent: AgentName, view: dict, candidates: list, checks: dict, costs
                        for r in checks[c.id]],
             "costs": costs[c.id].model_dump(),
         })
-    mine = [r["id"] for r in rows if OWN_CONCESSION[agent] in r["needs_concessions"]]
+    mine = [r["id"] for r in rows if OWN_CONCESSION[agent] in r["needs_concessions"] and fixable(r)]
     return {"you_are": agent, "your_concession": OWN_CONCESSION[agent],
             "candidates_needing_your_concession": mine, "scenario": view, "candidates": rows}
 
@@ -154,7 +167,8 @@ def _dumps(obj) -> str:
 
 # --- validation beyond the JSON schema ---
 
-def _offer_errors(agent: AgentName, r: OfferReply, ids: set[str]) -> list[str]:
+def _offer_errors(agent: AgentName, r: OfferReply, ids: set[str], targets: list[str] | None = None) -> list[str]:
+    """targets: the candidates that need this agent's concession and could become safe with it."""
     errs = []
     unknown = ({r.preferred} | set(r.acceptable)) - ids
     if unknown:
@@ -166,6 +180,9 @@ def _offer_errors(agent: AgentName, r: OfferReply, ids: set[str]) -> list[str]:
     for c in r.concessions:
         if c.id != OWN_CONCESSION[agent]:
             errs.append(f"{c.id} is not your concession; you may only offer {OWN_CONCESSION[agent]}")
+        elif targets is not None and c.target not in targets:
+            errs.append(f"the target of {c.id} must be the ID of a candidate it unlocks: one of {targets}"
+                        if targets else f"no candidate can be unlocked by {c.id}; offer no concession")
     if len(r.concessions) > 1:
         errs.append("offer your concession at most once")
     return errs
@@ -231,8 +248,9 @@ def offer(agent: AgentName, brief: dict, run_id: str, state_version: int, fake: 
     if fake:
         return fake_offer(agent, brief, run_id, state_version)
     ids = {c["id"] for c in brief["candidates"]}
+    targets = brief["candidates_needing_your_concession"]
     res = _ask(agent, COMMON.format(role=ROLES[agent]) + "\n\n" + ROUND1, brief, OfferReply,
-               lambda r: _offer_errors(agent, r, ids))
+               lambda r: _offer_errors(agent, r, ids, targets))
     if res.message is not None:
         r: OfferReply = res.message
         res.message = Offer(agent=agent, run_id=run_id, state_version=state_version,
@@ -282,7 +300,7 @@ def _own_ok(agent: AgentName, row: dict) -> bool:
 
 
 def _uses_own(agent: AgentName, row: dict) -> bool:
-    return OWN_CONCESSION[agent] in row["needs_concessions"]
+    return OWN_CONCESSION[agent] in row["needs_concessions"] and fixable(row)
 
 
 def fake_offer(agent: AgentName, brief: dict, run_id: str, state_version: int) -> AgentResult:

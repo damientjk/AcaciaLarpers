@@ -111,7 +111,9 @@ class GoodClient:
         brief = json.loads(kw["messages"][0]["content"])
         if kw["output_format"] is OfferReply:
             parsed = OfferReply(preferred="C5", acceptable=["C3", "C5"], constraints_cited=[],
-                                concessions=[{"id": brief["your_concession"], "target": None}], rationale="ok")
+                                concessions=[{"id": brief["your_concession"], "target": t}
+                                             for t in brief["candidates_needing_your_concession"][:1]],
+                                rationale="ok")
         else:
             parsed = VoteReply(vote="accept", rationale="ok")
         return SimpleNamespace(stop_reason="end_turn", parsed_output=parsed,
@@ -151,3 +153,40 @@ def test_stats_name_model_and_thinking_only_for_real_agents(monkeypatch):
     st = run(fake_agents=False)["stats"]
     assert st["model"] == agents.config()["llm"]["model"]
     assert st["thinking"] == {"type": "adaptive", "effort": agents.config()["llm"]["effort"]}
+
+
+def _results(failing):
+    from models import CheckResult
+    return [CheckResult(rule_id=r, basis="", inputs={}, passed=r not in failing, explanation="")
+            for r in ["F-1", "W-1", "R-1", "T-1", "G-1", "G-2", "G-3", "C-1"]]
+
+
+def test_status_only_calls_a_candidate_fixable_when_its_concessions_cover_every_failure():
+    from models import Candidate
+    c = Candidate(id="C3", landing="20:24", extra_holding_min=2, gate="B9", concession="ATC_EARLIER_SLOT",
+                  gate_arrival="20:32", gate_release="21:20")
+    assert agents.status(c, _results({"R-1"})).startswith("safe only if ATC_EARLIER_SLOT")
+    s = agents.status(c, _results({"R-1", "T-1"}))           # demo-001's C3: closed taxiway too
+    assert s == "unsafe: fails T-1 and no concession can fix it"
+    held = c.model_copy(update={"concession": "PILOT_EXTRA_HOLDING"})
+    assert agents.status(held, _results({"F-1"})).startswith("unsafe: fails F-1")
+
+
+def test_unfixable_candidates_are_not_listed_as_needing_your_concession():
+    from tests.toy_world import CANDIDATES
+    w, s = ToyWorld(), scenario()
+    checks = {c.id: w.check(c, s) for c in CANDIDATES}
+    checks["C5"] = _results({"R-1", "C-1", "T-1"})
+    costs = {c.id: w.cost(c, s) for c in CANDIDATES}
+    brief = agents.briefing("ground", w.view(s, "ground"), CANDIDATES, checks, costs)
+    assert brief["candidates_needing_your_concession"] == []
+    assert next(r for r in brief["candidates"] if r["id"] == "C5")["status"].startswith("unsafe: fails T-1")
+
+
+def test_concession_target_must_be_a_candidate_it_unlocks():
+    r = OfferReply(preferred="C2", acceptable=["C2"], constraints_cited=[],
+                   concessions=[{"id": "ATC_EARLIER_SLOT", "target": "20:24"}], rationale="")
+    assert agents._offer_errors("atc", r, {"C1", "C2"}, ["C2"])
+    ok = r.model_copy(update={"concessions": [r.concessions[0].model_copy(update={"target": "C2"})]})
+    assert agents._offer_errors("atc", ok, {"C1", "C2"}, ["C2"]) == []
+    assert "offer no concession" in agents._offer_errors("atc", ok, {"C1", "C2"}, [])[0]
