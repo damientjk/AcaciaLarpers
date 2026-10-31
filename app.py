@@ -274,6 +274,15 @@ digraph G { rankdir=LR; node [shape=box, style="filled", fontname="Helvetica", f
         if b.get("sample"):
             st.warning(b.get("note", "Sample numbers"))
         a = b["agents"]
+        dt = b["deterministic"]
+        if dt.get("runs"):
+            base, after = dt.get("feasible_on_base_state", 0), dt.get("fallback_feasible", 0)
+            t = st.columns(3)
+            t[0].metric("Safe plan before concessions", f"{base}/{dt['runs']}")
+            t[1].metric("Safe plan after agent concessions", f"{after}/{dt['runs']}", f"+{after - base} rescued")
+            t[2].metric("No safe plan: escalated to human", dt.get("escalations", 0))
+        if a.get("fake_agents"):
+            st.caption("Agent-run numbers below come from fake agents. Run `python benchmark.py --agents 10 --live` for live Claude runs.")
         m = st.columns(5)
         m[0].metric("Consensus in 2 rounds", f"{a['consensus']}/{a['completed']}")
         m[1].metric("Fallback", a["fallback"])
