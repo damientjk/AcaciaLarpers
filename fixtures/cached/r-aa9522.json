@@ -1,0 +1,2909 @@
+{
+  "run_id": "r-aa9522",
+  "label": null,
+  "created_at": "2026-10-31T13:09:17+08:00",
+  "sample": false,
+  "fake_agents": false,
+  "scenario": {
+    "scenario_id": "demo-001",
+    "issue_time": "2015-01-06T19:59",
+    "historical": {
+      "carrier": "US",
+      "carrier_name": "US Airways Inc.",
+      "flight": "2031",
+      "tail": "N708UW",
+      "origin": "PHL",
+      "destination": "ATL",
+      "date": "2015-01-06",
+      "scheduled_arrival": "18:42",
+      "actual_arrival": "20:28",
+      "arrival_delay_min": 106,
+      "weather_delay_min": 40,
+      "late_aircraft_delay_min": 44,
+      "distance_mi": 666
+    },
+    "simulated": {
+      "atc": {
+        "simulated": true,
+        "base_eta": "2015-01-06T20:22",
+        "aircraft_class": "narrowbody",
+        "disruption_type": "both",
+        "runway": "ARR-1",
+        "runway_capacity_per_hour": 20,
+        "slot_minutes": 3,
+        "own_wake": "large",
+        "slots": [
+          {
+            "slot_id": "SL-2012",
+            "time": "2015-01-06T20:12",
+            "occupant": "UA1147",
+            "occupant_wake": "large",
+            "occupant_flexible": true
+          },
+          {
+            "slot_id": "SL-2015",
+            "time": "2015-01-06T20:15",
+            "occupant": null,
+            "occupant_wake": null,
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2018",
+            "time": "2015-01-06T20:18",
+            "occupant": "WN2572",
+            "occupant_wake": "large",
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2021",
+            "time": "2015-01-06T20:21",
+            "occupant": "AA2210",
+            "occupant_wake": "large",
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2024",
+            "time": "2015-01-06T20:24",
+            "occupant": "DL1187",
+            "occupant_wake": "large",
+            "occupant_flexible": true
+          },
+          {
+            "slot_id": "SL-2027",
+            "time": "2015-01-06T20:27",
+            "occupant": "UA401",
+            "occupant_wake": "large",
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2030",
+            "time": "2015-01-06T20:30",
+            "occupant": "UA402",
+            "occupant_wake": "large",
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2033",
+            "time": "2015-01-06T20:33",
+            "occupant": null,
+            "occupant_wake": null,
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2036",
+            "time": "2015-01-06T20:36",
+            "occupant": "UA1863",
+            "occupant_wake": "heavy",
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2039",
+            "time": "2015-01-06T20:39",
+            "occupant": "UA1921",
+            "occupant_wake": "large",
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2042",
+            "time": "2015-01-06T20:42",
+            "occupant": null,
+            "occupant_wake": null,
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2045",
+            "time": "2015-01-06T20:45",
+            "occupant": "B61972",
+            "occupant_wake": "large",
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2048",
+            "time": "2015-01-06T20:48",
+            "occupant": "DL1132",
+            "occupant_wake": "large",
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2051",
+            "time": "2015-01-06T20:51",
+            "occupant": "AA918",
+            "occupant_wake": "large",
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2054",
+            "time": "2015-01-06T20:54",
+            "occupant": "UA1647",
+            "occupant_wake": "large",
+            "occupant_flexible": true
+          },
+          {
+            "slot_id": "SL-2057",
+            "time": "2015-01-06T20:57",
+            "occupant": null,
+            "occupant_wake": null,
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2100",
+            "time": "2015-01-06T21:00",
+            "occupant": "DL2491",
+            "occupant_wake": "small",
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2103",
+            "time": "2015-01-06T21:03",
+            "occupant": "DL262",
+            "occupant_wake": "heavy",
+            "occupant_flexible": true
+          },
+          {
+            "slot_id": "SL-2106",
+            "time": "2015-01-06T21:06",
+            "occupant": "UA1399",
+            "occupant_wake": "large",
+            "occupant_flexible": true
+          },
+          {
+            "slot_id": "SL-2109",
+            "time": "2015-01-06T21:09",
+            "occupant": null,
+            "occupant_wake": null,
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2112",
+            "time": "2015-01-06T21:12",
+            "occupant": null,
+            "occupant_wake": null,
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2115",
+            "time": "2015-01-06T21:15",
+            "occupant": "B61439",
+            "occupant_wake": "heavy",
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2118",
+            "time": "2015-01-06T21:18",
+            "occupant": null,
+            "occupant_wake": null,
+            "occupant_flexible": false
+          },
+          {
+            "slot_id": "SL-2121",
+            "time": "2015-01-06T21:21",
+            "occupant": "UA2924",
+            "occupant_wake": "small",
+            "occupant_flexible": false
+          }
+        ],
+        "closed_taxiways": [
+          "D"
+        ]
+      },
+      "pilot": {
+        "simulated": true,
+        "base_eta": "2015-01-06T20:22",
+        "aircraft_class": "narrowbody",
+        "disruption_type": "both",
+        "fuel_on_board_kg": 3395,
+        "cruise_burn_kg_per_min": 45,
+        "holding_burn_kg_per_min": 40,
+        "reserve_min": 45,
+        "reserve_kg": 1800,
+        "fuel_safe_holding_min": 14,
+        "comfortable_holding_min": 7,
+        "connections": [
+          {
+            "flight": "DL2045",
+            "departure_time": "2015-01-06T21:17",
+            "passengers": 18,
+            "min_connect_min": 40
+          }
+        ]
+      },
+      "ground": {
+        "simulated": true,
+        "base_eta": "2015-01-06T20:22",
+        "aircraft_class": "narrowbody",
+        "disruption_type": "both",
+        "planned_gate": "B4",
+        "gates": [
+          {
+            "gate_id": "B4",
+            "max_class": "narrowbody",
+            "taxi_route": [
+              "A",
+              "B"
+            ],
+            "taxi_in_min": 10,
+            "occupancy": [
+              {
+                "start": "2015-01-06T19:12",
+                "end": "2015-01-06T20:57",
+                "occupant": "DL1622"
+              }
+            ]
+          },
+          {
+            "gate_id": "B7",
+            "max_class": "narrowbody",
+            "taxi_route": [
+              "A",
+              "C"
+            ],
+            "taxi_in_min": 11,
+            "occupancy": []
+          },
+          {
+            "gate_id": "B9",
+            "max_class": "narrowbody",
+            "taxi_route": [
+              "D",
+              "E"
+            ],
+            "taxi_in_min": 12,
+            "occupancy": []
+          }
+        ],
+        "crews": [
+          {
+            "crew_id": "CRW-B4",
+            "assigned_gate": "B4",
+            "shift_start": "2015-01-06T13:59",
+            "shift_end": "2015-01-06T21:52",
+            "reassignable": false
+          },
+          {
+            "crew_id": "CRW-B9",
+            "assigned_gate": "B9",
+            "shift_start": "2015-01-06T13:59",
+            "shift_end": "2015-01-06T21:52",
+            "reassignable": true
+          }
+        ],
+        "turnaround_min": 35,
+        "gate_buffer_min": 10,
+        "next_departure": "2015-01-06T19:34"
+      }
+    }
+  },
+  "weights": {
+    "delay_usd_per_min": 100.76,
+    "holding_fuel_usd_per_kg": 0.85,
+    "overtime_usd_per_min": 1.5,
+    "missed_connection_usd": 250
+  },
+  "candidates": [
+    {
+      "id": "C1",
+      "landing": "20:24",
+      "extra_holding_min": 2,
+      "gate": "B4",
+      "concession": "ATC_EARLIER_SLOT",
+      "gate_arrival": "20:34",
+      "gate_release": "21:09"
+    },
+    {
+      "id": "C2",
+      "landing": "20:24",
+      "extra_holding_min": 2,
+      "gate": "B7",
+      "concession": "ATC_EARLIER_SLOT + GROUND_REASSIGN_CREW",
+      "gate_arrival": "20:35",
+      "gate_release": "21:10"
+    },
+    {
+      "id": "C3",
+      "landing": "20:24",
+      "extra_holding_min": 2,
+      "gate": "B9",
+      "concession": "ATC_EARLIER_SLOT",
+      "gate_arrival": "20:36",
+      "gate_release": "21:11"
+    },
+    {
+      "id": "C4",
+      "landing": "20:33",
+      "extra_holding_min": 11,
+      "gate": "B4",
+      "concession": "PILOT_EXTRA_HOLDING",
+      "gate_arrival": "20:43",
+      "gate_release": "21:18"
+    },
+    {
+      "id": "C5",
+      "landing": "20:33",
+      "extra_holding_min": 11,
+      "gate": "B7",
+      "concession": "PILOT_EXTRA_HOLDING + GROUND_REASSIGN_CREW",
+      "gate_arrival": "20:44",
+      "gate_release": "21:19"
+    },
+    {
+      "id": "C6",
+      "landing": "20:33",
+      "extra_holding_min": 11,
+      "gate": "B9",
+      "concession": "PILOT_EXTRA_HOLDING",
+      "gate_arrival": "20:45",
+      "gate_release": "21:20"
+    },
+    {
+      "id": "C7",
+      "landing": "20:42",
+      "extra_holding_min": 20,
+      "gate": "B4",
+      "concession": "PILOT_EXTRA_HOLDING",
+      "gate_arrival": "20:52",
+      "gate_release": "21:27"
+    },
+    {
+      "id": "C8",
+      "landing": "20:42",
+      "extra_holding_min": 20,
+      "gate": "B7",
+      "concession": "PILOT_EXTRA_HOLDING + GROUND_REASSIGN_CREW",
+      "gate_arrival": "20:53",
+      "gate_release": "21:28"
+    }
+  ],
+  "costs": {
+    "C1": {
+      "delay_min": 2.0,
+      "holding_fuel_kg": 80.0,
+      "overtime_min": 0.0,
+      "missed_connections": 0,
+      "total_usd": 269.52
+    },
+    "C2": {
+      "delay_min": 2.0,
+      "holding_fuel_kg": 80.0,
+      "overtime_min": 0.0,
+      "missed_connections": 0,
+      "total_usd": 269.52
+    },
+    "C3": {
+      "delay_min": 2.0,
+      "holding_fuel_kg": 80.0,
+      "overtime_min": 0.0,
+      "missed_connections": 0,
+      "total_usd": 269.52
+    },
+    "C4": {
+      "delay_min": 11.0,
+      "holding_fuel_kg": 440.0,
+      "overtime_min": 0.0,
+      "missed_connections": 18,
+      "total_usd": 5982.36
+    },
+    "C5": {
+      "delay_min": 11.0,
+      "holding_fuel_kg": 440.0,
+      "overtime_min": 0.0,
+      "missed_connections": 18,
+      "total_usd": 5982.36
+    },
+    "C6": {
+      "delay_min": 11.0,
+      "holding_fuel_kg": 440.0,
+      "overtime_min": 0.0,
+      "missed_connections": 18,
+      "total_usd": 5982.36
+    },
+    "C7": {
+      "delay_min": 20.0,
+      "holding_fuel_kg": 800.0,
+      "overtime_min": 0.0,
+      "missed_connections": 18,
+      "total_usd": 7195.2
+    },
+    "C8": {
+      "delay_min": 20.0,
+      "holding_fuel_kg": 800.0,
+      "overtime_min": 0.0,
+      "missed_connections": 18,
+      "total_usd": 7195.2
+    }
+  },
+  "checks": {
+    "before_concessions": {
+      "C1": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 2,
+            "fuel_at_landing_kg": 2280.0,
+            "reserve_kg": 1800
+          },
+          "passed": true,
+          "explanation": "2 min extra holding burns 80 kg; 2280 kg at landing meets the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:24",
+            "preceding": "AA2210",
+            "preceding_slot": "SL-2021",
+            "preceding_time": "20:21",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind AA2210 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:24",
+            "slot_id": "SL-2024",
+            "occupant": "DL1187",
+            "occupant_flexible": true,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": false,
+          "explanation": "Slot SL-2024 is occupied by DL1187 (flexible: ATC_EARLIER_SLOT can resequence it)."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B4",
+            "route": [
+              "A",
+              "B"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": []
+          },
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B4",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B4 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B4",
+            "occupancy": [
+              "20:34",
+              "21:19"
+            ],
+            "buffer_min": 10,
+            "conflicts": [
+              {
+                "occupant": "DL1622",
+                "busy_until_incl_buffer": "21:07"
+              }
+            ]
+          },
+          "passed": false,
+          "explanation": "Gate B4 overlaps 1 other occupant(s): DL1622 until 21:07"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:24",
+            "extra_holding_min": 2,
+            "gate_arrival": "20:34",
+            "gate_release": "21:09",
+            "taxi_in_min": 10,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B4",
+            "gate_arrival": "20:34",
+            "eligible_crews": [
+              "CRW-B4"
+            ],
+            "ineligible": [
+              "CRW-B9: assigned to B9, not B4"
+            ]
+          },
+          "passed": true,
+          "explanation": "Crew CRW-B4 is on shift at gate B4 when the aircraft arrives."
+        }
+      ],
+      "C2": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 2,
+            "fuel_at_landing_kg": 2280.0,
+            "reserve_kg": 1800
+          },
+          "passed": true,
+          "explanation": "2 min extra holding burns 80 kg; 2280 kg at landing meets the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:24",
+            "preceding": "AA2210",
+            "preceding_slot": "SL-2021",
+            "preceding_time": "20:21",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind AA2210 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:24",
+            "slot_id": "SL-2024",
+            "occupant": "DL1187",
+            "occupant_flexible": true,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": false,
+          "explanation": "Slot SL-2024 is occupied by DL1187 (flexible: ATC_EARLIER_SLOT can resequence it)."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B7",
+            "route": [
+              "A",
+              "C"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": []
+          },
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B7",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B7 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B7",
+            "occupancy": [
+              "20:35",
+              "21:20"
+            ],
+            "buffer_min": 10,
+            "conflicts": []
+          },
+          "passed": true,
+          "explanation": "Gate B7 free for [20:35, 21:20) including 10 min buffer."
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:24",
+            "extra_holding_min": 2,
+            "gate_arrival": "20:35",
+            "gate_release": "21:10",
+            "taxi_in_min": 11,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B7",
+            "gate_arrival": "20:35",
+            "eligible_crews": [],
+            "ineligible": [
+              "CRW-B4: assigned to B4, not B7",
+              "CRW-B9: assigned to B9, not B7"
+            ]
+          },
+          "passed": false,
+          "explanation": "No crew on shift at gate B7: CRW-B4: assigned to B4, not B7; CRW-B9: assigned to B9, not B7. GROUND_REASSIGN_CREW can move a reassignable crew here."
+        }
+      ],
+      "C3": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 2,
+            "fuel_at_landing_kg": 2280.0,
+            "reserve_kg": 1800
+          },
+          "passed": true,
+          "explanation": "2 min extra holding burns 80 kg; 2280 kg at landing meets the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:24",
+            "preceding": "AA2210",
+            "preceding_slot": "SL-2021",
+            "preceding_time": "20:21",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind AA2210 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:24",
+            "slot_id": "SL-2024",
+            "occupant": "DL1187",
+            "occupant_flexible": true,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": false,
+          "explanation": "Slot SL-2024 is occupied by DL1187 (flexible: ATC_EARLIER_SLOT can resequence it)."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B9",
+            "route": [
+              "D",
+              "E"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": [
+              "D"
+            ]
+          },
+          "passed": false,
+          "explanation": "Route uses closed taxiway(s) ['D']."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B9",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B9 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B9",
+            "occupancy": [
+              "20:36",
+              "21:21"
+            ],
+            "buffer_min": 10,
+            "conflicts": []
+          },
+          "passed": true,
+          "explanation": "Gate B9 free for [20:36, 21:21) including 10 min buffer."
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:24",
+            "extra_holding_min": 2,
+            "gate_arrival": "20:36",
+            "gate_release": "21:11",
+            "taxi_in_min": 12,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B9",
+            "gate_arrival": "20:36",
+            "eligible_crews": [
+              "CRW-B9"
+            ],
+            "ineligible": [
+              "CRW-B4: assigned to B4, not B9"
+            ]
+          },
+          "passed": true,
+          "explanation": "Crew CRW-B9 is on shift at gate B9 when the aircraft arrives."
+        }
+      ],
+      "C4": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 11,
+            "fuel_at_landing_kg": 1920.0,
+            "reserve_kg": 1800
+          },
+          "passed": true,
+          "explanation": "11 min extra holding burns 440 kg; 1920 kg at landing meets the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:33",
+            "preceding": "UA402",
+            "preceding_slot": "SL-2030",
+            "preceding_time": "20:30",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind UA402 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:33",
+            "slot_id": "SL-2033",
+            "occupant": null,
+            "occupant_flexible": false,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": true,
+          "explanation": "Slot SL-2033 is free; 13 arrivals in 20:00-21:00 against capacity 20: within the simulated runway capacity."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B4",
+            "route": [
+              "A",
+              "B"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": []
+          },
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B4",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B4 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B4",
+            "occupancy": [
+              "20:43",
+              "21:28"
+            ],
+            "buffer_min": 10,
+            "conflicts": [
+              {
+                "occupant": "DL1622",
+                "busy_until_incl_buffer": "21:07"
+              }
+            ]
+          },
+          "passed": false,
+          "explanation": "Gate B4 overlaps 1 other occupant(s): DL1622 until 21:07"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:33",
+            "extra_holding_min": 11,
+            "gate_arrival": "20:43",
+            "gate_release": "21:18",
+            "taxi_in_min": 10,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B4",
+            "gate_arrival": "20:43",
+            "eligible_crews": [
+              "CRW-B4"
+            ],
+            "ineligible": [
+              "CRW-B9: assigned to B9, not B4"
+            ]
+          },
+          "passed": true,
+          "explanation": "Crew CRW-B4 is on shift at gate B4 when the aircraft arrives."
+        }
+      ],
+      "C5": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 11,
+            "fuel_at_landing_kg": 1920.0,
+            "reserve_kg": 1800
+          },
+          "passed": true,
+          "explanation": "11 min extra holding burns 440 kg; 1920 kg at landing meets the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:33",
+            "preceding": "UA402",
+            "preceding_slot": "SL-2030",
+            "preceding_time": "20:30",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind UA402 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:33",
+            "slot_id": "SL-2033",
+            "occupant": null,
+            "occupant_flexible": false,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": true,
+          "explanation": "Slot SL-2033 is free; 13 arrivals in 20:00-21:00 against capacity 20: within the simulated runway capacity."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B7",
+            "route": [
+              "A",
+              "C"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": []
+          },
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B7",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B7 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B7",
+            "occupancy": [
+              "20:44",
+              "21:29"
+            ],
+            "buffer_min": 10,
+            "conflicts": []
+          },
+          "passed": true,
+          "explanation": "Gate B7 free for [20:44, 21:29) including 10 min buffer."
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:33",
+            "extra_holding_min": 11,
+            "gate_arrival": "20:44",
+            "gate_release": "21:19",
+            "taxi_in_min": 11,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B7",
+            "gate_arrival": "20:44",
+            "eligible_crews": [],
+            "ineligible": [
+              "CRW-B4: assigned to B4, not B7",
+              "CRW-B9: assigned to B9, not B7"
+            ]
+          },
+          "passed": false,
+          "explanation": "No crew on shift at gate B7: CRW-B4: assigned to B4, not B7; CRW-B9: assigned to B9, not B7. GROUND_REASSIGN_CREW can move a reassignable crew here."
+        }
+      ],
+      "C6": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 11,
+            "fuel_at_landing_kg": 1920.0,
+            "reserve_kg": 1800
+          },
+          "passed": true,
+          "explanation": "11 min extra holding burns 440 kg; 1920 kg at landing meets the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:33",
+            "preceding": "UA402",
+            "preceding_slot": "SL-2030",
+            "preceding_time": "20:30",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind UA402 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:33",
+            "slot_id": "SL-2033",
+            "occupant": null,
+            "occupant_flexible": false,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": true,
+          "explanation": "Slot SL-2033 is free; 13 arrivals in 20:00-21:00 against capacity 20: within the simulated runway capacity."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B9",
+            "route": [
+              "D",
+              "E"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": [
+              "D"
+            ]
+          },
+          "passed": false,
+          "explanation": "Route uses closed taxiway(s) ['D']."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B9",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B9 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B9",
+            "occupancy": [
+              "20:45",
+              "21:30"
+            ],
+            "buffer_min": 10,
+            "conflicts": []
+          },
+          "passed": true,
+          "explanation": "Gate B9 free for [20:45, 21:30) including 10 min buffer."
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:33",
+            "extra_holding_min": 11,
+            "gate_arrival": "20:45",
+            "gate_release": "21:20",
+            "taxi_in_min": 12,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B9",
+            "gate_arrival": "20:45",
+            "eligible_crews": [
+              "CRW-B9"
+            ],
+            "ineligible": [
+              "CRW-B4: assigned to B4, not B9"
+            ]
+          },
+          "passed": true,
+          "explanation": "Crew CRW-B9 is on shift at gate B9 when the aircraft arrives."
+        }
+      ],
+      "C7": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 20,
+            "fuel_at_landing_kg": 1560.0,
+            "reserve_kg": 1800
+          },
+          "passed": false,
+          "explanation": "20 min extra holding burns 800 kg; 1560 kg at landing is below the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:42",
+            "preceding": "UA1921",
+            "preceding_slot": "SL-2039",
+            "preceding_time": "20:39",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind UA1921 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:42",
+            "slot_id": "SL-2042",
+            "occupant": null,
+            "occupant_flexible": false,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": true,
+          "explanation": "Slot SL-2042 is free; 13 arrivals in 20:00-21:00 against capacity 20: within the simulated runway capacity."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B4",
+            "route": [
+              "A",
+              "B"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": []
+          },
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B4",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B4 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B4",
+            "occupancy": [
+              "20:52",
+              "21:37"
+            ],
+            "buffer_min": 10,
+            "conflicts": [
+              {
+                "occupant": "DL1622",
+                "busy_until_incl_buffer": "21:07"
+              }
+            ]
+          },
+          "passed": false,
+          "explanation": "Gate B4 overlaps 1 other occupant(s): DL1622 until 21:07"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:42",
+            "extra_holding_min": 20,
+            "gate_arrival": "20:52",
+            "gate_release": "21:27",
+            "taxi_in_min": 10,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B4",
+            "gate_arrival": "20:52",
+            "eligible_crews": [
+              "CRW-B4"
+            ],
+            "ineligible": [
+              "CRW-B9: assigned to B9, not B4"
+            ]
+          },
+          "passed": true,
+          "explanation": "Crew CRW-B4 is on shift at gate B4 when the aircraft arrives."
+        }
+      ],
+      "C8": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 20,
+            "fuel_at_landing_kg": 1560.0,
+            "reserve_kg": 1800
+          },
+          "passed": false,
+          "explanation": "20 min extra holding burns 800 kg; 1560 kg at landing is below the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:42",
+            "preceding": "UA1921",
+            "preceding_slot": "SL-2039",
+            "preceding_time": "20:39",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind UA1921 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:42",
+            "slot_id": "SL-2042",
+            "occupant": null,
+            "occupant_flexible": false,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": true,
+          "explanation": "Slot SL-2042 is free; 13 arrivals in 20:00-21:00 against capacity 20: within the simulated runway capacity."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B7",
+            "route": [
+              "A",
+              "C"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": []
+          },
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B7",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B7 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B7",
+            "occupancy": [
+              "20:53",
+              "21:38"
+            ],
+            "buffer_min": 10,
+            "conflicts": []
+          },
+          "passed": true,
+          "explanation": "Gate B7 free for [20:53, 21:38) including 10 min buffer."
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:42",
+            "extra_holding_min": 20,
+            "gate_arrival": "20:53",
+            "gate_release": "21:28",
+            "taxi_in_min": 11,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B7",
+            "gate_arrival": "20:53",
+            "eligible_crews": [],
+            "ineligible": [
+              "CRW-B4: assigned to B4, not B7",
+              "CRW-B9: assigned to B9, not B7"
+            ]
+          },
+          "passed": false,
+          "explanation": "No crew on shift at gate B7: CRW-B4: assigned to B4, not B7; CRW-B9: assigned to B9, not B7. GROUND_REASSIGN_CREW can move a reassignable crew here."
+        }
+      ]
+    },
+    "after_concessions": {
+      "C1": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 2,
+            "fuel_at_landing_kg": 2280.0,
+            "reserve_kg": 1800
+          },
+          "passed": true,
+          "explanation": "2 min extra holding burns 80 kg; 2280 kg at landing meets the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:24",
+            "preceding": "AA2210",
+            "preceding_slot": "SL-2021",
+            "preceding_time": "20:21",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind AA2210 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:24",
+            "slot_id": "SL-2024",
+            "occupant": null,
+            "occupant_flexible": false,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": true,
+          "explanation": "Slot SL-2024 is free; 13 arrivals in 20:00-21:00 against capacity 20: within the simulated runway capacity."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B4",
+            "route": [
+              "A",
+              "B"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": []
+          },
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B4",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B4 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B4",
+            "occupancy": [
+              "20:34",
+              "21:19"
+            ],
+            "buffer_min": 10,
+            "conflicts": [
+              {
+                "occupant": "DL1622",
+                "busy_until_incl_buffer": "21:07"
+              }
+            ]
+          },
+          "passed": false,
+          "explanation": "Gate B4 overlaps 1 other occupant(s): DL1622 until 21:07"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:24",
+            "extra_holding_min": 2,
+            "gate_arrival": "20:34",
+            "gate_release": "21:09",
+            "taxi_in_min": 10,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B4",
+            "gate_arrival": "20:34",
+            "eligible_crews": [
+              "CRW-B4"
+            ],
+            "ineligible": [
+              "CRW-B9: assigned to B7, not B4"
+            ]
+          },
+          "passed": true,
+          "explanation": "Crew CRW-B4 is on shift at gate B4 when the aircraft arrives."
+        }
+      ],
+      "C2": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 2,
+            "fuel_at_landing_kg": 2280.0,
+            "reserve_kg": 1800
+          },
+          "passed": true,
+          "explanation": "2 min extra holding burns 80 kg; 2280 kg at landing meets the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:24",
+            "preceding": "AA2210",
+            "preceding_slot": "SL-2021",
+            "preceding_time": "20:21",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind AA2210 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:24",
+            "slot_id": "SL-2024",
+            "occupant": null,
+            "occupant_flexible": false,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": true,
+          "explanation": "Slot SL-2024 is free; 13 arrivals in 20:00-21:00 against capacity 20: within the simulated runway capacity."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B7",
+            "route": [
+              "A",
+              "C"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": []
+          },
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B7",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B7 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B7",
+            "occupancy": [
+              "20:35",
+              "21:20"
+            ],
+            "buffer_min": 10,
+            "conflicts": []
+          },
+          "passed": true,
+          "explanation": "Gate B7 free for [20:35, 21:20) including 10 min buffer."
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:24",
+            "extra_holding_min": 2,
+            "gate_arrival": "20:35",
+            "gate_release": "21:10",
+            "taxi_in_min": 11,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B7",
+            "gate_arrival": "20:35",
+            "eligible_crews": [
+              "CRW-B9"
+            ],
+            "ineligible": [
+              "CRW-B4: assigned to B4, not B7"
+            ]
+          },
+          "passed": true,
+          "explanation": "Crew CRW-B9 (reassigned from B9) is on shift at gate B7 when the aircraft arrives."
+        }
+      ],
+      "C3": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 2,
+            "fuel_at_landing_kg": 2280.0,
+            "reserve_kg": 1800
+          },
+          "passed": true,
+          "explanation": "2 min extra holding burns 80 kg; 2280 kg at landing meets the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:24",
+            "preceding": "AA2210",
+            "preceding_slot": "SL-2021",
+            "preceding_time": "20:21",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind AA2210 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:24",
+            "slot_id": "SL-2024",
+            "occupant": null,
+            "occupant_flexible": false,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": true,
+          "explanation": "Slot SL-2024 is free; 13 arrivals in 20:00-21:00 against capacity 20: within the simulated runway capacity."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B9",
+            "route": [
+              "D",
+              "E"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": [
+              "D"
+            ]
+          },
+          "passed": false,
+          "explanation": "Route uses closed taxiway(s) ['D']."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B9",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B9 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B9",
+            "occupancy": [
+              "20:36",
+              "21:21"
+            ],
+            "buffer_min": 10,
+            "conflicts": []
+          },
+          "passed": true,
+          "explanation": "Gate B9 free for [20:36, 21:21) including 10 min buffer."
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:24",
+            "extra_holding_min": 2,
+            "gate_arrival": "20:36",
+            "gate_release": "21:11",
+            "taxi_in_min": 12,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B9",
+            "gate_arrival": "20:36",
+            "eligible_crews": [],
+            "ineligible": [
+              "CRW-B4: assigned to B4, not B9",
+              "CRW-B9: assigned to B7, not B9"
+            ]
+          },
+          "passed": false,
+          "explanation": "No crew on shift at gate B9: CRW-B4: assigned to B4, not B9; CRW-B9: assigned to B7, not B9. GROUND_REASSIGN_CREW can move a reassignable crew here."
+        }
+      ],
+      "C4": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 11,
+            "fuel_at_landing_kg": 1920.0,
+            "reserve_kg": 1800
+          },
+          "passed": true,
+          "explanation": "11 min extra holding burns 440 kg; 1920 kg at landing meets the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:33",
+            "preceding": "UA402",
+            "preceding_slot": "SL-2030",
+            "preceding_time": "20:30",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind UA402 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:33",
+            "slot_id": "SL-2033",
+            "occupant": null,
+            "occupant_flexible": false,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": true,
+          "explanation": "Slot SL-2033 is free; 13 arrivals in 20:00-21:00 against capacity 20: within the simulated runway capacity."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B4",
+            "route": [
+              "A",
+              "B"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": []
+          },
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B4",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B4 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B4",
+            "occupancy": [
+              "20:43",
+              "21:28"
+            ],
+            "buffer_min": 10,
+            "conflicts": [
+              {
+                "occupant": "DL1622",
+                "busy_until_incl_buffer": "21:07"
+              }
+            ]
+          },
+          "passed": false,
+          "explanation": "Gate B4 overlaps 1 other occupant(s): DL1622 until 21:07"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:33",
+            "extra_holding_min": 11,
+            "gate_arrival": "20:43",
+            "gate_release": "21:18",
+            "taxi_in_min": 10,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B4",
+            "gate_arrival": "20:43",
+            "eligible_crews": [
+              "CRW-B4"
+            ],
+            "ineligible": [
+              "CRW-B9: assigned to B7, not B4"
+            ]
+          },
+          "passed": true,
+          "explanation": "Crew CRW-B4 is on shift at gate B4 when the aircraft arrives."
+        }
+      ],
+      "C5": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 11,
+            "fuel_at_landing_kg": 1920.0,
+            "reserve_kg": 1800
+          },
+          "passed": true,
+          "explanation": "11 min extra holding burns 440 kg; 1920 kg at landing meets the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:33",
+            "preceding": "UA402",
+            "preceding_slot": "SL-2030",
+            "preceding_time": "20:30",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind UA402 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:33",
+            "slot_id": "SL-2033",
+            "occupant": null,
+            "occupant_flexible": false,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": true,
+          "explanation": "Slot SL-2033 is free; 13 arrivals in 20:00-21:00 against capacity 20: within the simulated runway capacity."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B7",
+            "route": [
+              "A",
+              "C"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": []
+          },
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B7",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B7 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B7",
+            "occupancy": [
+              "20:44",
+              "21:29"
+            ],
+            "buffer_min": 10,
+            "conflicts": []
+          },
+          "passed": true,
+          "explanation": "Gate B7 free for [20:44, 21:29) including 10 min buffer."
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:33",
+            "extra_holding_min": 11,
+            "gate_arrival": "20:44",
+            "gate_release": "21:19",
+            "taxi_in_min": 11,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B7",
+            "gate_arrival": "20:44",
+            "eligible_crews": [
+              "CRW-B9"
+            ],
+            "ineligible": [
+              "CRW-B4: assigned to B4, not B7"
+            ]
+          },
+          "passed": true,
+          "explanation": "Crew CRW-B9 (reassigned from B9) is on shift at gate B7 when the aircraft arrives."
+        }
+      ],
+      "C6": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 11,
+            "fuel_at_landing_kg": 1920.0,
+            "reserve_kg": 1800
+          },
+          "passed": true,
+          "explanation": "11 min extra holding burns 440 kg; 1920 kg at landing meets the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:33",
+            "preceding": "UA402",
+            "preceding_slot": "SL-2030",
+            "preceding_time": "20:30",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind UA402 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:33",
+            "slot_id": "SL-2033",
+            "occupant": null,
+            "occupant_flexible": false,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": true,
+          "explanation": "Slot SL-2033 is free; 13 arrivals in 20:00-21:00 against capacity 20: within the simulated runway capacity."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B9",
+            "route": [
+              "D",
+              "E"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": [
+              "D"
+            ]
+          },
+          "passed": false,
+          "explanation": "Route uses closed taxiway(s) ['D']."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B9",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B9 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B9",
+            "occupancy": [
+              "20:45",
+              "21:30"
+            ],
+            "buffer_min": 10,
+            "conflicts": []
+          },
+          "passed": true,
+          "explanation": "Gate B9 free for [20:45, 21:30) including 10 min buffer."
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:33",
+            "extra_holding_min": 11,
+            "gate_arrival": "20:45",
+            "gate_release": "21:20",
+            "taxi_in_min": 12,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B9",
+            "gate_arrival": "20:45",
+            "eligible_crews": [],
+            "ineligible": [
+              "CRW-B4: assigned to B4, not B9",
+              "CRW-B9: assigned to B7, not B9"
+            ]
+          },
+          "passed": false,
+          "explanation": "No crew on shift at gate B9: CRW-B4: assigned to B4, not B9; CRW-B9: assigned to B7, not B9. GROUND_REASSIGN_CREW can move a reassignable crew here."
+        }
+      ],
+      "C7": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 20,
+            "fuel_at_landing_kg": 1560.0,
+            "reserve_kg": 1800
+          },
+          "passed": false,
+          "explanation": "20 min extra holding burns 800 kg; 1560 kg at landing is below the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:42",
+            "preceding": "UA1921",
+            "preceding_slot": "SL-2039",
+            "preceding_time": "20:39",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind UA1921 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:42",
+            "slot_id": "SL-2042",
+            "occupant": null,
+            "occupant_flexible": false,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": true,
+          "explanation": "Slot SL-2042 is free; 13 arrivals in 20:00-21:00 against capacity 20: within the simulated runway capacity."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B4",
+            "route": [
+              "A",
+              "B"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": []
+          },
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B4",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B4 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B4",
+            "occupancy": [
+              "20:52",
+              "21:37"
+            ],
+            "buffer_min": 10,
+            "conflicts": [
+              {
+                "occupant": "DL1622",
+                "busy_until_incl_buffer": "21:07"
+              }
+            ]
+          },
+          "passed": false,
+          "explanation": "Gate B4 overlaps 1 other occupant(s): DL1622 until 21:07"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:42",
+            "extra_holding_min": 20,
+            "gate_arrival": "20:52",
+            "gate_release": "21:27",
+            "taxi_in_min": 10,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B4",
+            "gate_arrival": "20:52",
+            "eligible_crews": [
+              "CRW-B4"
+            ],
+            "ineligible": [
+              "CRW-B9: assigned to B7, not B4"
+            ]
+          },
+          "passed": true,
+          "explanation": "Crew CRW-B4 is on shift at gate B4 when the aircraft arrives."
+        }
+      ],
+      "C8": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 20,
+            "fuel_at_landing_kg": 1560.0,
+            "reserve_kg": 1800
+          },
+          "passed": false,
+          "explanation": "20 min extra holding burns 800 kg; 1560 kg at landing is below the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:42",
+            "preceding": "UA1921",
+            "preceding_slot": "SL-2039",
+            "preceding_time": "20:39",
+            "pair": "large-large",
+            "gap_s": 180.0,
+            "required_s": 120
+          },
+          "passed": true,
+          "explanation": "180 s behind UA1921 (large); profile large-large requires 120 s: met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:42",
+            "slot_id": "SL-2042",
+            "occupant": null,
+            "occupant_flexible": false,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": true,
+          "explanation": "Slot SL-2042 is free; 13 arrivals in 20:00-21:00 against capacity 20: within the simulated runway capacity."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B7",
+            "route": [
+              "A",
+              "C"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": []
+          },
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B7",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B7 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B7",
+            "occupancy": [
+              "20:53",
+              "21:38"
+            ],
+            "buffer_min": 10,
+            "conflicts": []
+          },
+          "passed": true,
+          "explanation": "Gate B7 free for [20:53, 21:38) including 10 min buffer."
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:42",
+            "extra_holding_min": 20,
+            "gate_arrival": "20:53",
+            "gate_release": "21:28",
+            "taxi_in_min": 11,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B7",
+            "gate_arrival": "20:53",
+            "eligible_crews": [
+              "CRW-B9"
+            ],
+            "ineligible": [
+              "CRW-B4: assigned to B4, not B7"
+            ]
+          },
+          "passed": true,
+          "explanation": "Crew CRW-B9 (reassigned from B9) is on shift at gate B7 when the aircraft arrives."
+        }
+      ]
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "offers": [
+        {
+          "agent": "atc",
+          "run_id": "r-aa9522",
+          "round": 1,
+          "state_version": 1,
+          "preferred": "C1",
+          "acceptable": [
+            "C1",
+            "C2"
+          ],
+          "constraints_cited": [
+            "R-1",
+            "T-1",
+            "W-1",
+            "G-2",
+            "C-1"
+          ],
+          "concessions": [
+            {
+              "id": "ATC_EARLIER_SLOT",
+              "target": "C1"
+            }
+          ],
+          "rationale": "C1 has the lowest total cost at $269.52 with 2.0 min delay and 80 kg holding fuel, versus $5982.36 or more for C4 to C8, and its R-1 failure is resolved by my ATC_EARLIER_SLOT concession. C2 has the same cost but also needs the ground crew concession and still fails C-1, so I keep it only as a fallback, and C3 fails T-1 on the closed taxiway D.",
+          "latency_s": 7.53,
+          "valid": true
+        },
+        {
+          "agent": "pilot",
+          "run_id": "r-aa9522",
+          "round": 1,
+          "state_version": 1,
+          "preferred": "C1",
+          "acceptable": [
+            "C1",
+            "C3"
+          ],
+          "constraints_cited": [
+            "F-1",
+            "R-1",
+            "G-2",
+            "T-1"
+          ],
+          "concessions": [],
+          "rationale": "C1 is the lowest-cost option at 269.52 USD with 2 min extra holding (80 kg), and F-1 passes with 2280 kg at landing against the 1800 kg reserve. It needs only ATC_EARLIER_SLOT, so I offer no concession of my own, since the 11-minute candidates C4-C6 cost 5982.36 USD and C7-C8 fail F-1.",
+          "latency_s": 9.54,
+          "valid": true
+        },
+        {
+          "agent": "ground",
+          "run_id": "r-aa9522",
+          "round": 1,
+          "state_version": 1,
+          "preferred": "C3",
+          "acceptable": [
+            "C3",
+            "C1",
+            "C2"
+          ],
+          "constraints_cited": [
+            "G-1",
+            "G-2",
+            "G-3",
+            "C-1",
+            "T-1"
+          ],
+          "concessions": [
+            {
+              "id": "GROUND_REASSIGN_CREW",
+              "target": "C2"
+            }
+          ],
+          "rationale": "C3 is the only option where G-2 passes with no gate overlap and C-1 passes without moving a crew, at the same $269.52 total as C1 and C2, but it still needs ATC_EARLIER_SLOT to clear T-1. I offer GROUND_REASSIGN_CREW targeting C2 because it costs $269.52 versus $5982.36 for C5 and $7195.20 for C8, so it is the better fallback for the group.",
+          "latency_s": 8.45,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "votes": [
+        {
+          "agent": "atc",
+          "run_id": "r-aa9522",
+          "round": 2,
+          "proposal_version": 2,
+          "vote": "accept",
+          "rationale": "The frozen proposal C2 passes every ATC check I own: W-1 (180 s behind AA2210, large-large 120 s required), R-1 (within capacity 20 in 20:00-21:00), and T-1 (route avoids closed taxiway D), with a tolerable cost of $269.52 and 2.0 min delay.",
+          "latency_s": 2.42
+        },
+        {
+          "agent": "pilot",
+          "run_id": "r-aa9522",
+          "round": 2,
+          "proposal_version": 2,
+          "vote": "accept",
+          "rationale": "C2 passes every check I own, including F-1 with 2280 kg at landing against the 1800 kg reserve after 2 min extra holding. Its total cost is $269.52 with 0 missed connections, which is tolerable.",
+          "latency_s": 3.49
+        },
+        {
+          "agent": "ground",
+          "run_id": "r-aa9522",
+          "round": 2,
+          "proposal_version": 2,
+          "vote": "accept",
+          "rationale": "C2 passes my checks G-1, G-2 (B7 free for [20:35, 21:20) with the 10 min buffer), G-3 and C-1 (CRW-B9 reassigned to B7 and on shift). Its cost of $269.52 is the same as C1 and far below the $5982.36 options, so it is tolerable.",
+          "latency_s": 2.76
+        }
+      ]
+    }
+  ],
+  "compromise": {
+    "concessions_applied": [
+      {
+        "agent": "atc",
+        "id": "ATC_EARLIER_SLOT",
+        "target": "C1",
+        "note": "moved DL1187 from SL-2024 to SL-2057",
+        "applied": true
+      },
+      {
+        "agent": "ground",
+        "id": "GROUND_REASSIGN_CREW",
+        "target": "C2",
+        "note": "moved CRW-B9 from B9 to B7",
+        "applied": true
+      }
+    ],
+    "feasible_before": [],
+    "feasible_after": [
+      "C2",
+      "C5"
+    ],
+    "in_all_acceptable": [],
+    "rule": "No feasible candidate in all three acceptable sets: most acceptances, then lowest cost",
+    "proposal": {
+      "version": 2,
+      "candidate": "C2"
+    }
+  },
+  "outcome": {
+    "type": "consensus",
+    "final_candidate": "C2",
+    "concessions_that_unlocked": [
+      "ATC_EARLIER_SLOT",
+      "GROUND_REASSIGN_CREW"
+    ],
+    "reason": "All three accepted proposal v2 and the final recheck passed.",
+    "final_recheck": {
+      "state_version": 2,
+      "passed": true
+    }
+  },
+  "fallback": null,
+  "baselines": {
+    "solver": {
+      "candidate": "C2",
+      "total_usd": 269.52
+    },
+    "heuristic": {
+      "plan": "Delay ETA by recorded delay (106 min), keep planned gate B4",
+      "candidate": {
+        "id": "H",
+        "landing": "20:28",
+        "extra_holding_min": 6,
+        "gate": "B4",
+        "concession": null,
+        "gate_arrival": "20:38",
+        "gate_release": "21:13"
+      },
+      "feasible": false,
+      "failed": [
+        "W-1",
+        "R-1",
+        "G-2"
+      ],
+      "checks": [
+        {
+          "rule_id": "F-1",
+          "basis": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by 14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+          "inputs": {
+            "fuel_on_board_kg": 3395,
+            "cruise_burn_kg_per_min": 45,
+            "minutes_issue_to_base_eta": 23.0,
+            "fuel_at_base_eta_kg": 2360.0,
+            "holding_burn_kg_per_min": 40,
+            "extra_holding_min": 6,
+            "fuel_at_landing_kg": 2120.0,
+            "reserve_kg": 1800
+          },
+          "passed": true,
+          "explanation": "6 min extra holding burns 240 kg; 2120 kg at landing meets the 1800 kg scenario reserve."
+        },
+        {
+          "rule_id": "W-1",
+          "basis": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+          "inputs": {
+            "landing": "20:28",
+            "preceding": "UA401",
+            "preceding_slot": "SL-2027",
+            "preceding_time": "20:27",
+            "pair": "large-large",
+            "gap_s": 60.0,
+            "required_s": 120
+          },
+          "passed": false,
+          "explanation": "60 s behind UA401 (large); profile large-large requires 120 s: not met."
+        },
+        {
+          "rule_id": "R-1",
+          "basis": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
+          "inputs": {
+            "landing": "20:28",
+            "slot_id": null,
+            "occupant": null,
+            "occupant_flexible": null,
+            "interval": "20:00-21:00",
+            "other_arrivals_in_interval": 12,
+            "focal_counted_once": 1,
+            "arrivals_in_interval": 13,
+            "capacity_per_hour": 20,
+            "runway": "ARR-1"
+          },
+          "passed": false,
+          "explanation": "20:28 is not an offered arrival slot."
+        },
+        {
+          "rule_id": "T-1",
+          "basis": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
+          "inputs": {
+            "gate": "B4",
+            "route": [
+              "A",
+              "B"
+            ],
+            "closed_taxiways": [
+              "D"
+            ],
+            "blocked_segments": []
+          },
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
+        },
+        {
+          "rule_id": "G-1",
+          "basis": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+          "inputs": {
+            "gate": "B4",
+            "aircraft_class": "narrowbody",
+            "gate_max_class": "narrowbody",
+            "class_order": [
+              "regional",
+              "narrowbody",
+              "widebody"
+            ]
+          },
+          "passed": true,
+          "explanation": "Gate B4 (max narrowbody) accepts a narrowbody."
+        },
+        {
+          "rule_id": "G-2",
+          "basis": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+          "inputs": {
+            "gate": "B4",
+            "occupancy": [
+              "20:38",
+              "21:23"
+            ],
+            "buffer_min": 10,
+            "conflicts": [
+              {
+                "occupant": "DL1622",
+                "busy_until_incl_buffer": "21:07"
+              }
+            ]
+          },
+          "passed": false,
+          "explanation": "Gate B4 overlaps 1 other occupant(s): DL1622 until 21:07"
+        },
+        {
+          "rule_id": "G-3",
+          "basis": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+          "inputs": {
+            "base_eta": "20:22",
+            "landing": "20:28",
+            "extra_holding_min": 6,
+            "gate_arrival": "20:38",
+            "gate_release": "21:13",
+            "taxi_in_min": 10,
+            "service_min": 35.0,
+            "turnaround_min": 35
+          },
+          "passed": true,
+          "explanation": "Service 35 min meets the 35 min turnaround; coupled times consistent."
+        },
+        {
+          "rule_id": "C-1",
+          "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
+          "inputs": {
+            "gate": "B4",
+            "gate_arrival": "20:38",
+            "eligible_crews": [
+              "CRW-B4"
+            ],
+            "ineligible": [
+              "CRW-B9: assigned to B9, not B4"
+            ]
+          },
+          "passed": true,
+          "explanation": "Crew CRW-B4 is on shift at gate B4 when the aircraft arrives."
+        }
+      ],
+      "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
+      "cost": {
+        "delay_min": 6.0,
+        "holding_fuel_kg": 240.0,
+        "overtime_min": 0.0,
+        "missed_connections": 18,
+        "total_usd": 5308.56
+      }
+    }
+  },
+  "human_decision": null,
+  "stats": {
+    "api_calls": 6,
+    "retries": 0,
+    "total_latency_s": 13.23,
+    "model": "claude-haiku-5-5",
+    "thinking": {
+      "type": "adaptive",
+      "effort": "medium"
+    },
+    "input_tokens": 46104,
+    "output_tokens": 4437,
+    "est_cost_usd": 0.00683
+  }
+}
