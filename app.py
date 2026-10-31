@@ -177,7 +177,7 @@ def normalize_benchmark(raw):
     for k in ("total", "weather_only", "late_aircraft_only", "both"):
         b["scenarios"].setdefault(k, 0)
     b.setdefault("cost_vs_solver_gap_pct", 0)
-    # Show the gap as total cost across runs (as README and PITCH do), not benchmark.py's mean of per-run
+    # Show the gap as total cost across runs (as the README does), not benchmark.py's mean of per-run
     # percentages, which one cheap-reference run can blow up (one run at +904% made the mean 114%).
     paired = [(r["final_cost_usd"], r["reference_optimum"]["total_usd"]) for r in b.get("agent_runs") or []
               if r.get("final_cost_usd") is not None and (r.get("reference_optimum") or {}).get("total_usd")]
