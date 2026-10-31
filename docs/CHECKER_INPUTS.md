@@ -1,100 +1,102 @@
-# Checker, cost and fallback inputs (Person B contract)
+# Checker, cost and fallback inputs (Person B)
 
 `models.py` leaves `Scenario.simulated[agent]` as a free dict. This file lists the keys that
-`checker.py`, `costs.py` and `fallback.py` read from it. Person A's `scenario.py` must produce
-them; everything here is **simulated** state and must be labelled so in the UI.
+`checker.py`, `costs.py` and `fallback.py` read from the state that `scenario.py` (Ashvin) emits, and
+how each rule and cost uses them. Everything here is **simulated** state and is labelled so in the UI.
 
-A missing or malformed required key **fails** the rule that needs it (the `CheckResult` says
-`Cannot evaluate: ...`). Nothing passes silently.
+A missing or malformed required key **fails** the rule that needs it (the `CheckResult` explanation
+starts with `Cannot evaluate: ...`). Nothing passes silently. The checker never raises on bad state.
 
 ## Time values
 
-Every clock value is `"HH:MM"` on the scenario's `issue_time` date, in one local time zone.
-A value more than 12 h before the issue time rolls to the next day (overnight arrivals).
-Full ISO datetimes (`2015-01-01T20:40`) are also accepted. `Candidate.landing`,
-`gate_arrival` and `gate_release` use the same convention.
+ISO datetimes (`2015-01-06T20:22`, naive, destination local time) as scenario.py writes them. `"HH:MM"`
+is also accepted and resolved on the `issue_time` date, rolling to the next day when more than 12 h
+before the issue time. `Candidate.landing`, `gate_arrival` and `gate_release` are `"HH:MM"`.
 
 ## `simulated.atc`
 
-| Key | Type / unit | Used by |
-|---|---|---|
-| `baseline_eta` | `"HH:MM"`: simulated ETA at issue time with no extra holding | costs (delay), heuristic |
-| `runway` | `{"id", "capacity_per_interval": int, "interval_min": int}`; intervals are fixed bins from midnight | R-1 |
-| `slots` | list of `"HH:MM"` arrival slots offered to this flight | R-1 |
-| `other_arrivals` | list of `{"callsign", "time": "HH:MM", "wake_category"}`; **never** includes the focal flight | R-1, W-1 |
-| `wake_category` | focal aircraft category, e.g. `"M"` | W-1 |
-| `wake_separation_s` | `{"LEADER-FOLLOWER": seconds}`; an absent pair fails W-1 | W-1 |
-| `closed_taxiways` | list of segment ids | T-1 |
-| `taxi_routes` | `{gate: [segment, ...]}` runway-to-gate route per gate | T-1 |
-| `taxi_in_min` | int; if present G-3 requires `gate_arrival == landing + taxi_in_min` | G-3, heuristic |
-| `resequence_options` | list of `{"slot": "HH:MM", "moves": [{"callsign", "to": "HH:MM"}]}` the ATC agent may offer | ATC_EARLIER_SLOT |
+| Key | Used by |
+|---|---|
+| `base_eta` | costs (delay), G-3 (holding = landing - base ETA), heuristic |
+| `own_wake` (`heavy` / `large` / `small`) | W-1 |
+| `slots[]` with `slot_id`, `time`, `occupant`, `occupant_wake`, `occupant_flexible` | R-1 (slot must exist and be unoccupied), W-1 (last occupied slot before landing) |
+| `runway_capacity_per_hour` | R-1 (occupied slots in the landing's clock hour + this flight) |
+| `closed_taxiways` | T-1 |
+
+W-1 reads the separation profile from `config.simulation.wake_separation_s` (seconds, keyed
+`leader-follower`). An absent pair fails.
 
 ## `simulated.pilot`
 
-| Key | Type / unit | Used by |
-|---|---|---|
-| `fuel_at_baseline_eta_kg` | kg of fuel on board at the baseline ETA | F-1 |
-| `holding_burn_kg_per_min` | kg per minute of extra holding | F-1, costs |
-| `reserve_kg` | scenario reserve in kg (a parameter inspired by 14 CFR 121.639, **not** a compliance figure) | F-1 |
-| `max_extra_holding_min` | pilot preference bound (not a hard rule); raised by PILOT_EXTRA_HOLDING up to the fuel-safe limit | agents |
-| `aircraft_type` | display only | UI |
+| Key | Used by |
+|---|---|
+| `fuel_on_board_kg`, `cruise_burn_kg_per_min` | F-1: fuel at base ETA = on board - cruise burn x (base ETA - issue time) |
+| `holding_burn_kg_per_min` | F-1, costs (holding fuel) |
+| `reserve_kg` | F-1 (equality passes). A scenario parameter inspired by 14 CFR 121.639, not a compliance figure |
+| `connections[]` with `departure_time`, `min_connect_min`, `passengers` | costs (missed connections) |
+| `fuel_safe_holding_min`, `comfortable_holding_min` | agents and `scenario.apply_concessions` only |
 
 ## `simulated.ground`
 
-| Key | Type / unit | Used by |
-|---|---|---|
-| `aircraft_class` | e.g. `"narrowbody"`; explicit, never guessed from the tail number | G-1 |
-| `gates` | `{gate: {"classes": [...], "bookings": [{"id", "flight", "start", "end"}]}}` | G-1, G-2 |
-| `own_booking_id` | optional; a booking with this id is this flight's replaced plan and is excluded from G-2 | G-2 |
-| `gate_buffer_min`, `turnaround_min` | optional overrides of `config.simulation` | G-2, G-3 |
-| `planned_gate` | gate of the original plan | heuristic |
-| `crews` | list of `{"id", "gates": [...], "shift_start", "shift_end", "regular_end", "assignments": [{"id", "gate", "start", "end"}], "can_reassign_to": [...]}` | C-1, costs (overtime) |
-| `connections` | list of `{"flight", "departure": "HH:MM", "min_connect_min", "pax"}` | costs (missed) |
+| Key | Used by |
+|---|---|
+| `aircraft_class` (`regional` < `narrowbody` < `widebody`) | G-1 |
+| `gates[]` with `gate_id`, `max_class`, `taxi_route`, `taxi_in_min`, `occupancy[]{start,end,occupant}` | G-1, T-1, G-3, G-2 |
+| `turnaround_min`, `gate_buffer_min` (fallback: `config.simulation`) | G-3, G-2, costs (overtime window) |
+| `crews[]` with `crew_id`, `assigned_gate`, `shift_start`, `shift_end` (+ `reassigned_from` after a move) | C-1, costs (overtime) |
+| `planned_gate`, `next_departure` | heuristic |
 
-## Candidate
+## Rules
 
-The agreed `models.Candidate`. `gate_arrival` and `gate_release` are authoritative; G-3 verifies
-`gate_release - gate_arrival >= turnaround_min`, `gate_arrival >= landing` (`== landing + taxi_in_min`
-when declared) and `landing >= issue_time`. `extra_holding_min` must be a non-negative integer.
+| Rule | Predicate (equality passes) |
+|---|---|
+| F-1 | fuel at base ETA - extra_holding x holding burn >= reserve_kg |
+| W-1 | seconds from the last occupied slot before landing >= profile[leader wake - own wake] |
+| R-1 | landing is an offered slot, that slot is unoccupied, occupied slots in the clock hour + 1 <= capacity |
+| T-1 | gate taxi_route has no segment in closed_taxiways |
+| G-1 | gate max_class rank >= aircraft_class rank |
+| G-2 | [gate_arrival, gate_release + buffer) overlaps no occupancy [start, end + buffer); half-open |
+| G-3 | landing >= issue time and >= base ETA; extra_holding == landing - base ETA; gate_arrival == landing + taxi_in; release - arrival >= turnaround |
+| C-1 | a crew with assigned_gate == gate is on shift at gate arrival (shift_start <= arrival <= shift_end) |
 
-## Concessions (`checker.apply_concessions`)
+C-1 deliberately checks presence at arrival rather than the whole service window: work past the
+shift end is a soft cost (overtime), not a hard violation. This matches options.py's crew logic and
+keeps "ground crew overtime" a meaningful cost.
 
-The source scenario is never mutated. `apply_concessions(scenario, concessions, state_version)` returns
-`AdjustedState(scenario, state_version, applied, rejected)`; the version increases by one when at
-least one concession changed the state. Recheck every candidate on the new scenario.
+## Concessions
 
-| Concession | `target` | Effect on the copy |
-|---|---|---|
-| `ATC_EARLIER_SLOT` | `"HH:MM"` listed in `atc.resequence_options` | slot added to `atc.slots`; declared neighbour moves applied to `other_arrivals`. R-1/W-1 still enforce capacity and spacing. |
-| `GROUND_REASSIGN_CREW` | gate id | each crew with that gate in `can_reassign_to` gains it in `gates`. Assignments are kept, so an overlapping job still fails C-1. |
-| `PILOT_EXTRA_HOLDING` | `"12"` or `"12 min"` | `pilot.max_extra_holding_min = min(target, fuel-safe limit)`. Preference only; F-1 stays the hard rule. |
-
-A concession whose target is not declared in the state is reported in `rejected` and changes nothing.
+The coordinator applies concessions with `scenario.apply_concessions(scenario, [{"agent","id","target"}])`
+(Ashvin), which returns a new Scenario and records `applied_concessions` / `rejected_concessions` in each
+agent's state. Recheck every candidate on the returned scenario; the source scenario is never mutated.
 
 ## Costs (`costs.py`)
 
 | Component | Unit | Formula |
 |---|---|---|
-| `delay_min` | min | `landing - atc.baseline_eta` (signed; earlier than baseline is negative). The historical recorded delay is never added. |
+| `delay_min` | min | `landing - atc.base_eta` (= extra holding for options.py candidates). The historical recorded delay is never added. |
 | `holding_fuel_kg` | kg | `extra_holding_min x holding_burn_kg_per_min` |
-| `overtime_min` | min | service minutes after the serving crew's `regular_end` (first eligible crew by id) |
-| `missed_connections` | pax | sum of `pax` on connections with `departure < gate_arrival + min_connect_min` |
+| `overtime_min` | min | `(gate_arrival + turnaround_min) - shift_end` of the serving crew, floored at 0 |
+| `missed_connections` | pax | sum of `passengers` on connections with `departure_time < gate_arrival + min_connect_min` |
 | `total_usd` | USD-equivalent score | sum of component x `config.costs` weight |
 
-`costs.breakdown(candidate, scenario, weights)` returns raw, unit, weight and weighted value per
-component for the UI. `inputs.delay_vs_schedule_min` is also reported for display.
+`costs.breakdown(candidate, scenario, weights)` gives raw value, unit, weight and weighted value per
+component for the UI, plus `inputs.delay_vs_schedule_min` for display.
 
 ## Calls teammates make
 
 ```python
-import checker, costs, fallback
+import checker, costs, fallback, scenario as S
 cfg = checker.load_config()
 checks = checker.check_all(candidates, scenario, cfg)            # {id: [CheckResult x 8]}
+results = checker.check(candidate, scenario)                     # one candidate (coordinator uses this)
 cost_map = costs.cost_all(candidates, scenario, cfg["costs"])    # {id: CandidateCost}
+one = costs.cost(candidate, scenario, cfg["costs"])              # coordinator uses this
 best = fallback.solve(candidates, checks, cost_map)              # id or None (escalate)
-block = fallback.decide(candidates, checks, cost_map)            # log-ready dict, 'outcome' = fallback | escalation
-adj = checker.apply_concessions(scenario, offers_concessions, state_version=1)
-checks_after = checker.check_all(candidates, adj.scenario, cfg)  # recheck on the new version
+block = fallback.decide(candidates, checks, cost_map)            # log-ready dict, outcome fallback | escalation
+after = S.apply_concessions(scenario, offered)                   # new state version; recheck on it
 baseline = fallback.heuristic(scenario, cfg)                     # heuristic block for the log
-result = fallback.run_pipeline(candidates, scenario, cfg)        # all of the above, no LLM
+result = fallback.run_pipeline(candidates, scenario, cfg)        # checks + costs + decision, no LLM
 ```
+
+`python benchmark.py` runs demo-001 plus the 50 seeded scenarios deterministically and the four
+failure tests; `--agents N` adds coordinator runs with fake agents (no API); `--live` uses Claude.

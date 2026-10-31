@@ -89,7 +89,7 @@ def run_pipeline(candidates: list[Candidate], scenario: Scenario, config: dict |
     cfg = config if config is not None else checker.load_config()
     checks = checker.check_all(candidates, scenario, cfg)
     weights = costs_mod.weights_from_config(cfg)
-    cost_map = costs_mod.cost_all(candidates, scenario, weights, strict=False)
+    cost_map = costs_mod.cost_all(candidates, scenario, weights, strict=False, config=cfg)
     return {"checks": checks, "costs": cost_map, "weights": weights,
             "cost_errors": [cid for cid, v in cost_map.items() if v is None],
             "decision": decide(candidates, checks, cost_map)}
@@ -98,24 +98,27 @@ def run_pipeline(candidates: list[Candidate], scenario: Scenario, config: dict |
 def heuristic_candidate(scenario: Scenario, config: dict | None = None) -> Candidate:
     """Historical outcome: scheduled arrival + recorded arrival delay (= actual arrival), planned gate.
 
-    The baseline ETA is NOT used here, so the recorded delay is counted exactly once. Any part of the
-    actual arrival later than the simulated baseline ETA is treated as airborne holding (simulated
-    assumption) so F-1 can be evaluated.
+    The base ETA is NOT used to place the landing, so the recorded delay is counted exactly once. Any
+    part of the actual arrival later than the simulated base ETA is treated as airborne holding
+    (simulated assumption) so F-1 can be evaluated. Gate times follow options.py's coupling.
     """
     cfg = config if config is not None else checker.load_config()
     issue = issue_time(scenario)
-    atc, ground = _state(scenario, "atc"), _state(scenario, "ground")
+    ground = _state(scenario, "ground")
     h = scenario.historical
     sched = parse_time(h.scheduled_arrival, issue, "historical.scheduled_arrival")
     landing = sched + timedelta(minutes=int(h.arrival_delay_min))
-    baseline = parse_time(_get(atc, "baseline_eta", "atc"), issue, "atc.baseline_eta")
-    hold = max(0, int(round((landing - baseline).total_seconds() / 60)))
-    taxi = int(_get(atc, "taxi_in_min", "atc"))
+    hold = max(0, int(round((landing - checker.base_eta(scenario, issue)).total_seconds() / 60)))
+    gate_id = str(_get(ground, "planned_gate", "ground"))
+    gate = checker.gate_of(scenario, gate_id)
+    taxi = int(_get(gate, "taxi_in_min", f"ground.gates[{gate_id}]"))
     _, turnaround = checker._sim_params(scenario, cfg)
     gate_arrival = landing + timedelta(minutes=taxi)
-    return Candidate(id="H", landing=hhmm(landing), extra_holding_min=hold,
-                     gate=str(_get(ground, "planned_gate", "ground")), concession=None,
-                     gate_arrival=hhmm(gate_arrival), gate_release=hhmm(gate_arrival + timedelta(minutes=turnaround)))
+    release = gate_arrival + timedelta(minutes=turnaround)
+    if "next_departure" in ground:
+        release = max(release, parse_time(ground["next_departure"], issue, "ground.next_departure"))
+    return Candidate(id="H", landing=hhmm(landing), extra_holding_min=hold, gate=gate_id, concession=None,
+                     gate_arrival=hhmm(gate_arrival), gate_release=hhmm(release))
 
 
 def heuristic(scenario: Scenario, config: dict | None = None) -> dict:
@@ -131,9 +134,9 @@ def heuristic(scenario: Scenario, config: dict | None = None) -> dict:
                    f"keep planned gate {cand.gate}",
            "candidate": cand.model_dump(), "feasible": feasible(results), "failed": failed_rules(results),
            "checks": [r.model_dump() for r in results],
-           "assumption": "Simulated: arrival later than the baseline ETA is treated as airborne holding."}
+           "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding."}
     try:
-        out["cost"] = costs_mod.cost(cand, scenario, costs_mod.weights_from_config(cfg)).model_dump()
+        out["cost"] = costs_mod.cost(cand, scenario, costs_mod.weights_from_config(cfg), cfg).model_dump()
     except MissingInput as e:
         out["cost"] = None
         out["cost_error"] = str(e)

@@ -1,9 +1,11 @@
-"""One passing boundary and one failing boundary per rule, plus missing-input and concession behaviour."""
+"""One passing boundary and one failing boundary per rule, plus missing-input and concession behaviour.
+All numbers come from scenario.py's demo-001 (see conftest.demo)."""
 import pytest
 
 import checker
+import scenario as S
 from models import CheckResult
-from tests.conftest import cand, rule, with_state
+from tests.conftest import cand, crew, gate, rule, slot, with_config, with_state
 
 
 def run(c, s, cfg, rid):
@@ -13,271 +15,236 @@ def run(c, s, cfg, rid):
 # ---------------------------------------------------------------- F-1 fuel reserve
 
 def test_f1_equality_passes(demo, cfg):
-    # 2600 - 12*40 = 2120; reserve raised to exactly 2120 must pass
-    s = with_state(demo["scenario"], lambda sim: sim["pilot"].__setitem__("reserve_kg", 2120))
-    r = run(cand(demo, "C3"), s, cfg, "F-1")
-    assert r.passed and r.inputs["fuel_at_landing_kg"] == 2120
+    # 3395 - 45*23 = 2360 kg at base ETA; 14 min * 40 = 560 -> exactly the 1800 kg reserve
+    r = run(cand(demo, "C4", extra_holding_min=14), demo["scenario"], cfg, "F-1")
+    assert r.passed and r.inputs["fuel_at_landing_kg"] == 1800 and r.inputs["fuel_at_base_eta_kg"] == 2360
 
 
 def test_f1_one_minute_more_fails(demo, cfg):
-    s = with_state(demo["scenario"], lambda sim: sim["pilot"].__setitem__("reserve_kg", 2120))
-    r = run(cand(demo, "C3", extra_holding_min=13), s, cfg, "F-1")
+    r = run(cand(demo, "C4", extra_holding_min=15), demo["scenario"], cfg, "F-1")
     assert not r.passed and "below" in r.explanation
 
 
 def test_f1_missing_reserve_fails_not_raises(demo, cfg):
     s = with_state(demo["scenario"], lambda sim: sim["pilot"].pop("reserve_kg"))
-    r = run(cand(demo, "C1"), s, cfg, "F-1")
+    r = run(cand(demo, "C4"), s, cfg, "F-1")
     assert not r.passed and "Cannot evaluate" in r.explanation and "reserve_kg" in r.inputs["error"]
 
 
 def test_f1_non_finite_fuel_fails(demo, cfg):
-    s = with_state(demo["scenario"], lambda sim: sim["pilot"].__setitem__("fuel_at_baseline_eta_kg", float("nan")))
-    assert not run(cand(demo, "C1"), s, cfg, "F-1").passed
+    s = with_state(demo["scenario"], lambda sim: sim["pilot"].__setitem__("fuel_on_board_kg", float("nan")))
+    assert not run(cand(demo, "C4"), s, cfg, "F-1").passed
 
 
 # ---------------------------------------------------------------- W-1 wake spacing
 
-def _move(callsign, to):
-    def m(sim):
-        for o in sim["atc"]["other_arrivals"]:
-            if o["callsign"] == callsign:
-                o["time"] = to
-    return m
+def test_w1_passes_with_margin(demo, cfg):
+    # C4 lands 20:33; the last occupied slot before it is UA402 at 20:30 (large): 180 s, profile large-large 120 s
+    r = run(cand(demo, "C4"), demo["scenario"], cfg, "W-1")
+    assert r.passed and r.inputs == {**r.inputs, "preceding": "UA402", "gap_s": 180, "pair": "large-large"}
 
 
-def test_w1_equality_passes(demo, cfg):
-    # C1 lands 20:40 behind UAL455 (H); H-M needs 180 s. Leader at 20:37 gives exactly 180 s.
-    s = with_state(demo["scenario"], _move("UAL455", "20:37"))
-    r = run(cand(demo, "C1"), s, cfg, "W-1")
-    assert r.passed and r.inputs["gap_s"] == 180 and r.inputs["pair"] == "H-M"
-
-
-def test_w1_one_second_short_fails(demo, cfg):
-    s = with_state(demo["scenario"], _move("UAL455", "20:38"))
-    r = run(cand(demo, "C1"), s, cfg, "W-1")
-    assert not r.passed and r.inputs["gap_s"] == 120
+def test_w1_equality_passes_and_one_second_short_fails(demo, cfg):
+    eq = with_config(cfg, lambda c: c["simulation"]["wake_separation_s"].__setitem__("large-large", 180))
+    assert run(cand(demo, "C4"), demo["scenario"], eq, "W-1").passed
+    short = with_config(cfg, lambda c: c["simulation"]["wake_separation_s"].__setitem__("large-large", 181))
+    assert not run(cand(demo, "C4"), demo["scenario"], short, "W-1").passed
 
 
 def test_w1_unsupported_pair_fails(demo, cfg):
-    s = with_state(demo["scenario"], lambda sim: sim["atc"]["wake_separation_s"].pop("H-M"))
-    r = run(cand(demo, "C1"), s, cfg, "W-1")
+    c = with_config(cfg, lambda c: c["simulation"]["wake_separation_s"].pop("large-large"))
+    r = run(cand(demo, "C4"), demo["scenario"], c, "W-1")
     assert not r.passed and "No simulated separation profile" in r.explanation
 
 
+def test_w1_heavy_pair_in_adjacent_slot_fails(demo, cfg):
+    def heavy(sim):
+        slot(sim, "SL-2030")["occupant_wake"] = "heavy"
+        sim["atc"]["own_wake"] = "heavy"
+    r = run(cand(demo, "C4"), with_state(demo["scenario"], heavy), cfg, "W-1")   # heavy-heavy needs 240 s, gap 180 s
+    assert not r.passed and r.inputs["pair"] == "heavy-heavy" and r.inputs["required_s"] == 240
+
+
 def test_w1_no_preceding_aircraft_passes_explicitly(demo, cfg):
-    s = with_state(demo["scenario"], lambda sim: sim["atc"].__setitem__("other_arrivals", []))
-    r = run(cand(demo, "C1"), s, cfg, "W-1")
+    def clear(sim):
+        for sl in sim["atc"]["slots"]:
+            sl.update(occupant=None, occupant_wake=None)
+    r = run(cand(demo, "C4"), with_state(demo["scenario"], clear), cfg, "W-1")
     assert r.passed and r.inputs["preceding"] is None
 
 
 # ---------------------------------------------------------------- R-1 runway capacity
 
-def _add(*arrivals):
-    def m(sim):
-        sim["atc"]["other_arrivals"] += [{"callsign": f"X{i}", "time": t, "wake_category": "L"} for i, t in enumerate(arrivals)]
-    return m
-
-
-def test_r1_at_capacity_passes(demo, cfg):
-    # bin 20:40-20:50 capacity 3: two others + focal = 3
-    s = with_state(demo["scenario"], _add("20:46", "20:49"))
-    r = run(cand(demo, "C1"), s, cfg, "R-1")
-    assert r.passed and r.inputs["arrivals_in_interval"] == 3
+def test_r1_free_slot_at_capacity_passes(demo, cfg):
+    # 12 occupied slots in 20:00-21:00 plus this flight = 13
+    s = with_state(demo["scenario"], lambda sim: sim["atc"].__setitem__("runway_capacity_per_hour", 13))
+    r = run(cand(demo, "C4"), s, cfg, "R-1")
+    assert r.passed and r.inputs["arrivals_in_interval"] == 13
 
 
 def test_r1_over_capacity_fails(demo, cfg):
-    s = with_state(demo["scenario"], _add("20:46", "20:48", "20:49"))
-    r = run(cand(demo, "C1"), s, cfg, "R-1")
-    assert not r.passed and r.inputs["arrivals_in_interval"] == 4
+    s = with_state(demo["scenario"], lambda sim: sim["atc"].__setitem__("runway_capacity_per_hour", 12))
+    assert not run(cand(demo, "C4"), s, cfg, "R-1").passed
 
 
-def test_r1_unoffered_slot_fails(demo, cfg):
-    r = run(cand(demo, "C5"), demo["scenario"], cfg, "R-1")  # 20:32 only opens via ATC_EARLIER_SLOT
+def test_r1_occupied_slot_fails_and_names_the_concession(demo, cfg):
+    r = run(cand(demo, "C1"), demo["scenario"], cfg, "R-1")
+    assert not r.passed and "DL1187" in r.explanation and "ATC_EARLIER_SLOT" in r.explanation
+
+
+def test_r1_unoffered_time_fails(demo, cfg):
+    r = run(cand(demo, "C4", landing="20:34", extra_holding_min=12, gate_arrival="20:44", gate_release="21:19"),
+            demo["scenario"], cfg, "R-1")
     assert not r.passed and "not an offered" in r.explanation
 
 
 # ---------------------------------------------------------------- T-1 taxiways
 
 def test_t1_open_route_passes(demo, cfg):
-    assert run(cand(demo, "C1"), demo["scenario"], cfg, "T-1").passed
+    assert run(cand(demo, "C4"), demo["scenario"], cfg, "T-1").passed
 
 
 def test_t1_closed_segment_fails(demo, cfg):
-    r = run(cand(demo, "C8"), demo["scenario"], cfg, "T-1")  # C5 gate route uses closed taxiway L
-    assert not r.passed and r.inputs["blocked_segments"] == ["L"]
+    r = run(cand(demo, "C6"), demo["scenario"], cfg, "T-1")   # B9 route D,E; D is closed
+    assert not r.passed and r.inputs["blocked_segments"] == ["D"]
 
 
-def test_t1_unknown_gate_route_fails(demo, cfg):
-    assert not run(cand(demo, "C1", gate="Z9"), demo["scenario"], cfg, "T-1").passed
+def test_t1_unknown_gate_fails(demo, cfg):
+    assert not run(cand(demo, "C4", gate="Z9"), demo["scenario"], cfg, "T-1").passed
 
 
 # ---------------------------------------------------------------- G-1 gate compatibility
 
-def test_g1_compatible_passes(demo, cfg):
-    assert run(cand(demo, "C1"), demo["scenario"], cfg, "G-1").passed
+def test_g1_compatible_passes_including_larger_gate(demo, cfg):
+    assert run(cand(demo, "C4"), demo["scenario"], cfg, "G-1").passed
+    s = with_state(demo["scenario"], lambda sim: gate(sim, "B4").__setitem__("max_class", "widebody"))
+    assert run(cand(demo, "C4"), s, cfg, "G-1").passed
 
 
-def test_g1_incompatible_fails(demo, cfg):
-    r = run(cand(demo, "C8"), demo["scenario"], cfg, "G-1")
-    assert not r.passed and r.inputs["gate_classes"] == ["regional"]
+def test_g1_too_small_gate_fails(demo, cfg):
+    s = with_state(demo["scenario"], lambda sim: gate(sim, "B4").__setitem__("max_class", "regional"))
+    r = run(cand(demo, "C4"), s, cfg, "G-1")
+    assert not r.passed and r.inputs["gate_max_class"] == "regional"
+
+
+def test_g1_unknown_class_fails(demo, cfg):
+    s = with_state(demo["scenario"], lambda sim: sim["ground"].__setitem__("aircraft_class", "A380"))
+    assert not run(cand(demo, "C4"), s, cfg, "G-1").passed
 
 
 # ---------------------------------------------------------------- G-2 gate occupancy
 
-def _end(gate, booking, end):
-    def m(sim):
-        for b in sim["ground"]["gates"][gate]["bookings"]:
-            if b["id"] == booking:
-                b["end"] = end
-    return m
-
-
 def test_g2_exact_adjacency_passes(demo, cfg):
-    # C4 arrives 21:13; booking end 21:03 + 10 buffer = 21:13 -> half-open, passes
-    s = with_state(demo["scenario"], _end("B4", "BK-B4-1", "21:03"))
+    # C4 reaches B4 at 20:43; DL1622 leaving 20:33 + 10 min buffer = 20:43 -> half-open, passes
+    s = with_state(demo["scenario"], lambda sim: gate(sim, "B4")["occupancy"][0].__setitem__("end", "2015-01-06T20:33"))
     r = run(cand(demo, "C4"), s, cfg, "G-2")
     assert r.passed and r.inputs["conflicts"] == []
 
 
 def test_g2_one_minute_overlap_fails(demo, cfg):
-    s = with_state(demo["scenario"], _end("B4", "BK-B4-1", "21:04"))
+    s = with_state(demo["scenario"], lambda sim: gate(sim, "B4")["occupancy"][0].__setitem__("end", "2015-01-06T20:34"))
     r = run(cand(demo, "C4"), s, cfg, "G-2")
-    assert not r.passed and r.inputs["conflicts"][0]["id"] == "BK-B4-1"
+    assert not r.passed and r.inputs["conflicts"][0]["occupant"] == "DL1622"
 
 
-def test_g2_own_booking_excluded_only_by_id(demo, cfg):
-    # Remove the other booking: only the flight's own replaced booking remains and is excluded by id.
-    s = with_state(demo["scenario"], lambda sim: sim["ground"]["gates"]["B4"].__setitem__(
-        "bookings", [b for b in sim["ground"]["gates"]["B4"]["bookings"] if b["id"] == "BK-B4-OWN"]))
-    assert run(cand(demo, "C1"), s, cfg, "G-2").passed
-    s2 = with_state(s, lambda sim: sim["ground"].pop("own_booking_id"))
-    assert not run(cand(demo, "C1"), s2, cfg, "G-2").passed
+def test_g2_empty_gate_passes_and_planned_gate_fails(demo, cfg):
+    assert run(cand(demo, "C5"), demo["scenario"], cfg, "G-2").passed
+    assert not run(cand(demo, "C4"), demo["scenario"], cfg, "G-2").passed
 
 
 # ---------------------------------------------------------------- G-3 turnaround and coupling
 
 def test_g3_equality_passes(demo, cfg):
-    r = run(cand(demo, "C1"), demo["scenario"], cfg, "G-3")  # 45 min service, 45 min minimum
-    assert r.passed and r.inputs["service_min"] == 45
+    r = run(cand(demo, "C4"), demo["scenario"], cfg, "G-3")   # 35 min service, 35 min minimum
+    assert r.passed and r.inputs["service_min"] == 35
 
 
 def test_g3_one_minute_short_fails(demo, cfg):
-    r = run(cand(demo, "C1", gate_release="21:32"), demo["scenario"], cfg, "G-3")
+    r = run(cand(demo, "C4", gate_release="21:17"), demo["scenario"], cfg, "G-3")
     assert not r.passed and "turnaround" in r.explanation
 
 
 def test_g3_inconsistent_taxi_fails(demo, cfg):
-    assert not run(cand(demo, "C1", gate_arrival="20:50", gate_release="21:35"), demo["scenario"], cfg, "G-3").passed
+    assert not run(cand(demo, "C4", gate_arrival="20:44", gate_release="21:19"), demo["scenario"], cfg, "G-3").passed
+
+
+def test_g3_holding_not_matching_landing_fails(demo, cfg):
+    r = run(cand(demo, "C4", extra_holding_min=10), demo["scenario"], cfg, "G-3")
+    assert not r.passed and "extra_holding_min" in r.explanation
+
+
+def test_g3_landing_before_base_eta_fails(demo, cfg):
+    r = run(cand(demo, "C4", landing="20:21", extra_holding_min=0, gate_arrival="20:31", gate_release="21:06"),
+            demo["scenario"], cfg, "G-3")
+    assert not r.passed and "before the base ETA" in r.explanation
 
 
 def test_g3_release_before_arrival_fails(demo, cfg):
-    assert not run(cand(demo, "C1", gate_release="20:30"), demo["scenario"], cfg, "G-3").passed
-
-
-def test_g3_landing_before_issue_fails(demo, cfg):
-    s = with_state(demo["scenario"], lambda sim: sim["atc"]["slots"].append("19:50"))
-    r = run(cand(demo, "C1", landing="19:50", gate_arrival="19:58", gate_release="20:43"), s, cfg, "G-3")
-    assert not r.passed and "before the issue time" in r.explanation
+    assert not run(cand(demo, "C4", gate_release="20:30"), demo["scenario"], cfg, "G-3").passed
 
 
 # ---------------------------------------------------------------- C-1 crew
 
-def _crew(cid, **changes):
-    def m(sim):
-        for c in sim["ground"]["crews"]:
-            if c["id"] == cid:
-                c.update(changes)
-    return m
-
-
-def test_c1_shift_ends_at_release_passes(demo, cfg):
-    s = with_state(demo["scenario"], _crew("CR1", shift_end="21:45"))
-    r = run(cand(demo, "C3"), s, cfg, "C-1")  # service 21:00-21:45
-    assert r.passed and r.inputs["eligible_crews"] == ["CR1"]
+def test_c1_on_shift_passes_and_shift_end_equality_passes(demo, cfg):
+    assert run(cand(demo, "C4"), demo["scenario"], cfg, "C-1").inputs["eligible_crews"] == ["CRW-B4"]
+    s = with_state(demo["scenario"], lambda sim: crew(sim, "CRW-B4").__setitem__("shift_end", "2015-01-06T20:43"))
+    assert run(cand(demo, "C4"), s, cfg, "C-1").passed
 
 
 def test_c1_shift_one_minute_short_fails(demo, cfg):
-    s = with_state(demo["scenario"], _crew("CR1", shift_end="21:44"))
-    assert not run(cand(demo, "C3"), s, cfg, "C-1").passed
+    s = with_state(demo["scenario"], lambda sim: crew(sim, "CRW-B4").__setitem__("shift_end", "2015-01-06T20:42"))
+    assert not run(cand(demo, "C4"), s, cfg, "C-1").passed
 
 
-def test_c1_overlapping_assignment_fails_and_adjacent_passes(demo, cfg):
-    busy = with_state(demo["scenario"], _crew("CR1", assignments=[{"id": "J1", "gate": "B4", "start": "21:30", "end": "22:00"}]))
-    assert not run(cand(demo, "C3"), busy, cfg, "C-1").passed
-    adjacent = with_state(demo["scenario"], _crew("CR1", assignments=[{"id": "J1", "gate": "B4", "start": "21:45", "end": "22:00"}]))
-    assert run(cand(demo, "C3"), adjacent, cfg, "C-1").passed
-
-
-def test_c1_no_crew_for_gate_fails(demo, cfg):
-    r = run(cand(demo, "C2"), demo["scenario"], cfg, "C-1")
-    assert not r.passed and r.inputs["eligible_crews"] == []
+def test_c1_no_crew_for_gate_fails_then_passes_after_reassignment(demo, cfg):
+    r = run(cand(demo, "C5"), demo["scenario"], cfg, "C-1")
+    assert not r.passed and r.inputs["eligible_crews"] == [] and "GROUND_REASSIGN_CREW" in r.explanation
+    s2 = S.apply_concessions(demo["scenario"], [{"agent": "ground", "id": "GROUND_REASSIGN_CREW", "target": "B7"}])
+    r2 = run(cand(demo, "C5"), s2, cfg, "C-1")
+    assert r2.passed and "reassigned from B9" in r2.explanation
 
 
 # ---------------------------------------------------------------- shape, invalid candidates, concessions
 
 def test_check_returns_eight_agreed_results(demo, cfg):
-    rs = checker.check(cand(demo, "C1"), demo["scenario"], cfg)
+    rs = checker.check(cand(demo, "C4"), demo["scenario"], cfg)
     assert [r.rule_id for r in rs] == checker.RULES
     assert all(isinstance(r, CheckResult) and r.basis and isinstance(r.inputs, dict) for r in rs)
 
 
 def test_negative_holding_fails_every_time_rule(demo, cfg):
-    rs = checker.check(cand(demo, "C1", extra_holding_min=-1), demo["scenario"], cfg)
+    rs = checker.check(cand(demo, "C4", extra_holding_min=-1), demo["scenario"], cfg)
     assert not checker.feasible(rs)
     assert {"F-1", "W-1", "R-1", "G-2", "G-3", "C-1"} <= set(checker.failed_rules(rs))
 
 
 def test_unparsable_time_fails_not_raises(demo, cfg):
-    rs = checker.check(cand(demo, "C1", landing="8pm"), demo["scenario"], cfg)
+    rs = checker.check(cand(demo, "C4", landing="8pm"), demo["scenario"], cfg)
     assert not checker.feasible(rs) and "not HH:MM" in rule(rs, "R-1").inputs["error"]
 
 
 def test_missing_agent_state_fails_everything(demo, cfg):
     s = demo["scenario"].model_copy(update={"simulated": {"atc": demo["scenario"].simulated["atc"]}})
-    rs = checker.check(cand(demo, "C3"), s, cfg)
+    rs = checker.check(cand(demo, "C4"), s, cfg)
     assert not checker.feasible(rs) and not rule(rs, "F-1").passed and not rule(rs, "G-1").passed
 
 
 def test_duplicate_candidate_ids_rejected(demo, cfg):
     with pytest.raises(ValueError):
-        checker.check_all([cand(demo, "C1"), cand(demo, "C2", id="C1")], demo["scenario"], cfg)
+        checker.check_all([cand(demo, "C4"), cand(demo, "C5", id="C4")], demo["scenario"], cfg)
 
 
-def test_overnight_rollover(demo, cfg):
+def test_hhmm_overnight_rollover_and_iso(demo):
     issue = checker.issue_time(demo["scenario"])
-    t = checker.parse_time("00:30", issue)
-    assert t.day == 2 and t.hour == 0
+    assert checker.parse_time("00:30", issue).day == issue.day + 1
+    assert checker.parse_time("2015-01-07T00:30", issue).day == issue.day + 1
 
 
-def test_apply_concessions_new_version_source_unchanged(demo, cfg):
+def test_recheck_on_concession_adjusted_state_source_unchanged(demo, cfg):
     before = checker.check_all(demo["candidates"], demo["scenario"], cfg)
-    adj = checker.apply_concessions(demo["scenario"], demo["concessions"], state_version=1)
-    after = checker.check_all(demo["candidates"], adj.scenario, cfg)
-    assert adj.state_version == 2 and [a["id"] for a in adj.applied] == [c["id"] for c in demo["concessions"]]
-    assert demo["scenario"].simulated["atc"]["slots"] == ["20:40", "20:52", "21:05"]
-    assert demo["scenario"].simulated["ground"]["crews"][1]["gates"] == ["B9"]
-    assert not checker.feasible(before["C5"]) and checker.feasible(after["C5"])
-    assert not checker.feasible(before["C2"]) and checker.feasible(after["C2"])
-    assert adj.scenario.simulated["pilot"]["max_extra_holding_min"] == 12  # min(12, fuel-safe 12)
-
-
-def test_crew_reassignment_keeps_existing_jobs(demo, cfg):
-    # Give CR2 a B9 job overlapping C2's service; after reassignment C-1 must still fail for C2.
-    s = with_state(demo["scenario"], _crew("CR2", assignments=[{"id": "J-B9-2", "gate": "B9", "start": "20:40", "end": "21:10"}]))
-    adj = checker.apply_concessions(s, [{"id": "GROUND_REASSIGN_CREW", "target": "B7"}])
-    r = run(cand(demo, "C2"), adj.scenario, cfg, "C-1")
-    assert not r.passed and "J-B9-2" in r.explanation
-
-
-def test_undeclared_concession_target_rejected(demo, cfg):
-    adj = checker.apply_concessions(demo["scenario"], [{"id": "ATC_EARLIER_SLOT", "target": "20:20"},
-                                                       {"id": "GROUND_REASSIGN_CREW", "target": "C9"},
-                                                       {"id": "PILOT_EXTRA_HOLDING", "target": "lots"}])
-    assert adj.applied == [] and len(adj.rejected) == 3 and adj.state_version == 1
-    assert adj.scenario is demo["scenario"]
-
-
-def test_pilot_concession_capped_at_fuel_safe_limit(demo, cfg):
-    adj = checker.apply_concessions(demo["scenario"], [{"id": "PILOT_EXTRA_HOLDING", "target": "30 min"}])
-    assert adj.scenario.simulated["pilot"]["max_extra_holding_min"] == 12
+    assert not any(checker.feasible(rs) for rs in before.values())
+    after_s = S.apply_concessions(demo["scenario"], demo["concessions"])
+    after = checker.check_all(demo["candidates"], after_s, cfg)
+    assert {cid for cid, rs in after.items() if checker.feasible(rs)} == {"C2", "C5"}
+    assert slot(demo["scenario"].simulated, "SL-2024")["occupant"] == "DL1187"      # source untouched
+    assert crew(demo["scenario"].simulated, "CRW-B9")["assigned_gate"] == "B9"

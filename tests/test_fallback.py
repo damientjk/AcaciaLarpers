@@ -1,8 +1,8 @@
 import pytest
 
 import checker
-import costs
 import fallback
+import scenario as S
 from checker import MissingInput
 from models import CandidateCost
 from tests.conftest import cand
@@ -26,7 +26,7 @@ def _globals(demo, cfg):
 def test_lowest_cost_feasible(demo):
     cands = demo["candidates"]
     checks = _checks(cands, {"C1", "C3", "C7"})
-    cost_map = {c.id: _cost(i * 10.0) for i, c in enumerate(cands, 1)}  # C1 cheapest but C3 < C7
+    cost_map = {c.id: _cost(i * 10.0) for i, c in enumerate(cands, 1)}
     assert fallback.solve(cands, checks, cost_map) == "C1"
     cost_map["C1"] = _cost(999)
     assert fallback.solve(cands, checks, cost_map) == "C3"
@@ -65,40 +65,44 @@ def test_missing_checks_or_costs_raise(demo):
         fallback.solve(cands, checks, {k: v for k, v in cost_map.items() if k != "C1"})
 
 
-def test_run_pipeline_on_demo_fixture(demo, cfg):
-    r = fallback.run_pipeline(demo["candidates"], demo["scenario"], cfg)
-    assert r["decision"]["outcome"] == "fallback" and r["decision"]["candidate"] == "C3"
-    assert r["decision"]["feasible"] == ["C3"]
-    adj = checker.apply_concessions(demo["scenario"], demo["concessions"])
-    r2 = fallback.run_pipeline(demo["candidates"], adj.scenario, cfg)
-    assert r2["decision"]["candidate"] == "C5" and set(r2["decision"]["feasible"]) == {"C2", "C3", "C5", "C7"}
-
-
-def test_run_pipeline_escalates_on_impossible_fixture(impossible, cfg):
-    r = fallback.run_pipeline(impossible["candidates"], impossible["scenario"], cfg)
-    assert r["decision"]["outcome"] == "escalation"
-    assert {cid: checker.failed_rules(rs) for cid, rs in r["checks"].items()} == \
-        {"C1": ["G-2"], "C2": ["F-1", "G-1"], "C3": ["F-1", "G-2"]}
-
-
-def test_heuristic_uses_recorded_delay_once(demo, cfg):
-    h = fallback.heuristic(demo["scenario"], cfg)
-    assert h["candidate"]["landing"] == "22:29" == demo["scenario"].historical.actual_arrival
-    assert h["candidate"]["extra_holding_min"] == 109          # 22:29 - baseline 20:40, not 119 + anything
-    assert h["feasible"] is False and "F-1" in h["failed"]
-    assert h["cost"]["delay_min"] == 109 and "Simulated" in h["assumption"]
-
-
-def test_heuristic_reports_missing_input(demo, cfg):
-    s = demo["scenario"].model_copy(update={"simulated": {**demo["scenario"].simulated,
-                                                          "ground": {k: v for k, v in demo["scenario"].simulated["ground"].items() if k != "planned_gate"}}})
-    h = fallback.heuristic(s, cfg)
-    assert h["feasible"] is False and h["failed"] == ["INPUT"] and "planned_gate" in h["error"]
-
-
 def test_feasible_candidate_without_cost_cannot_be_ranked(demo):
     cands = demo["candidates"][:2]
     checks = _checks(cands, {"C1"})
     with pytest.raises(MissingInput):
         fallback.solve(cands, checks, {"C1": None, "C2": _cost(1.0)})
-    assert fallback.solve(cands, checks, {"C1": _cost(1.0), "C2": None}) == "C1"  # infeasible C2 may lack a cost
+    assert fallback.solve(cands, checks, {"C1": _cost(1.0), "C2": None}) == "C1"
+
+
+def test_run_pipeline_on_demo_base_state_escalates_then_concessions_unlock(demo, cfg):
+    r = fallback.run_pipeline(demo["candidates"], demo["scenario"], cfg)
+    assert r["decision"]["outcome"] == "escalation" and r["decision"]["feasible"] == []
+    r2 = fallback.run_pipeline(demo["candidates"], S.apply_concessions(demo["scenario"], demo["concessions"]), cfg)
+    assert r2["decision"]["outcome"] == "fallback" and r2["decision"]["candidate"] == "C2"
+    assert r2["decision"]["feasible"] == ["C2", "C5"]
+    assert r2["costs"]["C2"].total_usd < r2["costs"]["C5"].total_usd
+
+
+def test_run_pipeline_escalates_on_impossible_fixture(impossible, cfg):
+    r = fallback.run_pipeline(impossible["candidates"], impossible["scenario"], cfg)
+    assert r["decision"]["outcome"] == "escalation"
+    failed = {cid: checker.failed_rules(rs) for cid, rs in r["checks"].items()}
+    assert all(failed.values())
+    assert "G-2" in failed["C1"] and "G-1" in failed["C2"] and "T-1" in failed["C3"] and "F-1" in failed["C5"]
+    r2 = fallback.run_pipeline(impossible["candidates"], S.apply_concessions(impossible["scenario"], impossible["concessions"]), cfg)
+    assert r2["decision"]["outcome"] == "escalation"
+
+
+def test_heuristic_uses_recorded_delay_once(demo, cfg):
+    h = fallback.heuristic(demo["scenario"], cfg)
+    assert h["candidate"]["landing"] == "20:28" == demo["scenario"].historical.actual_arrival
+    assert h["candidate"]["extra_holding_min"] == 6          # 20:28 - base ETA 20:22, not 106 + anything
+    assert h["candidate"]["gate"] == "B4"
+    assert h["feasible"] is False and {"R-1", "G-2"} <= set(h["failed"])
+    assert h["cost"]["delay_min"] == 6 and "Simulated" in h["assumption"]
+
+
+def test_heuristic_reports_missing_input(demo, cfg):
+    sim = {**demo["scenario"].simulated,
+           "ground": {k: v for k, v in demo["scenario"].simulated["ground"].items() if k != "planned_gate"}}
+    h = fallback.heuristic(demo["scenario"].model_copy(update={"simulated": sim}), cfg)
+    assert h["feasible"] is False and h["failed"] == ["INPUT"] and "planned_gate" in h["error"]

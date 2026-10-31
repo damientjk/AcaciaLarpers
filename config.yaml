@@ -32,6 +32,12 @@ simulation:
   turnaround_min: 35           # narrowbody
   turnaround_min_widebody: 75
   gates_per_scenario: [2, 3]
+  # --- checker.py W-1 (Yizhuo). SIMULATED separation profile in seconds, keyed "leader-follower" with the
+  # wake categories scenario.py uses (heavy, large, small). Informed by FAA JO 7110.65 category concepts;
+  # these are not quoted regulatory minima.
+  wake_separation_s: {heavy-heavy: 240, heavy-large: 180, heavy-small: 240,
+                      large-heavy: 120, large-large: 120, large-small: 180,
+                      small-heavy: 120, small-large: 120, small-small: 120}
   # --- scenario.py (Ashvin). Every value here is SIMULATED / an assumption.
   widebody_min_distance_mi: 2000   # inferred aircraft class: distance >= this -> widebody (heavy wake)
   runway_capacity_per_hour: {normal: 30, weather: 20}   # 2-min / 3-min arrival slots

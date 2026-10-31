@@ -1,30 +1,29 @@
-"""Hard checks F-1, W-1, R-1, T-1, G-1, G-2, G-3, C-1 and concession application. (Yizhuo)
+"""Hard checks F-1, W-1, R-1, T-1, G-1, G-2, G-3, C-1. (Yizhuo)
 
 Every check is a simplified SIMULATION rule. None of them establishes FAA compliance.
 
-Inputs come from the agreed ``models.Scenario`` / ``models.Candidate``. The keys the
-checker reads inside ``scenario.simulated[agent]`` are documented in
-docs/CHECKER_INPUTS.md. A missing or malformed required input FAILS the rule that
-needs it; nothing passes silently.
+Inputs are the agreed ``models.Scenario`` / ``models.Candidate``; the simulated-state keys read here
+are the ones ``scenario.py`` (Ashvin) emits, listed in docs/CHECKER_INPUTS.md. A missing or malformed
+required input FAILS the rule that needs it; nothing passes silently. The checker never raises for
+bad simulated input, it returns a failed CheckResult whose explanation starts with "Cannot evaluate".
 
-Time handling: every clock value is either "HH:MM" on the scenario's issue date (rolled
-to the next day when it is more than 12 h before the issue time) or a full ISO
-datetime. One time zone is assumed throughout (the scenario's local zone).
+Time handling: every clock value is an ISO datetime ("2015-01-06T20:22") or "HH:MM" on the scenario's
+issue date (rolled to the next day when more than 12 h before the issue time). Naive datetimes in the
+destination's local time, as scenario.py produces them.
 
 Public API
 ----------
 check(candidate, scenario, config=None) -> list[CheckResult]      one candidate, all 8 rules
 check_all(candidates, scenario, config=None) -> dict[id, list]    every candidate
-feasible(results) -> bool                                         all rules passed
-apply_concessions(scenario, concessions, state_version=1) -> AdjustedState
+feasible(results) -> bool / failed_rules(results) -> list[str]
+eligible_crews(candidate, scenario) -> (crews, reasons)           shared with costs.py (overtime)
 load_config(path=None) -> dict                                    config.yaml as a dict
 """
 from __future__ import annotations
 
-import copy
 import math
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Callable
@@ -36,23 +35,24 @@ from models import Candidate, CheckResult, Scenario
 RULES = ["F-1", "W-1", "R-1", "T-1", "G-1", "G-2", "G-3", "C-1"]
 
 BASIS = {
-    "F-1": "Simplified simulation: fuel at baseline ETA minus holding burn must meet the scenario "
-           "reserve (kg). The reserve figure is a scenario parameter inspired by 14 CFR 121.639; "
-           "this is not a dispatch-fuel or FAA compliance check.",
-    "W-1": "Simulated wake-separation profile (seconds) informed by FAA JO 7110.65 category "
-           "concepts. No universal real-airport value is claimed.",
-    "R-1": "Simulated runway resource model: landing must be an offered slot and the arrivals in "
-           "its capacity interval (focal flight counted once) must not exceed the declared capacity.",
+    "F-1": "Simplified simulation: fuel on board at issue time minus cruise burn to the base ETA minus holding "
+           "burn must meet the scenario reserve (kg). The reserve is a scenario parameter inspired by "
+           "14 CFR 121.639; this is not a dispatch-fuel or FAA compliance check.",
+    "W-1": "Simulated wake-separation profile (seconds, config.simulation.wake_separation_s) informed by "
+           "FAA JO 7110.65 category concepts. No universal real-airport value is claimed.",
+    "R-1": "Simulated runway resource model: landing must be an offered, unoccupied arrival slot and the "
+           "arrivals in that clock hour (this flight counted once) must not exceed the declared capacity.",
     "T-1": "Simulated taxiway topology: the gate's taxi route must avoid every closed taxiway.",
-    "G-1": "Simulated gate compatibility: the gate's declared classes must include the aircraft class.",
-    "G-2": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap "
-           "another booking's [start, end + buffer). Half-open intervals; exact adjacency passes.",
-    "G-3": "Explicit simulation assumption: service time at the gate must be at least the turnaround "
-           "minimum and the candidate's coupled times must be consistent.",
-    "C-1": "Simulated crew roster: one crew must cover the gate for the whole service interval with no "
-           "overlapping assignment. A reassignment never removes crew from another active job.",
+    "G-1": "Simulated gate compatibility: the gate's maximum aircraft class must be at least the aircraft's class.",
+    "G-2": "Simulated gate schedule: occupancy [gate arrival, gate release + buffer) must not overlap another "
+           "occupant's [start, end + buffer). Half-open intervals; exact adjacency passes.",
+    "G-3": "Explicit simulation assumption: service time at the gate must be at least the turnaround minimum "
+           "and the candidate's coupled times (holding, landing, taxi-in, gate arrival, release) must agree.",
+    "C-1": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. "
+           "Work past the shift end is costed as overtime, not forbidden.",
 }
 
+CLASS_ORDER = ["regional", "narrowbody", "widebody"]   # gate max_class must be >= aircraft class
 _HHMM = re.compile(r"^(\d{2}):(\d{2})$")
 
 
@@ -81,7 +81,7 @@ def issue_time(scenario: Scenario) -> datetime:
 
 
 def parse_time(value: Any, issue: datetime, label: str = "time") -> datetime:
-    """'HH:MM' on the issue date (next day if >12 h before the issue time) or an ISO datetime."""
+    """ISO datetime, or 'HH:MM' on the issue date (next day if more than 12 h before the issue time)."""
     if not isinstance(value, str):
         raise MissingInput(f"{label} must be a string, got {type(value).__name__}")
     if "T" in value:
@@ -106,8 +106,8 @@ def minutes(a: datetime, b: datetime) -> float:
     return (b - a).total_seconds() / 60.0
 
 
-def hhmm(t: datetime) -> str:
-    return t.strftime("%H:%M")
+def hhmm(t: datetime | None) -> str | None:
+    return None if t is None else t.strftime("%H:%M")
 
 
 def _num(value: Any, label: str, *, minimum: float | None = None, integer: bool = False) -> float:
@@ -123,7 +123,7 @@ def _num(value: Any, label: str, *, minimum: float | None = None, integer: bool 
 
 
 def _get(state: dict, key: str, label: str, types: tuple = ()) -> Any:
-    if key not in state:
+    if not isinstance(state, dict) or key not in state:
         raise MissingInput(f"{label}.{key} is required")
     v = state[key]
     if types and not isinstance(v, types):
@@ -136,6 +136,30 @@ def _state(scenario: Scenario, agent: str) -> dict:
     if not isinstance(s, dict):
         raise MissingInput(f"scenario.simulated.{agent} is required")
     return s
+
+
+def base_eta(scenario: Scenario, issue: datetime | None = None) -> datetime:
+    issue = issue or issue_time(scenario)
+    return parse_time(_get(_state(scenario, "atc"), "base_eta", "atc"), issue, "atc.base_eta")
+
+
+def gate_of(scenario: Scenario, gate_id: str) -> dict:
+    gates = _get(_state(scenario, "ground"), "gates", "ground", (list,))
+    for g in gates:
+        if isinstance(g, dict) and g.get("gate_id") == gate_id:
+            return g
+    raise MissingInput(f"ground.gates has no gate {gate_id!r}")
+
+
+def _sim_params(scenario: Scenario, config: dict) -> tuple[int, int]:
+    """(gate_buffer_min, turnaround_min): ground-state value, else config.simulation."""
+    ground = _state(scenario, "ground")
+    sim = config.get("simulation") or {}
+    buf = ground.get("gate_buffer_min", sim.get("gate_buffer_min"))
+    turn = ground.get("turnaround_min", sim.get("turnaround_min"))
+    if buf is None or turn is None:
+        raise MissingInput("gate_buffer_min and turnaround_min must be set in ground state or config.simulation")
+    return int(_num(buf, "gate_buffer_min", minimum=0)), int(_num(turn, "turnaround_min", minimum=0))
 
 
 # --------------------------------------------------------------------------- candidate times
@@ -159,99 +183,100 @@ def candidate_times(candidate: Candidate, scenario: Scenario) -> _Times:
     )
 
 
-def _sim_params(scenario: Scenario, config: dict) -> tuple[int, int]:
-    """(gate_buffer_min, turnaround_min): ground-state override, else config.simulation."""
-    ground = _state(scenario, "ground")
-    sim = config.get("simulation") or {}
-    buf = ground.get("gate_buffer_min", sim.get("gate_buffer_min"))
-    turn = ground.get("turnaround_min", sim.get("turnaround_min"))
-    if buf is None or turn is None:
-        raise MissingInput("gate_buffer_min and turnaround_min must be set in config.simulation or ground state")
-    return int(_num(buf, "gate_buffer_min", minimum=0)), int(_num(turn, "turnaround_min", minimum=0))
-
-
 # --------------------------------------------------------------------------- the eight rules
+
+def fuel_at_base_eta_kg(scenario: Scenario) -> tuple[float, dict]:
+    """Fuel on board at issue time minus cruise burn until the base ETA (simulated)."""
+    issue = issue_time(scenario)
+    pilot = _state(scenario, "pilot")
+    fob = _num(_get(pilot, "fuel_on_board_kg", "pilot"), "pilot.fuel_on_board_kg", minimum=0)
+    cruise = _num(_get(pilot, "cruise_burn_kg_per_min", "pilot"), "pilot.cruise_burn_kg_per_min", minimum=0)
+    to_eta = minutes(issue, base_eta(scenario, issue))
+    if to_eta < 0:
+        raise MissingInput("atc.base_eta is before the issue time")
+    return fob - cruise * to_eta, {"fuel_on_board_kg": fob, "cruise_burn_kg_per_min": cruise,
+                                   "minutes_issue_to_base_eta": round(to_eta, 1)}
+
 
 def _f1(c: Candidate, s: Scenario, cfg: dict) -> tuple[bool, dict, str]:
     pilot = _state(s, "pilot")
-    fuel = _num(_get(pilot, "fuel_at_baseline_eta_kg", "pilot"), "pilot.fuel_at_baseline_eta_kg", minimum=0)
+    at_eta, inputs = fuel_at_base_eta_kg(s)
     burn = _num(_get(pilot, "holding_burn_kg_per_min", "pilot"), "pilot.holding_burn_kg_per_min", minimum=0)
     reserve = _num(_get(pilot, "reserve_kg", "pilot"), "pilot.reserve_kg", minimum=0)
     hold = _num(c.extra_holding_min, "candidate.extra_holding_min", minimum=0, integer=True)
-    at_landing = fuel - hold * burn
-    inputs = {"fuel_at_baseline_eta_kg": fuel, "holding_burn_kg_per_min": burn,
-              "extra_holding_min": hold, "fuel_at_landing_kg": round(at_landing, 1), "reserve_kg": reserve}
+    at_landing = at_eta - hold * burn
+    inputs.update({"fuel_at_base_eta_kg": round(at_eta, 1), "holding_burn_kg_per_min": burn,
+                   "extra_holding_min": hold, "fuel_at_landing_kg": round(at_landing, 1), "reserve_kg": reserve})
     ok = at_landing >= reserve
-    return ok, inputs, (f"{hold} min extra holding burns {hold * burn:.0f} kg; {at_landing:.0f} kg at landing "
+    return ok, inputs, (f"{hold:.0f} min extra holding burns {hold * burn:.0f} kg; {at_landing:.0f} kg at landing "
                         f"{'meets' if ok else 'is below'} the {reserve:.0f} kg scenario reserve.")
+
+
+def _slots(atc: dict, issue: datetime) -> list[tuple[dict, datetime]]:
+    out = []
+    for sl in _get(atc, "slots", "atc", (list,)):
+        if not isinstance(sl, dict):
+            raise MissingInput("atc.slots entries must be objects")
+        out.append((sl, parse_time(_get(sl, "time", "atc.slots[]"), issue, "atc.slots[].time")))
+    return out
 
 
 def _w1(c: Candidate, s: Scenario, cfg: dict) -> tuple[bool, dict, str]:
     t = candidate_times(c, s)
     atc = _state(s, "atc")
-    focal = _get(atc, "wake_category", "atc", (str,))
-    table = _get(atc, "wake_separation_s", "atc", (dict,))
-    others = _get(atc, "other_arrivals", "atc", (list,))
+    focal = _get(atc, "own_wake", "atc", (str,))
+    table = (cfg.get("simulation") or {}).get("wake_separation_s")
+    if not isinstance(table, dict):
+        raise MissingInput("config.simulation.wake_separation_s is required")
     leader = None
-    for o in others:
-        if not isinstance(o, dict):
-            raise MissingInput("atc.other_arrivals entries must be objects")
-        ot = parse_time(_get(o, "time", "atc.other_arrivals[]"), t.issue, "atc.other_arrivals[].time")
-        if ot <= t.landing and (leader is None or ot > leader[1]):
-            leader = (o, ot)
+    for sl, st in _slots(atc, t.issue):
+        if sl.get("occupant") is not None and st < t.landing and (leader is None or st > leader[1]):
+            leader = (sl, st)
     if leader is None:
-        return True, {"landing": hhmm(t.landing), "preceding": None, "follower_category": focal}, \
-            "No preceding simulated arrival at or before this landing; no spacing requirement applies."
-    o, ot = leader
-    lead_cat = _get(o, "wake_category", "atc.other_arrivals[]", (str,))
-    pair = f"{lead_cat}-{focal}"
-    gap_s = (t.landing - ot).total_seconds()
-    inputs = {"landing": hhmm(t.landing), "preceding": o.get("callsign"), "preceding_time": hhmm(ot),
-              "pair": pair, "gap_s": gap_s, "required_s": table.get(pair)}
+        return True, {"landing": hhmm(t.landing), "preceding": None, "follower_wake": focal}, \
+            "No occupied simulated arrival slot before this landing; no spacing requirement applies."
+    sl, st = leader
+    lead = _get(sl, "occupant_wake", "atc.slots[]", (str,))
+    pair = f"{lead}-{focal}"
+    gap_s = (t.landing - st).total_seconds()
+    inputs = {"landing": hhmm(t.landing), "preceding": sl.get("occupant"), "preceding_slot": sl.get("slot_id"),
+              "preceding_time": hhmm(st), "pair": pair, "gap_s": gap_s, "required_s": table.get(pair)}
     if pair not in table:
-        return False, inputs, f"No simulated separation profile for category pair {pair}; cannot pass."
-    req = _num(table[pair], f"atc.wake_separation_s[{pair}]", minimum=0)
+        return False, inputs, f"No simulated separation profile for wake pair {pair}; cannot pass."
+    req = _num(table[pair], f"wake_separation_s[{pair}]", minimum=0)
     ok = gap_s >= req
-    return ok, inputs, (f"{gap_s:.0f} s behind {o.get('callsign')} ({lead_cat}); profile {pair} requires "
+    return ok, inputs, (f"{gap_s:.0f} s behind {sl.get('occupant')} ({lead}); profile {pair} requires "
                         f"{req:.0f} s: {'met' if ok else 'not met'}.")
 
 
 def _r1(c: Candidate, s: Scenario, cfg: dict) -> tuple[bool, dict, str]:
     t = candidate_times(c, s)
     atc = _state(s, "atc")
-    slots = [parse_time(x, t.issue, "atc.slots[]") for x in _get(atc, "slots", "atc", (list,))]
-    rw = _get(atc, "runway", "atc", (dict,))
-    cap = int(_num(_get(rw, "capacity_per_interval", "atc.runway"), "atc.runway.capacity_per_interval", minimum=0, integer=True))
-    interval = int(_num(_get(rw, "interval_min", "atc.runway"), "atc.runway.interval_min", minimum=1, integer=True))
-    others = _get(atc, "other_arrivals", "atc", (list,))
-
-    def bin_of(x: datetime) -> int:
-        return int((x - t.issue.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds() // 60) // interval
-
-    b = bin_of(t.landing)
-    in_bin = [o.get("callsign") for o in others
-              if bin_of(parse_time(_get(o, "time", "atc.other_arrivals[]"), t.issue)) == b]
-    start = t.issue.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(minutes=b * interval)
-    inputs = {"landing": hhmm(t.landing), "offered_slots": [hhmm(x) for x in slots],
-              "interval": f"{hhmm(start)}-{hhmm(start + timedelta(minutes=interval))}",
-              "other_arrivals_in_interval": in_bin, "focal_counted_once": 1,
-              "arrivals_in_interval": len(in_bin) + 1, "capacity_per_interval": cap, "runway": rw.get("id")}
-    if t.landing not in slots:
+    cap = int(_num(_get(atc, "runway_capacity_per_hour", "atc"), "atc.runway_capacity_per_hour", minimum=0, integer=True))
+    slots = _slots(atc, t.issue)
+    hour0 = t.landing.replace(minute=0, second=0, microsecond=0)
+    hour1 = hour0 + timedelta(hours=1)
+    in_hour = [sl.get("occupant") for sl, st in slots if sl.get("occupant") is not None and hour0 <= st < hour1]
+    mine = [sl for sl, st in slots if st == t.landing]
+    inputs = {"landing": hhmm(t.landing), "slot_id": mine[0].get("slot_id") if mine else None,
+              "occupant": mine[0].get("occupant") if mine else None,
+              "occupant_flexible": mine[0].get("occupant_flexible") if mine else None,
+              "interval": f"{hhmm(hour0)}-{hhmm(hour1)}", "other_arrivals_in_interval": len(in_hour),
+              "focal_counted_once": 1, "arrivals_in_interval": len(in_hour) + 1, "capacity_per_hour": cap,
+              "runway": atc.get("runway")}
+    if not mine:
         return False, inputs, f"{hhmm(t.landing)} is not an offered arrival slot."
-    ok = len(in_bin) + 1 <= cap
-    return ok, inputs, (f"{len(in_bin) + 1} arrivals in {inputs['interval']} against capacity {cap}: "
-                        f"{'within' if ok else 'exceeds'} the simulated runway capacity.")
+    if mine[0].get("occupant") is not None:
+        flex = " (flexible: ATC_EARLIER_SLOT can resequence it)" if mine[0].get("occupant_flexible") else ""
+        return False, inputs, f"Slot {mine[0].get('slot_id')} is occupied by {mine[0]['occupant']}{flex}."
+    ok = len(in_hour) + 1 <= cap
+    return ok, inputs, (f"Slot {mine[0].get('slot_id')} is free; {len(in_hour) + 1} arrivals in {inputs['interval']} "
+                        f"against capacity {cap}: {'within' if ok else 'exceeds'} the simulated runway capacity.")
 
 
 def _t1(c: Candidate, s: Scenario, cfg: dict) -> tuple[bool, dict, str]:
-    atc = _state(s, "atc")
-    closed = _get(atc, "closed_taxiways", "atc", (list,))
-    routes = _get(atc, "taxi_routes", "atc", (dict,))
-    if c.gate not in routes:
-        raise MissingInput(f"atc.taxi_routes has no route for gate {c.gate!r}")
-    route = routes[c.gate]
-    if not isinstance(route, list):
-        raise MissingInput(f"atc.taxi_routes[{c.gate!r}] must be a list of segments")
+    closed = _get(_state(s, "atc"), "closed_taxiways", "atc", (list,))
+    route = _get(gate_of(s, c.gate), "taxi_route", f"ground.gates[{c.gate}]", (list,))
     blocked = [seg for seg in route if seg in set(closed)]
     inputs = {"gate": c.gate, "route": route, "closed_taxiways": closed, "blocked_segments": blocked}
     return (not blocked), inputs, ("Route avoids every closed taxiway." if not blocked
@@ -259,71 +284,63 @@ def _t1(c: Candidate, s: Scenario, cfg: dict) -> tuple[bool, dict, str]:
 
 
 def _g1(c: Candidate, s: Scenario, cfg: dict) -> tuple[bool, dict, str]:
-    ground = _state(s, "ground")
-    cls = _get(ground, "aircraft_class", "ground", (str,))
-    gates = _get(ground, "gates", "ground", (dict,))
-    if c.gate not in gates:
-        raise MissingInput(f"ground.gates has no gate {c.gate!r}")
-    classes = _get(gates[c.gate], "classes", f"ground.gates[{c.gate}]", (list,))
-    ok = cls in classes
-    return ok, {"gate": c.gate, "aircraft_class": cls, "gate_classes": classes}, \
-        (f"Gate {c.gate} accepts class {cls}." if ok else f"Gate {c.gate} does not accept class {cls}.")
+    cls = _get(_state(s, "ground"), "aircraft_class", "ground", (str,))
+    max_cls = _get(gate_of(s, c.gate), "max_class", f"ground.gates[{c.gate}]", (str,))
+    inputs = {"gate": c.gate, "aircraft_class": cls, "gate_max_class": max_cls, "class_order": CLASS_ORDER}
+    if cls not in CLASS_ORDER or max_cls not in CLASS_ORDER:
+        raise MissingInput(f"unknown aircraft class {cls!r} or gate max_class {max_cls!r}; known: {CLASS_ORDER}")
+    ok = CLASS_ORDER.index(cls) <= CLASS_ORDER.index(max_cls)
+    return ok, inputs, (f"Gate {c.gate} (max {max_cls}) accepts a {cls}." if ok
+                        else f"Gate {c.gate} (max {max_cls}) cannot take a {cls}.")
 
 
 def _g2(c: Candidate, s: Scenario, cfg: dict) -> tuple[bool, dict, str]:
     t = candidate_times(c, s)
-    ground = _state(s, "ground")
-    gates = _get(ground, "gates", "ground", (dict,))
-    if c.gate not in gates:
-        raise MissingInput(f"ground.gates has no gate {c.gate!r}")
     buffer_min, _ = _sim_params(s, cfg)
-    own = ground.get("own_booking_id")
-    bookings = _get(gates[c.gate], "bookings", f"ground.gates[{c.gate}]", (list,))
+    occupancy = _get(gate_of(s, c.gate), "occupancy", f"ground.gates[{c.gate}]", (list,))
     if t.gate_release < t.gate_arrival:
         raise MissingInput("candidate.gate_release is before gate_arrival")
     a0, a1 = t.gate_arrival, t.gate_release + timedelta(minutes=buffer_min)
-    conflicts, excluded = [], []
-    for b in bookings:
-        if not isinstance(b, dict) or "id" not in b:
-            raise MissingInput(f"ground.gates[{c.gate}].bookings entries need an id, start and end")
-        if own is not None and b["id"] == own:
-            excluded.append(b["id"])
-            continue
-        b0 = parse_time(_get(b, "start", "booking"), t.issue, "booking.start")
-        b1 = parse_time(_get(b, "end", "booking"), t.issue, "booking.end") + timedelta(minutes=buffer_min)
+    conflicts = []
+    for b in occupancy:
+        b0 = parse_time(_get(b, "start", "occupancy"), t.issue, "occupancy.start")
+        b1 = parse_time(_get(b, "end", "occupancy"), t.issue, "occupancy.end") + timedelta(minutes=buffer_min)
         if b1 < b0:
-            raise MissingInput(f"booking {b['id']} ends before it starts")
+            raise MissingInput(f"occupancy by {b.get('occupant')} ends before it starts")
         if a0 < b1 and b0 < a1:
-            conflicts.append({"id": b["id"], "flight": b.get("flight"), "busy_until_incl_buffer": hhmm(b1)})
-    inputs = {"gate": c.gate, "occupancy": [hhmm(a0), hhmm(a1)], "buffer_min": buffer_min,
-              "conflicts": conflicts, "excluded_own_booking": excluded}
+            conflicts.append({"occupant": b.get("occupant"), "busy_until_incl_buffer": hhmm(b1)})
+    inputs = {"gate": c.gate, "occupancy": [hhmm(a0), hhmm(a1)], "buffer_min": buffer_min, "conflicts": conflicts}
     ok = not conflicts
     return ok, inputs, (f"Gate {c.gate} free for [{hhmm(a0)}, {hhmm(a1)}) including {buffer_min} min buffer."
-                        if ok else f"Gate {c.gate} overlaps {len(conflicts)} other booking(s): "
-                                   + ", ".join(f"{x['id']} until {x['busy_until_incl_buffer']}" for x in conflicts))
+                        if ok else f"Gate {c.gate} overlaps {len(conflicts)} other occupant(s): "
+                                   + ", ".join(f"{x['occupant']} until {x['busy_until_incl_buffer']}" for x in conflicts))
 
 
 def _g3(c: Candidate, s: Scenario, cfg: dict) -> tuple[bool, dict, str]:
     t = candidate_times(c, s)
     _, turnaround = _sim_params(s, cfg)
-    atc = _state(s, "atc")
-    taxi = atc.get("taxi_in_min")
+    taxi = _num(_get(gate_of(s, c.gate), "taxi_in_min", f"ground.gates[{c.gate}]"), "taxi_in_min", minimum=0)
+    eta = base_eta(s, t.issue)
     problems = []
     if t.landing < t.issue:
         problems.append(f"landing {hhmm(t.landing)} is before the issue time {hhmm(t.issue)}")
+    if t.landing < eta:
+        problems.append(f"landing {hhmm(t.landing)} is before the base ETA {hhmm(eta)}")
+    elif abs(minutes(eta, t.landing) - c.extra_holding_min) > 1e-9:
+        problems.append(f"extra_holding_min {c.extra_holding_min} does not equal landing - base ETA "
+                        f"({minutes(eta, t.landing):.0f} min)")
     if t.gate_arrival < t.landing:
         problems.append("gate_arrival is before landing")
-    elif taxi is not None:
-        taxi = _num(taxi, "atc.taxi_in_min", minimum=0)
-        if abs(minutes(t.landing, t.gate_arrival) - taxi) > 1e-9:
-            problems.append(f"gate_arrival - landing = {minutes(t.landing, t.gate_arrival):.0f} min, "
-                            f"but the simulated taxi-in time is {taxi:.0f} min")
+    elif abs(minutes(t.landing, t.gate_arrival) - taxi) > 1e-9:
+        problems.append(f"gate_arrival - landing = {minutes(t.landing, t.gate_arrival):.0f} min, "
+                        f"but gate {c.gate} taxi-in is {taxi:.0f} min")
     service = minutes(t.gate_arrival, t.gate_release)
     if service < 0:
         problems.append("gate_release is before gate_arrival")
     elif service < turnaround:
         problems.append(f"service {service:.0f} min is below the {turnaround} min turnaround minimum")
-    inputs = {"landing": hhmm(t.landing), "gate_arrival": hhmm(t.gate_arrival), "gate_release": hhmm(t.gate_release),
+    inputs = {"base_eta": hhmm(eta), "landing": hhmm(t.landing), "extra_holding_min": c.extra_holding_min,
+              "gate_arrival": hhmm(t.gate_arrival), "gate_release": hhmm(t.gate_release),
               "taxi_in_min": taxi, "service_min": service, "turnaround_min": turnaround}
     ok = not problems
     return ok, inputs, (f"Service {service:.0f} min meets the {turnaround} min turnaround; coupled times consistent."
@@ -331,36 +348,21 @@ def _g3(c: Candidate, s: Scenario, cfg: dict) -> tuple[bool, dict, str]:
 
 
 def eligible_crews(c: Candidate, s: Scenario) -> tuple[list[dict], list[str]]:
-    """Crews that can serve this candidate, plus per-crew reasons for the ones that cannot."""
+    """Crews assigned to the candidate's gate and on shift at gate arrival, plus reasons for the others."""
     t = candidate_times(c, s)
-    ground = _state(s, "ground")
-    crews = _get(ground, "crews", "ground", (list,))
-    if t.gate_release < t.gate_arrival:
-        raise MissingInput("candidate.gate_release is before gate_arrival")
+    crews = _get(_state(s, "ground"), "crews", "ground", (list,))
     ok, why = [], []
-    for crew in sorted(crews, key=lambda x: str(x.get("id"))):
-        if not isinstance(crew, dict) or "id" not in crew:
-            raise MissingInput("ground.crews entries need an id")
-        cid = crew["id"]
-        gates = _get(crew, "gates", f"crew {cid}", (list,))
-        if c.gate not in gates:
-            why.append(f"{cid}: does not cover gate {c.gate}")
+    for crew in sorted(crews, key=lambda x: str(x.get("crew_id"))):
+        if not isinstance(crew, dict) or "crew_id" not in crew:
+            raise MissingInput("ground.crews entries need a crew_id")
+        cid = crew["crew_id"]
+        if _get(crew, "assigned_gate", f"crew {cid}") != c.gate:
+            why.append(f"{cid}: assigned to {crew['assigned_gate']}, not {c.gate}")
             continue
         s0 = parse_time(_get(crew, "shift_start", f"crew {cid}"), t.issue, "shift_start")
         s1 = parse_time(_get(crew, "shift_end", f"crew {cid}"), t.issue, "shift_end")
-        if not (s0 <= t.gate_arrival and t.gate_release <= s1):
-            why.append(f"{cid}: shift {hhmm(s0)}-{hhmm(s1)} does not cover {hhmm(t.gate_arrival)}-{hhmm(t.gate_release)}")
-            continue
-        clash = None
-        for job in _get(crew, "assignments", f"crew {cid}", (list,)):
-            j0 = parse_time(_get(job, "start", "assignment"), t.issue, "assignment.start")
-            j1 = parse_time(_get(job, "end", "assignment"), t.issue, "assignment.end")
-            if t.gate_arrival < j1 and j0 < t.gate_release:
-                clash = job
-                break
-        if clash:
-            why.append(f"{cid}: already assigned to {clash.get('id')} at {clash.get('gate')} "
-                       f"{clash.get('start')}-{clash.get('end')}")
+        if not (s0 <= t.gate_arrival <= s1):
+            why.append(f"{cid}: shift {hhmm(s0)}-{hhmm(s1)} does not cover gate arrival {hhmm(t.gate_arrival)}")
             continue
         ok.append(crew)
     return ok, why
@@ -369,11 +371,13 @@ def eligible_crews(c: Candidate, s: Scenario) -> tuple[list[dict], list[str]]:
 def _c1(c: Candidate, s: Scenario, cfg: dict) -> tuple[bool, dict, str]:
     t = candidate_times(c, s)
     ok, why = eligible_crews(c, s)
-    inputs = {"gate": c.gate, "service": [hhmm(t.gate_arrival), hhmm(t.gate_release)],
-              "eligible_crews": [x["id"] for x in ok], "ineligible": why}
+    inputs = {"gate": c.gate, "gate_arrival": hhmm(t.gate_arrival), "eligible_crews": [x["crew_id"] for x in ok],
+              "ineligible": why}
     if ok:
-        return True, inputs, f"Crew {ok[0]['id']} covers gate {c.gate} for the whole service interval."
-    return False, inputs, "No crew covers the service interval: " + ("; ".join(why) if why else "no crews declared") + "."
+        moved = f" (reassigned from {ok[0]['reassigned_from']})" if ok[0].get("reassigned_from") else ""
+        return True, inputs, f"Crew {ok[0]['crew_id']}{moved} is on shift at gate {c.gate} when the aircraft arrives."
+    return False, inputs, ("No crew on shift at gate " + c.gate + ": " + ("; ".join(why) if why else "no crews declared")
+                           + ". GROUND_REASSIGN_CREW can move a reassignable crew here.")
 
 
 _RULE_FNS: dict[str, Callable[[Candidate, Scenario, dict], tuple[bool, dict, str]]] = {
@@ -410,99 +414,3 @@ def feasible(results: list[CheckResult]) -> bool:
 
 def failed_rules(results: list[CheckResult]) -> list[str]:
     return [r.rule_id for r in results if not r.passed]
-
-
-# --------------------------------------------------------------------------- concessions
-
-@dataclass(frozen=True)
-class AdjustedState:
-    """A new, immutable scenario version produced by applying concessions. Recheck it."""
-    scenario: Scenario
-    state_version: int
-    applied: list[dict] = field(default_factory=list)
-    rejected: list[dict] = field(default_factory=list)
-
-
-def _concession_fields(x: Any) -> tuple[str, str | None]:
-    if isinstance(x, dict):
-        return str(x.get("id")), x.get("target")
-    return str(getattr(x, "id")), getattr(x, "target", None)
-
-
-def fuel_safe_holding_min(scenario: Scenario) -> int:
-    """Largest whole-minute holding that keeps F-1 passing (simulated)."""
-    pilot = _state(scenario, "pilot")
-    fuel = _num(_get(pilot, "fuel_at_baseline_eta_kg", "pilot"), "pilot.fuel_at_baseline_eta_kg", minimum=0)
-    burn = _num(_get(pilot, "holding_burn_kg_per_min", "pilot"), "pilot.holding_burn_kg_per_min", minimum=0)
-    reserve = _num(_get(pilot, "reserve_kg", "pilot"), "pilot.reserve_kg", minimum=0)
-    if burn == 0:
-        return 10 ** 6
-    return max(0, int(math.floor((fuel - reserve) / burn)))
-
-
-def apply_concessions(scenario: Scenario, concessions: list, state_version: int = 1) -> AdjustedState:
-    """Apply allow-listed concessions to a deep copy of the simulated state.
-
-    The source scenario is never mutated. The result carries state_version + 1 when at least
-    one concession changed the state, otherwise the same version. Effects (all simulated):
-
-    - ATC_EARLIER_SLOT target "HH:MM": the slot must be declared in atc.resequence_options;
-      it is added to atc.slots and the declared neighbour moves are applied to atc.other_arrivals.
-      R-1 and W-1 are rechecked afterwards, so capacity and spacing are still enforced.
-    - GROUND_REASSIGN_CREW target gate: every crew whose can_reassign_to lists that gate gains it in
-      crew.gates. Existing assignments stay, so C-1 still rejects an overlapping job.
-    - PILOT_EXTRA_HOLDING target "N" or "N min": pilot.max_extra_holding_min becomes min(N, fuel-safe
-      limit). This is a preference bound for the agents; F-1 is the hard rule either way.
-    """
-    sim = copy.deepcopy(dict(scenario.simulated))
-    applied, rejected = [], []
-    for raw in concessions:
-        cid, target = _concession_fields(raw)
-        rec = {"id": cid, "target": target}
-        try:
-            if cid == "ATC_EARLIER_SLOT":
-                atc = sim["atc"]
-                opts = _get(atc, "resequence_options", "atc", (list,))
-                match = next((o for o in opts if o.get("slot") == target), None)
-                if match is None:
-                    raise MissingInput(f"slot {target!r} is not in atc.resequence_options")
-                issue = issue_time(scenario)
-                parse_time(target, issue, "concession.target")
-                if target not in atc.setdefault("slots", []):
-                    atc["slots"].append(target)
-                moved = []
-                for mv in match.get("moves", []):
-                    for o in atc.get("other_arrivals", []):
-                        if o.get("callsign") == mv.get("callsign"):
-                            parse_time(mv["to"], issue, "resequence move")
-                            moved.append({"callsign": o["callsign"], "from": o["time"], "to": mv["to"]})
-                            o["time"] = mv["to"]
-                rec["effect"] = {"slot_added": target, "moves": moved}
-            elif cid == "GROUND_REASSIGN_CREW":
-                crews = _get(sim["ground"], "crews", "ground", (list,))
-                moved = []
-                for crew in crews:
-                    if target in crew.get("can_reassign_to", []) and target not in crew.get("gates", []):
-                        crew.setdefault("gates", []).append(target)
-                        moved.append(crew["id"])
-                if not moved:
-                    raise MissingInput(f"no crew declares can_reassign_to {target!r}")
-                rec["effect"] = {"gate": target, "crews_now_covering": moved, "assignments_kept": True}
-            elif cid == "PILOT_EXTRA_HOLDING":
-                m = re.match(r"^\s*(\d+)", str(target or ""))
-                if not m:
-                    raise MissingInput(f"target {target!r} is not a number of minutes")
-                safe = fuel_safe_holding_min(scenario)
-                new = min(int(m.group(1)), safe)
-                sim["pilot"]["max_extra_holding_min"] = new
-                rec["effect"] = {"max_extra_holding_min": new, "fuel_safe_limit_min": safe}
-            else:
-                raise MissingInput(f"unknown concession id {cid!r}")
-        except (MissingInput, KeyError, TypeError) as e:
-            rec["reason"] = str(e)
-            rejected.append(rec)
-            continue
-        applied.append(rec)
-    new_scenario = scenario.model_copy(update={"simulated": sim}) if applied else scenario
-    return AdjustedState(scenario=new_scenario, state_version=state_version + (1 if applied else 0),
-                         applied=applied, rejected=rejected)

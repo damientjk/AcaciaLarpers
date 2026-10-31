@@ -23,6 +23,8 @@ def load(name: str) -> dict:
 
 @pytest.fixture
 def demo():
+    """scenario.py's demo-001 (ATL, US2031, 2015-01-06): issue 19:59, base ETA 20:22, 3-min slots, cap 20/h,
+    fuel at base ETA 2360 kg, reserve 1800 kg, burn 40 kg/min (fuel-safe 14 min), gates B4/B7/B9."""
     return load("demo_scenario.json")
 
 
@@ -43,6 +45,12 @@ def with_state(scenario: Scenario, mutate) -> Scenario:
     return scenario.model_copy(update={"simulated": sim})
 
 
+def with_config(cfg: dict, mutate) -> dict:
+    c = copy.deepcopy(cfg)
+    mutate(c)
+    return c
+
+
 def cand(demo, cid: str, **changes) -> Candidate:
     base = next(c for c in demo["candidates"] if c.id == cid)
     return base.model_copy(update=changes)
@@ -50,3 +58,15 @@ def cand(demo, cid: str, **changes) -> Candidate:
 
 def rule(results, rule_id):
     return next(r for r in results if r.rule_id == rule_id)
+
+
+def slot(sim, slot_id):
+    return next(s for s in sim["atc"]["slots"] if s["slot_id"] == slot_id)
+
+
+def gate(sim, gate_id):
+    return next(g for g in sim["ground"]["gates"] if g["gate_id"] == gate_id)
+
+
+def crew(sim, crew_id):
+    return next(c for c in sim["ground"]["crews"] if c["crew_id"] == crew_id)
