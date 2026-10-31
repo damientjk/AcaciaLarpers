@@ -20,7 +20,7 @@ llm:
 costs:
   delay_usd_per_min: 100.76    # A4A 2024 block-minute cost, see README sources
   holding_fuel_usd_per_kg: 0.85 # approx. jet fuel at ~$108/bbl (~127 kg/bbl); between IATA's 2025 average ($90/bbl) and its June 2026 outlook ($152/bbl). Rough, see README sources
-  overtime_usd_per_min: 1.5     # approx. 4-person ramp crew at 1.5x the ~$18/h US median for hand laborers/material movers (BLS OEWS, May 2023 proxy). Rough
+  overtime_usd_per_min: 1.5     # approx. 4-person ramp crew at the ~$18/h US median for hand laborers/material movers (BLS OEWS, May 2023 proxy): ~$72/h straight time, ~$108/h at 1.5x; 1.5/min (~$90/h) sits between. Rough
   missed_connection_usd: 250    # approx. per-passenger rebooking cost (Switchfly US estimate, 2017 data); covers cancellations, used here as a misconnect proxy. Rough
   # total_usd = delay_min*delay_usd_per_min + holding_fuel_kg*holding_fuel_usd_per_kg
   #           + overtime_min*overtime_usd_per_min + missed_connections*missed_connection_usd
