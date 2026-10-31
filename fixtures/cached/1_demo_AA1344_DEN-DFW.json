@@ -1,9 +1,9 @@
 {
-  "run_id": "r-5492f6",
+  "run_id": "r-050839",
   "label": null,
-  "created_at": "2026-10-31T04:54:12+00:00",
+  "created_at": "2026-10-31T13:10:27+08:00",
   "sample": false,
-  "fake_agents": true,
+  "fake_agents": false,
   "scenario": {
     "scenario_id": "S74",
     "issue_time": "2015-01-01T21:46",
@@ -2010,73 +2010,67 @@
       "offers": [
         {
           "agent": "atc",
-          "run_id": "r-5492f6",
+          "run_id": "r-050839",
           "round": 1,
           "state_version": 1,
-          "preferred": "C5",
+          "preferred": "C2",
           "acceptable": [
-            "C1",
-            "C2",
-            "C3",
-            "C4",
-            "C5",
-            "C6"
+            "C2"
           ],
           "constraints_cited": [
             "R-1",
-            "T-1",
-            "W-1"
+            "C-1",
+            "W-1",
+            "T-1"
           ],
           "concessions": [
             {
               "id": "ATC_EARLIER_SLOT",
-              "target": "C1"
+              "target": "C2"
             }
           ],
-          "rationale": "Simulated agent: accepts every candidate that passes its own checks.",
-          "latency_s": 0.0,
+          "rationale": "C2 has the lowest total cost at $943.32 with zero missed connections and zero overtime, versus $10971.82 for C1 and $10985.32 for C3. I offer ATC_EARLIER_SLOT to resequence flexible B62043 out of SL-2224 so that R-1 passes for C2, and C-1 depends on the GROUND_REASSIGN_CREW confirmation.",
+          "latency_s": 6.18,
           "valid": true
         },
         {
           "agent": "pilot",
-          "run_id": "r-5492f6",
+          "run_id": "r-050839",
           "round": 1,
           "state_version": 1,
           "preferred": "C2",
           "acceptable": [
-            "C1",
             "C2",
-            "C3",
-            "C4",
-            "C5",
-            "C6"
+            "C1"
           ],
           "constraints_cited": [
-            "F-1"
+            "F-1",
+            "C-1",
+            "R-1",
+            "G-2"
           ],
           "concessions": [
             {
               "id": "PILOT_EXTRA_HOLDING",
-              "target": "C1"
+              "target": "C2"
             }
           ],
-          "rationale": "Simulated agent: accepts every candidate that passes its own checks.",
-          "latency_s": 0.0,
+          "rationale": "C2 passes F-1 with 7 min extra holding (280 kg burn, 1880 kg at landing vs 1800 kg reserve) and has the lowest total cost at $943.32 with 0 missed connections, versus about $10,971 for C1 and C3. C2 needs ATC_EARLIER_SLOT and GROUND_REASSIGN_CREW confirmed, and C1 is the fallback because it also stays within the 7 min holding limit.",
+          "latency_s": 4.37,
           "valid": true
         },
         {
           "agent": "ground",
-          "run_id": "r-5492f6",
+          "run_id": "r-050839",
           "round": 1,
           "state_version": 1,
           "preferred": "C2",
           "acceptable": [
-            "C2",
-            "C5"
+            "C2"
           ],
           "constraints_cited": [
             "C-1",
-            "G-1",
+            "R-1",
             "G-2",
             "G-3"
           ],
@@ -2086,8 +2080,8 @@
               "target": "C2"
             }
           ],
-          "rationale": "Simulated agent: accepts every candidate that passes its own checks.",
-          "latency_s": 0.0,
+          "rationale": "C2 has the lowest total cost at $943.32 with 0 missed connections and 0 overtime minutes, and it is only safe if I reassign CRW-B9 to open B7, which C-1 flags as failing. C1 and C3 cost about $10,970 each with 40 missed connections, and C1 also depends on ATC and pilot concessions while failing G-2 at B4.",
+          "latency_s": 4.12,
           "valid": true
         }
       ]
@@ -2097,30 +2091,30 @@
       "votes": [
         {
           "agent": "atc",
-          "run_id": "r-5492f6",
+          "run_id": "r-050839",
           "round": 2,
           "proposal_version": 2,
           "vote": "accept",
-          "rationale": "Simulated agent: all of its own checks pass on C2.",
-          "latency_s": 0.0
+          "rationale": "C2 passes my checks R-1 (slot SL-2224 within the 20/hour capacity after the applied ATC_EARLIER_SLOT), W-1 (180 s behind DL338 meets the 120 s large-large minimum) and T-1 (no closed taxiways). Its total cost of $943.32 with 0 missed connections is the lowest of the candidates.",
+          "latency_s": 1.82
         },
         {
           "agent": "pilot",
-          "run_id": "r-5492f6",
+          "run_id": "r-050839",
           "round": 2,
           "proposal_version": 2,
           "vote": "accept",
-          "rationale": "Simulated agent: all of its own checks pass on C2.",
-          "latency_s": 0.0
+          "rationale": "The frozen proposal C2 passes F-1 with 7 min extra holding (280 kg burn, 1880 kg at landing vs 1800 kg reserve), and all my checks pass; its total cost is $943.32 with 0 missed connections, which is tolerable and well within my fuel-safe limit of 9 min.",
+          "latency_s": 1.48
         },
         {
           "agent": "ground",
-          "run_id": "r-5492f6",
+          "run_id": "r-050839",
           "round": 2,
           "proposal_version": 2,
           "vote": "accept",
-          "rationale": "Simulated agent: all of its own checks pass on C2.",
-          "latency_s": 0.0
+          "rationale": "Proposal C2 passes my checks G-1, G-2, G-3 and C-1, with CRW-B9 reassigned to B7 and the gate free from 22:34 including the 10 min buffer. Its total cost is $943.32 with 0 missed connections and 0 overtime minutes, which is the lowest of the candidates.",
+          "latency_s": 1.75
         }
       ]
     }
@@ -2130,14 +2124,14 @@
       {
         "agent": "atc",
         "id": "ATC_EARLIER_SLOT",
-        "target": "C1",
+        "target": "C2",
         "note": "moved B62043 from SL-2224 to SL-2251",
         "applied": true
       },
       {
         "agent": "pilot",
         "id": "PILOT_EXTRA_HOLDING",
-        "target": "C1",
+        "target": "C2",
         "note": "accepted holding limit 4 -> 9 min (fuel-safe limit 9 min)",
         "applied": true
       },
@@ -2345,13 +2339,16 @@
   },
   "human_decision": null,
   "stats": {
-    "api_calls": 0,
+    "api_calls": 6,
     "retries": 0,
-    "total_latency_s": 0.18,
-    "model": null,
-    "thinking": null,
-    "input_tokens": 0,
-    "output_tokens": 0,
-    "est_cost_usd": 0.0
+    "total_latency_s": 8.08,
+    "model": "claude-haiku-5-5",
+    "thinking": {
+      "type": "adaptive",
+      "effort": "medium"
+    },
+    "input_tokens": 40249,
+    "output_tokens": 3532,
+    "est_cost_usd": 0.00579
   }
 }

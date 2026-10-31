@@ -1,6 +1,6 @@
 {
   "sample": false,
-  "generated_at": "2026-10-31T04:59:40+00:00",
+  "generated_at": "2026-10-31T05:12:04+00:00",
   "note": "Measured inside the simulation. Costs are USD-equivalent scores with config.yaml weights, not measured savings. Checks are simplified, not FAA compliance.",
   "source": "scenario.fixture_ids()",
   "scenarios": {
@@ -26,7 +26,7 @@
       "G-3": 0,
       "C-1": 69
     },
-    "mean_execution_ms": 6.95
+    "mean_execution_ms": 2.87
   },
   "agents": {
     "completed": 10,
@@ -34,17 +34,17 @@
     "fallback": 0,
     "escalation": 3,
     "accepted_violations": 0,
-    "mean_latency_s": 0.13,
-    "mean_api_calls": 0.0,
+    "mean_latency_s": 8.04,
+    "mean_api_calls": 5.1,
     "retries": 0,
-    "total_input_tokens": 0,
-    "total_output_tokens": 0,
-    "est_api_cost_usd": 0,
-    "fake_agents": true,
+    "total_input_tokens": 344929,
+    "total_output_tokens": 36933,
+    "est_api_cost_usd": 0.053,
+    "fake_agents": false,
     "not_run": null,
     "failures": []
   },
-  "cost_vs_solver_gap_pct": 0.0,
+  "cost_vs_solver_gap_pct": 42.86,
   "heuristic": {
     "infeasible_rate_pct": 100.0,
     "mean_cost_usd_when_feasible": null
@@ -84,7 +84,7 @@
       "result": "fallback",
       "passed": true,
       "detail": {
-        "run_id": "r-7761aa",
+        "run_id": "r-17a529",
         "scenario_id": "S14929",
         "offers_valid": [
           false,
@@ -103,7 +103,7 @@
       "result": "fallback",
       "passed": true,
       "detail": {
-        "run_id": "r-739ffa",
+        "run_id": "r-2c0b16",
         "scenario_id": "S14929",
         "offers_valid": [
           false,
@@ -427,7 +427,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 20.37
+      "execution_ms": 7.82
     },
     {
       "scenario_id": "S12137",
@@ -659,7 +659,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 6.38
+      "execution_ms": 2.75
     },
     {
       "scenario_id": "S14929",
@@ -962,7 +962,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 10.11
+      "execution_ms": 4.46
     },
     {
       "scenario_id": "S23912",
@@ -1153,7 +1153,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.35
+      "execution_ms": 1.9
     },
     {
       "scenario_id": "S29519",
@@ -1460,7 +1460,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 11.72
+      "execution_ms": 4.69
     },
     {
       "scenario_id": "S34206",
@@ -1763,7 +1763,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 8.55
+      "execution_ms": 3.61
     },
     {
       "scenario_id": "S35636",
@@ -1994,7 +1994,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.1
+      "execution_ms": 1.33
     },
     {
       "scenario_id": "S43968",
@@ -2297,7 +2297,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 21.72
+      "execution_ms": 7.91
     },
     {
       "scenario_id": "S48747",
@@ -2537,7 +2537,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.07
+      "execution_ms": 1.36
     },
     {
       "scenario_id": "S107608",
@@ -2768,7 +2768,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.77
+      "execution_ms": 1.33
     },
     {
       "scenario_id": "S151754",
@@ -3060,7 +3060,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 5.36
+      "execution_ms": 1.7
     },
     {
       "scenario_id": "S201998",
@@ -3304,7 +3304,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 8.4
+      "execution_ms": 3.43
     },
     {
       "scenario_id": "S202191",
@@ -3549,7 +3549,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 8.48
+      "execution_ms": 3.39
     },
     {
       "scenario_id": "S208924",
@@ -3840,7 +3840,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.41
+      "execution_ms": 1.74
     },
     {
       "scenario_id": "S226993",
@@ -3990,7 +3990,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.44
+      "execution_ms": 1.84
     },
     {
       "scenario_id": "S229874",
@@ -4300,7 +4300,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 10.6
+      "execution_ms": 4.69
     },
     {
       "scenario_id": "S268944",
@@ -4480,7 +4480,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 2.74
+      "execution_ms": 0.95
     },
     {
       "scenario_id": "S271370",
@@ -4672,7 +4672,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.82
+      "execution_ms": 1.93
     },
     {
       "scenario_id": "S275195",
@@ -4975,7 +4975,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 13.53
+      "execution_ms": 4.6
     },
     {
       "scenario_id": "S343183",
@@ -5260,7 +5260,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 8.24
+      "execution_ms": 3.47
     },
     {
       "scenario_id": "S354770",
@@ -5388,7 +5388,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 1.5
+      "execution_ms": 0.58
     },
     {
       "scenario_id": "S8582",
@@ -5698,7 +5698,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 19.32
+      "execution_ms": 8.47
     },
     {
       "scenario_id": "S24602",
@@ -5983,7 +5983,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 6.69
+      "execution_ms": 2.76
     },
     {
       "scenario_id": "S78881",
@@ -6278,7 +6278,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.24
+      "execution_ms": 1.75
     },
     {
       "scenario_id": "S80976",
@@ -6563,7 +6563,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.4
+      "execution_ms": 1.85
     },
     {
       "scenario_id": "S123805",
@@ -6794,7 +6794,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.33
+      "execution_ms": 1.42
     },
     {
       "scenario_id": "S140553",
@@ -7084,7 +7084,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.43
+      "execution_ms": 1.83
     },
     {
       "scenario_id": "S150971",
@@ -7369,7 +7369,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.19
+      "execution_ms": 1.92
     },
     {
       "scenario_id": "S161184",
@@ -7655,7 +7655,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.45
+      "execution_ms": 1.87
     },
     {
       "scenario_id": "S183466",
@@ -7959,7 +7959,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 11.45
+      "execution_ms": 4.84
     },
     {
       "scenario_id": "S187031",
@@ -8194,7 +8194,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 6.78
+      "execution_ms": 2.92
     },
     {
       "scenario_id": "S191228",
@@ -8424,7 +8424,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.22
+      "execution_ms": 1.38
     },
     {
       "scenario_id": "S220337",
@@ -8655,7 +8655,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.48
+      "execution_ms": 1.42
     },
     {
       "scenario_id": "S235366",
@@ -8944,7 +8944,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 6.53
+      "execution_ms": 2.81
     },
     {
       "scenario_id": "S238783",
@@ -9246,7 +9246,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 8.89
+      "execution_ms": 3.83
     },
     {
       "scenario_id": "S256904",
@@ -9531,7 +9531,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 8.45
+      "execution_ms": 3.61
     },
     {
       "scenario_id": "S284522",
@@ -9817,7 +9817,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 8.59
+      "execution_ms": 3.74
     },
     {
       "scenario_id": "S298215",
@@ -10107,7 +10107,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.24
+      "execution_ms": 1.82
     },
     {
       "scenario_id": "S310443",
@@ -10414,7 +10414,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 12.06
+      "execution_ms": 5.49
     },
     {
       "scenario_id": "S317755",
@@ -10649,7 +10649,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.39
+      "execution_ms": 1.46
     },
     {
       "scenario_id": "S331011",
@@ -10879,7 +10879,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.31
+      "execution_ms": 1.4
     },
     {
       "scenario_id": "S9943",
@@ -11053,7 +11053,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 8.1
+      "execution_ms": 3.44
     },
     {
       "scenario_id": "S46686",
@@ -11230,7 +11230,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.36
+      "execution_ms": 1.88
     },
     {
       "scenario_id": "S55945",
@@ -11464,7 +11464,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 8.3
+      "execution_ms": 3.68
     },
     {
       "scenario_id": "S68904",
@@ -11695,7 +11695,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.13
+      "execution_ms": 1.32
     },
     {
       "scenario_id": "S123707",
@@ -11928,7 +11928,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.34
+      "execution_ms": 1.45
     },
     {
       "scenario_id": "S147053",
@@ -12173,7 +12173,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 8.36
+      "execution_ms": 3.58
     },
     {
       "scenario_id": "S180066",
@@ -12403,7 +12403,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.17
+      "execution_ms": 1.34
     },
     {
       "scenario_id": "S204630",
@@ -12638,7 +12638,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 3.09
+      "execution_ms": 1.33
     },
     {
       "scenario_id": "S283429",
@@ -12935,7 +12935,7 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 4.23
+      "execution_ms": 1.75
     },
     {
       "scenario_id": "S287847",
@@ -13220,12 +13220,12 @@
         "assumption": "Simulated: arrival later than the base ETA is treated as airborne holding.",
         "error": null
       },
-      "execution_ms": 11.1
+      "execution_ms": 4.64
     }
   ],
   "agent_runs": [
     {
-      "run_id": "r-85cafe",
+      "run_id": "r-c7480b",
       "scenario_id": "demo-001",
       "outcome": "consensus",
       "final_candidate": "C2",
@@ -13255,17 +13255,17 @@
         "ATC_EARLIER_SLOT",
         "GROUND_REASSIGN_CREW"
       ],
-      "api_calls": 0,
+      "api_calls": 6,
       "retries": 0,
-      "latency_s": 0.16,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "est_cost_usd": 0.0,
-      "model": null,
+      "latency_s": 8.74,
+      "input_tokens": 45939,
+      "output_tokens": 4486,
+      "est_cost_usd": 0.00684,
+      "model": "claude-haiku-5-5",
       "accepted_violations": 0
     },
     {
-      "run_id": "r-18c3f5",
+      "run_id": "r-d9495d",
       "scenario_id": "S12137",
       "outcome": "escalation",
       "final_candidate": null,
@@ -13288,21 +13288,21 @@
       ],
       "rounds_completed": 1,
       "concessions_that_unlocked": [],
-      "api_calls": 0,
+      "api_calls": 3,
       "retries": 0,
-      "latency_s": 0.13,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "est_cost_usd": 0.0,
-      "model": null,
+      "latency_s": 4.61,
+      "input_tokens": 18294,
+      "output_tokens": 2713,
+      "est_cost_usd": 0.00319,
+      "model": "claude-haiku-5-5",
       "accepted_violations": 0
     },
     {
-      "run_id": "r-be8821",
+      "run_id": "r-f43363",
       "scenario_id": "S14929",
       "outcome": "consensus",
-      "final_candidate": "C1",
-      "final_cost_usd": 404.28,
+      "final_candidate": "C4",
+      "final_cost_usd": 1617.12,
       "coordinator_solver": {
         "candidate": "C1",
         "total_usd": 404.28
@@ -13311,8 +13311,8 @@
         "candidate": "C1",
         "total_usd": 404.28
       },
-      "cost_gap_vs_coordinator_usd": 0.0,
-      "cost_gap_vs_reference_usd": 0.0,
+      "cost_gap_vs_coordinator_usd": 1212.84,
+      "cost_gap_vs_reference_usd": 1212.84,
       "votes": {
         "atc": "accept",
         "pilot": "accept",
@@ -13324,20 +13324,18 @@
         true
       ],
       "rounds_completed": 2,
-      "concessions_that_unlocked": [
-        "ATC_EARLIER_SLOT"
-      ],
-      "api_calls": 0,
+      "concessions_that_unlocked": [],
+      "api_calls": 6,
       "retries": 0,
-      "latency_s": 0.17,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "est_cost_usd": 0.0,
-      "model": null,
+      "latency_s": 7.92,
+      "input_tokens": 44623,
+      "output_tokens": 3657,
+      "est_cost_usd": 0.00629,
+      "model": "claude-haiku-5-5",
       "accepted_violations": 0
     },
     {
-      "run_id": "r-36280a",
+      "run_id": "r-b13722",
       "scenario_id": "S23912",
       "outcome": "consensus",
       "final_candidate": "C2",
@@ -13367,17 +13365,17 @@
         "ATC_EARLIER_SLOT",
         "PILOT_EXTRA_HOLDING"
       ],
-      "api_calls": 0,
+      "api_calls": 6,
       "retries": 0,
-      "latency_s": 0.08,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "est_cost_usd": 0.0,
-      "model": null,
+      "latency_s": 9.08,
+      "input_tokens": 30913,
+      "output_tokens": 3524,
+      "est_cost_usd": 0.00485,
+      "model": "claude-haiku-5-5",
       "accepted_violations": 0
     },
     {
-      "run_id": "r-f06910",
+      "run_id": "r-ffea5d",
       "scenario_id": "S29519",
       "outcome": "consensus",
       "final_candidate": "C2",
@@ -13406,17 +13404,17 @@
       "concessions_that_unlocked": [
         "ATC_EARLIER_SLOT"
       ],
-      "api_calls": 0,
+      "api_calls": 6,
       "retries": 0,
-      "latency_s": 0.15,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "est_cost_usd": 0.0,
-      "model": null,
+      "latency_s": 9.69,
+      "input_tokens": 43664,
+      "output_tokens": 4238,
+      "est_cost_usd": 0.00649,
+      "model": "claude-haiku-5-5",
       "accepted_violations": 0
     },
     {
-      "run_id": "r-783c89",
+      "run_id": "r-fe780d",
       "scenario_id": "S34206",
       "outcome": "consensus",
       "final_candidate": "C2",
@@ -13445,17 +13443,17 @@
       "concessions_that_unlocked": [
         "ATC_EARLIER_SLOT"
       ],
-      "api_calls": 0,
+      "api_calls": 6,
       "retries": 0,
-      "latency_s": 0.15,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "est_cost_usd": 0.0,
-      "model": null,
+      "latency_s": 8.63,
+      "input_tokens": 44676,
+      "output_tokens": 4398,
+      "est_cost_usd": 0.00667,
+      "model": "claude-haiku-5-5",
       "accepted_violations": 0
     },
     {
-      "run_id": "r-33ebb8",
+      "run_id": "r-aee495",
       "scenario_id": "S35636",
       "outcome": "escalation",
       "final_candidate": null,
@@ -13478,17 +13476,17 @@
       ],
       "rounds_completed": 1,
       "concessions_that_unlocked": [],
-      "api_calls": 0,
+      "api_calls": 3,
       "retries": 0,
-      "latency_s": 0.11,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "est_cost_usd": 0.0,
-      "model": null,
+      "latency_s": 5.85,
+      "input_tokens": 17934,
+      "output_tokens": 3366,
+      "est_cost_usd": 0.00348,
+      "model": "claude-haiku-5-5",
       "accepted_violations": 0
     },
     {
-      "run_id": "r-957823",
+      "run_id": "r-4c1f07",
       "scenario_id": "S43968",
       "outcome": "consensus",
       "final_candidate": "C1",
@@ -13517,17 +13515,17 @@
       "concessions_that_unlocked": [
         "ATC_EARLIER_SLOT"
       ],
-      "api_calls": 0,
+      "api_calls": 6,
       "retries": 0,
-      "latency_s": 0.15,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "est_cost_usd": 0.0,
-      "model": null,
+      "latency_s": 11.99,
+      "input_tokens": 45206,
+      "output_tokens": 4747,
+      "est_cost_usd": 0.00689,
+      "model": "claude-haiku-5-5",
       "accepted_violations": 0
     },
     {
-      "run_id": "r-e6dabb",
+      "run_id": "r-1adfa6",
       "scenario_id": "S48747",
       "outcome": "consensus",
       "final_candidate": "C2",
@@ -13554,17 +13552,17 @@
       ],
       "rounds_completed": 2,
       "concessions_that_unlocked": [],
-      "api_calls": 0,
+      "api_calls": 6,
       "retries": 0,
-      "latency_s": 0.11,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "est_cost_usd": 0.0,
-      "model": null,
+      "latency_s": 6.34,
+      "input_tokens": 35730,
+      "output_tokens": 2753,
+      "est_cost_usd": 0.00495,
+      "model": "claude-haiku-5-5",
       "accepted_violations": 0
     },
     {
-      "run_id": "r-db067d",
+      "run_id": "r-f8ebd4",
       "scenario_id": "S107608",
       "outcome": "escalation",
       "final_candidate": null,
@@ -13587,13 +13585,13 @@
       ],
       "rounds_completed": 1,
       "concessions_that_unlocked": [],
-      "api_calls": 0,
+      "api_calls": 3,
       "retries": 0,
-      "latency_s": 0.11,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "est_cost_usd": 0.0,
-      "model": null,
+      "latency_s": 7.58,
+      "input_tokens": 17950,
+      "output_tokens": 3051,
+      "est_cost_usd": 0.00332,
+      "model": "claude-haiku-5-5",
       "accepted_violations": 0
     }
   ]

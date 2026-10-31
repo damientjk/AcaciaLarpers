@@ -50,10 +50,10 @@ reasons." (Point at the option funnel on Metrics, then the failure tests on Benc
 |---|---|---|
 | Where does it fail, and how would the user know? | Yizhuo | Timeout, bad output or no deal goes to the rulebook, labelled fallback. Nothing safe escalates to the human with reasons. |
 | How do you stop unsafe plans? | Yizhuo | Agents never decide safety. Eight coded checks run on every plan, and the final plan is rechecked before the human sees it. 0 unsafe plans accepted. |
-| What do the agents add over a solver? | Damien | Concessions. The solver only knows the base state. The agents reveal what they can give up, which made 8 more scenarios solvable. On the same options they match the solver's cost. |
+| What do the agents add over a solver? | Damien | Concessions. The solver only knows the base state. The agents reveal what they can give up, which made 8 more scenarios solvable. On the same options, 6 of 7 live consensus runs matched the solver's cost; one picked a dearer safe plan (mean gap 42.9%). |
 | Why do 22 of 51 escalate? | Ashvin | We model up to 8 plans per flight with tight simulated gates, crew and fuel. When none is safe, refusing is correct. Busy gates, crew and fuel reserve block most. |
 | What's real and what's simulated? | Ashvin | The flight row is real 2015 DOT data. Slots, fuel, gates and crew are simulated, seeded and labelled. Checks are simplified, not FAA compliance. |
 | Why two rounds? What about timeouts? | Damien | Bounded time and cost. Per-call timeout and one retry, then fallback. Retries never open a new round. |
 
-Agent-run numbers in the app come from fake agents until someone runs `python benchmark.py --agents 10 --live`.
+Agent-run numbers come from a live benchmark of 10 Claude runs (7 consensus, 3 escalation, 0 unsafe plans accepted, about $0.05 in API cost).
 Say "in our simulation" for every number.
