@@ -23,13 +23,13 @@ button{font-family:var(--display);cursor:pointer}
 canvas.px{image-rendering:pixelated;display:block}
 .wrap{padding:2px 8px 10px 2px}
 .blk{background:var(--panel);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);border-radius:4px}
-.btn{font-size:10px;padding:6px 10px;border:3px solid var(--ink);background:#fff;color:var(--ink);box-shadow:3px 3px 0 var(--ink);border-radius:4px}
+.btn{font-size:11px;padding:7px 12px;border:3px solid var(--ink);background:#fff;color:var(--ink);box-shadow:3px 3px 0 var(--ink);border-radius:4px}
 .btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
 .btn.go{background:var(--accent);color:var(--ink)}
 .chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:1px 8px;border:2px solid var(--ink);background:#fff;border-radius:3px;font-variant-numeric:tabular-nums}
 .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
 .bar .grow{margin-right:auto}
-.outcome{font-family:var(--display);font-size:10px;padding:4px 8px;border:3px solid var(--ink)}
+.outcome{font-family:var(--display);font-size:11px;padding:5px 10px;border:3px solid var(--ink)}
 .outcome.consensus{background:#bff0c8}.outcome.fallback{background:#ffc2c4}.outcome.escalation{background:#b42318;color:#fff}.outcome.pending{background:#fff}
 .grid{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:14px}
 /* The full 16:9 backdrop, no tint, so the sky, plane and terminal keep their colours. */
@@ -42,7 +42,7 @@ canvas.px{image-rendering:pixelated;display:block}
 .label{position:absolute;top:100%;left:50%;transform:translateX(-50%);text-align:center;white-space:nowrap;line-height:1.15;pointer-events:none}
 .seat.lblright .label{top:22%;left:104%;transform:none;text-align:left}
 .tag{display:inline-block;font-family:var(--display);font-size:clamp(7px,.75vw,9px);background:var(--ink);color:#fff;padding:2px 4px}
-.sub{display:block;width:max-content;margin:1px auto 0;font-size:clamp(8px,.85vw,10px);color:var(--ink);background:rgba(255,255,255,.88);padding:0 4px}
+.sub{display:block;width:max-content;margin:1px auto 0;font-size:11px;color:var(--ink);background:rgba(255,255,255,.88);padding:0 4px}
 .think{position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%);background:#fff;border:2px solid var(--ink);padding:2px 5px;font-family:var(--display);font-size:8px;white-space:nowrap;box-shadow:2px 2px 0 var(--ink);display:none}
 .think.show{display:block}
 .think.spinonly{background:none;border:0;box-shadow:none;padding:0}
@@ -107,7 +107,7 @@ canvas.px{image-rendering:pixelated;display:block}
 .v-airport .side,.v-airport .cands,.v-airport .agentcard{display:none}
 .v-airport .grid{grid-template-columns:1fr}
 .place{position:absolute;font-family:var(--display);font-size:clamp(5px,.6vw,8px);padding:2px 4px !important;background:#334155;color:#fff;padding:0 5px;border:2px solid var(--ink);z-index:1;pointer-events:none}
-.think.say{font-family:var(--body);font-size:clamp(9px,.95vw,12px);font-weight:600;max-width:min(200px,24vw);white-space:normal;width:max-content;text-align:left;padding:2px 7px;line-height:1.25}
+.think.say{font-family:var(--body);font-size:clamp(11px,.95vw,12px);font-weight:600;max-width:min(200px,24vw);white-space:normal;width:max-content;text-align:left;padding:2px 7px;line-height:1.25}
 @media (max-width:820px){.grid{grid-template-columns:1fr}.side{min-height:300px}}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 </style>
@@ -164,7 +164,7 @@ const LOG=JSON.parse(document.getElementById("skylog").textContent);
 const LIVE=JSON.parse(document.getElementById("skylive").textContent);
 const VIEW=JSON.parse(document.getElementById("skyview").textContent)||"huddle";
 document.getElementById("wrap").classList.add("v-"+VIEW);
-const AG={atc:{name:"Ava",role:"Tower"},pilot:{name:"Pip",role:"Pilot"},ground:{name:"Gus",role:"Ground"},mod:{name:"Mo",role:"Duty manager (you)"}};
+const AG={atc:{name:"Ava",role:"Tower"},pilot:{name:"Pip",role:"Pilot"},ground:{name:"Gus",role:"Ground"},mod:{name:"Mo",role:"You"}};
 /* Feet positions on the 320 x 180 backdrop: Ava at the tower base, Pip on the plane by the cockpit,
    Gus at the terminal, Mo beside the coordinator's board. */
 const FEET={atc:[13,77],pilot:[57,42],ground:[86,78],mod:[66,97]};
