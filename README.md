@@ -124,6 +124,26 @@ case.
 simulated state deliberately shaped so that preferences conflict. The code does not fix which plan wins. Every
 other scenario uses the seeded generator unchanged.
 
+## Differences from the organisers' constraints workbook
+
+The organisers' `challenge2_operational_constraints.xlsx` says any limit we change must be stated. We kept the
+three-agent structure and our own simulated airport, and these are the differences:
+
+- **Rounds:** the workbook allows 3 turns. We use 2 rounds, which is stricter.
+- **Fuel reserve:** the workbook has a 30 minute final reserve plus 5% contingency. We use a 45 minute reserve in
+  `config.yaml` (inspired by 14 CFR 121.639) and do not model contingency fuel, so our check is stricter.
+- **Holding burn:** 40 kg/min narrowbody (the workbook's 2,400 kg/h) and 110 kg/min widebody (workbook 6,500 kg/h).
+- **Wake spacing:** our simulated arrival profile (120 to 240 s, `config.yaml`) replaces the workbook's departure
+  table, and we have no "Super" category.
+- **Runway capacity and gates:** we simulate 30 arrivals/hour (20 in weather) and 3 gates per scenario, instead of
+  the workbook's per-airport capacity, gates and spare gates.
+- **Turnaround:** 35 min narrowbody and 75 min widebody, instead of 45 min at large hubs.
+- **Ground crew:** a shift ends 20 to 120 min after arrival, and overtime is priced as a flat score weight
+  ($1.5/min), not 1.5x of an 8 hour shift.
+- **Not modelled:** the 20 minute gate-change notice and the 13 hour flight-crew duty limit.
+
+All simulated values are labelled "simulated" in the app and are not real airport data.
+
 ## Sources
 
 - Cost of aircraft time: $100.76 per block minute in 2024, Airlines for America,
