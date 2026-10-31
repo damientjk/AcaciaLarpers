@@ -26,53 +26,53 @@ COST_PER_MIN_SOURCE = ("Airlines for America: U.S. Passenger Carrier Delay Costs
 st.set_page_config(page_title="Sky Huddle", page_icon="✈️", layout="wide", initial_sidebar_state="collapsed")
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jersey+15&family=Poppins:wght@400;500;600;700&display=swap');
 html, body, [class*="css"], .stMarkdown, p, li, label {font-family: 'Poppins', sans-serif;}
-h1, h2, h3, h4 {font-family: 'Press Start 2P', monospace !important; font-weight:400 !important; letter-spacing:0; line-height:1.4 !important;}
-h1 {font-size:1.55rem !important;} h2 {font-size:1.15rem !important;} h3 {font-size:.95rem !important;}
-.stApp {background: linear-gradient(#8ed0f7 0, #c7ebfc 300px, #e9f5fd 300px);}
+h1, h2, h3, h4 {font-family: 'Jersey 15', monospace !important; font-weight:400 !important; letter-spacing:.02em; line-height:1.15 !important;}
+h1 {font-size:2.7rem !important;} h2 {font-size:2.1rem !important;} h3 {font-size:1.7rem !important;}
+.stApp {background: linear-gradient(180deg, #b5e1fa 0%, #dcf0fc 30%, #eef7fd 60%) fixed;}
 header[data-testid="stHeader"] {background: rgba(233,245,253,.92); border-bottom: 3px solid #1b1f3b;}
 footer {display:none;}
 section[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"] {display:none;}
 .block-container {padding-top: 4.2rem; max-width: 1500px;}
 [data-testid="InputInstructions"] {display:none;}
-[data-testid="stMain"] .stButton button, [data-testid="stMain"] .stFormSubmitButton button, [data-testid="stPopover"] button {font-family:'Press Start 2P',monospace; font-size:11px; font-weight:400; border:3px solid #1b1f3b; border-radius:4px; box-shadow:3px 3px 0 #1b1f3b; background:#fff; color:#1b1f3b;}
+[data-testid="stMain"] .stButton button, [data-testid="stMain"] .stFormSubmitButton button, [data-testid="stPopover"] button {font-family:'Jersey 15',monospace; font-size:19px; font-weight:400; border:3px solid #1b1f3b; border-radius:4px; box-shadow:3px 3px 0 #1b1f3b; background:#fff; color:#1b1f3b;}
 [data-testid="stMain"] button[data-testid="stBaseButton-primary"], [data-testid="stMain"] button[data-testid="stBaseButton-primaryFormSubmit"] {background:#ff8a3d; color:#1b1f3b;}
 [data-testid="stMain"] .stButton button:hover {background:#ffd447; color:#1b1f3b;}
 [data-testid="stMain"] .stButton button:disabled {background:#eef0f5; color:#5b6487; box-shadow:none;}
 [data-testid="stMain"] input {border: 2px solid #1b1f3b !important; border-radius: 3px !important; background: #fff !important;}
 .mo {border:3px solid #1b1f3b; background:#fff8e1; box-shadow:4px 4px 0 #1b1f3b; padding:12px 16px; margin:4px 0 12px;}
 [data-testid="stMetric"] {background:#f3f8fd; border:3px solid #1b1f3b; box-shadow:3px 3px 0 #1b1f3b; padding:8px 12px;}
-.badge {display:inline-block;padding:3px 8px;border:3px solid #1b1f3b;font-family:'Press Start 2P',monospace;font-size:10px;box-shadow:3px 3px 0 #1b1f3b;}
+.badge {display:inline-block;padding:3px 8px;border:3px solid #1b1f3b;font-family:'Jersey 15',monospace;font-size:18px;box-shadow:3px 3px 0 #1b1f3b;}
 .b-consensus {background:#bff0c8;} .b-fallback {background:#ffc2c4;} .b-escalation {background:#b42318;color:#fff;}
 .card {border:3px solid #1b1f3b;padding:10px 12px;margin-bottom:8px;background:#fff;box-shadow:3px 3px 0 #1b1f3b;}
 .ok {background:#e9f9ec;border-color:#1b1f3b;} .no {background:#ffecec;}
 .sim {color:#6d28d9;font-weight:600;font-size:12px;} .real {color:#1e7d34;font-weight:600;font-size:12px;}
 /* brand and boarding-pass incident bar (from the Sky Huddle design artifact) */
 .brand {display:flex;align-items:center;gap:12px}
-.brand img {width:34px;image-rendering:pixelated}
-.brand h1 {font-size:22px !important;margin:0;padding:0;color:#1b1f3b}
+.brand img {width:46px;image-rendering:pixelated}
+.brand h1 {font-size:46px !important;margin:0;padding:0;color:#1b1f3b}
 .brand small {display:block;font-size:13px;color:#3b4366}
 .incident {display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:10px 14px;margin:4px 0 6px;background:#f3f8fd;border:3px solid #1b1f3b;box-shadow:4px 4px 0 #1b1f3b;border-radius:4px}
-.incident .tag {font-family:'Press Start 2P',monospace;background:#b42318;color:#fff;padding:4px 8px;border:2px solid #1b1f3b;font-size:10px}
+.incident .tag {font-family:'Jersey 15',monospace;background:#b42318;color:#fff;padding:2px 10px;border:2px solid #1b1f3b;font-size:19px}
 .incident .src {margin-left:auto;font-size:12px;color:#3b4366}
 .chip {display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:2px 8px;border:2px solid #1b1f3b;background:#fff;border-radius:3px}
 .ticket {display:inline-flex;align-items:stretch;background:#fff;border:3px solid #1b1f3b;box-shadow:3px 3px 0 #1b1f3b;border-radius:6px}
 .tk-body {display:flex;align-items:center;gap:12px;padding:4px 14px}
 .tk-port small,.tk-port span {display:block;font-size:11px;color:#3b4366;line-height:1.15}
-.tk-port b {display:block;font-family:'Press Start 2P',monospace;font-size:19px;line-height:1.3}
+.tk-port b {display:block;font-family:'Jersey 15',monospace;font-size:34px;line-height:1}
 .tk-fly {display:flex;flex-direction:column;align-items:center;font-size:11px;color:#3b4366;min-width:84px}
 .tk-stub {border-left:3px dashed #1b1f3b;padding:4px 14px;background:#ffd447;display:grid;align-content:center;font-size:11px;line-height:1.3;border-radius:0 3px 3px 0}
-.tk-stub b {font-family:'Press Start 2P',monospace;font-size:12px;line-height:1.6}
+.tk-stub b {font-family:'Jersey 15',monospace;font-size:24px;line-height:1.1}
 /* agent pages */
 .inv {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .cell {border:3px solid #1b1f3b;padding:6px 8px;font-size:12.5px;line-height:1.3;position:relative;box-shadow:inset -3px -3px 0 rgba(0,0,0,.12)}
-.cell b {font-family:'Press Start 2P',monospace;font-size:11px;display:block;margin-bottom:3px}
+.cell b {font-family:'Jersey 15',monospace;font-size:21px;display:block;line-height:1}
 .cell.like {background:#bff0c8}.cell.meh {background:#fff1b8}.cell.bad {background:#3a3f5c;color:#ffd0d2}
 .cell.pref {outline:3px solid #ffd447;outline-offset:2px}
-.cell.final::after {content:"FINAL";position:absolute;right:4px;top:3px;font-family:'Press Start 2P',monospace;font-size:7px;background:#1b1f3b;color:#fff;padding:2px 4px}
+.cell.final::after {content:"FINAL";position:absolute;right:4px;top:3px;font-family:'Jersey 15',monospace;font-size:14px;background:#1b1f3b;color:#fff;padding:0 5px}
 .thought {display:grid;grid-template-columns:62px 1fr;gap:8px;font-size:13px;margin-bottom:8px}
-.thought .k {font-family:'Press Start 2P',monospace;font-size:8px;padding:3px 0;text-align:center;border:2px solid #1b1f3b;background:#ffd447;height:max-content}
+.thought .k {font-family:'Jersey 15',monospace;font-size:15px;padding:0;text-align:center;border:2px solid #1b1f3b;background:#ffd447;height:max-content}
 </style>
 """, unsafe_allow_html=True)
 
@@ -291,10 +291,8 @@ ROLE = {"atc": ("Ava", "Air traffic control", "Owns the runway: slots, wake spac
 
 
 def png(agent):
-    import base64
-    from ui.replay import character_pngs
-    d = character_pngs().get(agent)
-    return base64.b64decode(d.split(",", 1)[1]) if d else None
+    from ui.sprites import sprite_png
+    return sprite_png(agent)
 
 
 def key_box():
