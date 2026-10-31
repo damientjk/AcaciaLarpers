@@ -1,0 +1,56 @@
+{
+  "sample": true,
+  "note": "SAMPLE NUMBERS for UI layout only. Replace with benchmark.py output.",
+  "scenarios": {
+    "total": 50,
+    "weather_only": 20,
+    "late_aircraft_only": 20,
+    "both": 10
+  },
+  "deterministic": {
+    "runs": 50,
+    "fallback_feasible": 47,
+    "escalations": 3
+  },
+  "agents": {
+    "completed": 10,
+    "consensus": 8,
+    "fallback": 2,
+    "escalation": 0,
+    "accepted_violations": 0,
+    "mean_latency_s": 11.8,
+    "mean_api_calls": 6.2,
+    "retries": 2
+  },
+  "cost_vs_solver_gap_pct": 3.4,
+  "heuristic": {
+    "infeasible_rate_pct": 62,
+    "mean_cost_usd_when_feasible": 3900
+  },
+  "failure_tests": [
+    {
+      "test": "Injected invalid proposal",
+      "expected": "blocked",
+      "result": "blocked",
+      "passed": true
+    },
+    {
+      "test": "Impossible scenario",
+      "expected": "escalate",
+      "result": "escalate",
+      "passed": true
+    },
+    {
+      "test": "Malformed agent response",
+      "expected": "fallback",
+      "result": "fallback",
+      "passed": true
+    },
+    {
+      "test": "API timeout",
+      "expected": "fallback",
+      "result": "fallback",
+      "passed": true
+    }
+  ]
+}
