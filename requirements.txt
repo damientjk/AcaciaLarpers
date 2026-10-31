@@ -3,3 +3,4 @@ pandas
 pydantic>=2
 pyyaml
 anthropic
+pytest
