@@ -288,17 +288,29 @@ def _simulate(row, t: dict, dtype: str, rng: _random.Random) -> dict:
             occupancy.append({"start": iso(arrive - timedelta(minutes=90)),
                               "end": iso(arrive + timedelta(minutes=rng.randint(10, 35))),
                               "occupant": f"{row.AIRLINE}{rng.randint(100, 2999)}"})
-        elif rng.random() < 0.3:
-            s = arrive + timedelta(minutes=rng.randint(-60, 30))
-            occupancy.append({"start": iso(s), "end": iso(s + timedelta(minutes=rng.randint(40, 80))),
+        elif i > 0 and rng.random() < c["alt_gate_conflict_prob"]:
+            # alternative gate also busy across this flight's arrival
+            s = arrive - timedelta(minutes=rng.randint(20, 60))
+            occupancy.append({"start": iso(s), "end": iso(arrive + timedelta(minutes=rng.randint(10, 40))),
                               "occupant": f"{rng.choice(['DL', 'AA', 'UA'])}{rng.randint(100, 2999)}"})
+        elif rng.random() < 0.5:
+            # ordinary traffic that does not overlap: left before arrival, or due after this turn
+            if rng.random() < 0.5:
+                e = arrive - timedelta(minutes=c["gate_buffer_min"] + rng.randint(5, 30))
+                occupancy.append({"start": iso(e - timedelta(minutes=rng.randint(40, 80))), "end": iso(e),
+                                  "occupant": f"{rng.choice(['DL', 'AA', 'UA'])}{rng.randint(100, 2999)}"})
+            else:
+                s = arrive + timedelta(minutes=turn + c["gate_buffer_min"] + rng.randint(60, 120))
+                occupancy.append({"start": iso(s), "end": iso(s + timedelta(minutes=rng.randint(40, 80))),
+                                  "occupant": f"{rng.choice(['DL', 'AA', 'UA'])}{rng.randint(100, 2999)}"})
         gates.append({"gate_id": g, "max_class": max_class, "taxi_route": rng.sample(taxiways, 2),
                       "taxi_in_min": taxi, "occupancy": occupancy})
         if i == 0 or rng.random() < c["gate_crewed_prob"]:
             crews.append({"crew_id": f"CRW-{g}", "assigned_gate": g,
                           "shift_start": iso(issue - timedelta(hours=6)),
                           "shift_end": iso(base_eta + timedelta(minutes=rng.randint(*c["crew_shift_end_after_eta_min"]))),
-                          "reassignable": i != 0 and rng.random() < c["crew_reassignable_prob"]})
+                          # the planned gate's crew works this flight, so it can follow it if that gate is blocked
+                          "reassignable": bool(occupancy) if i == 0 else rng.random() < c["crew_reassignable_prob"]})
     next_dep = t["scheduled_arrival"] + timedelta(minutes=turn + rng.randint(*c["next_departure_slack_min"]))
     ground = {**shared, "planned_gate": planned, "gates": gates, "crews": crews,
               "turnaround_min": turn, "gate_buffer_min": c["gate_buffer_min"],
