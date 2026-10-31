@@ -189,25 +189,44 @@ def try_pipeline_run(mode, flight=None, date=None):
         st.info("The pipeline isn't in the repo yet (no coordinator.py). Showing saved runs only.")
         return None
     fake = not os.environ.get("ANTHROPIC_API_KEY")
-    try:
-        if mode == "random":
-            res = coordinator.run(random=True, fake_agents=fake)
-        else:
-            res = coordinator.run(flight=flight, date=date, fake_agents=fake)
-    except NotImplementedError:
-        st.warning("coordinator.run is still a stub. Showing saved runs only.")
-        return None
-    except Exception as e:  # show the failure, never crash the demo
-        st.error(f"Run failed: {e}. The saved runs below still work.")
-        return None
+    with st.status("Starting the negotiation…", expanded=True) as status:
+        def progress(msg):  # called by coordinator.negotiate at each stage
+            status.update(label=msg)
+            st.write(msg)
+
+        try:
+            if mode == "random":
+                res = coordinator.run(random=True, fake_agents=fake, progress=progress)
+            else:
+                res = coordinator.run(flight=flight, date=date, fake_agents=fake, progress=progress)
+        except NotImplementedError:
+            status.update(label="Pipeline is still a stub", state="error")
+            st.warning("coordinator.run is still a stub. Showing saved runs only.")
+            return None
+        except Exception as e:  # show the failure, never crash the demo
+            status.update(label="Run failed", state="error")
+            st.error(f"Run failed: {e}. The saved runs below still work.")
+            return None
+        status.update(label=f"Done: {res['run_id']} ({res['outcome']['type']}). Opening the replay…",
+                      state="complete", expanded=False)
     if fake:
         st.sidebar.caption("No API key: ran with fake (random) agents.")
     return res
 
 
+def open_new_run(res):
+    """Jump to the new run's replay and autoplay it (applied at the top of the next script run)."""
+    list_logs.clear()
+    st.session_state["_goto_run"] = res["run_id"]
+    st.rerun()
+
+
 # ---------- sidebar ----------
 st.sidebar.title("Sky Huddle")
-page = st.sidebar.radio("Page", ["Story", "Negotiation", "Pixel replay", "Metrics", "Benchmark"], index=1)
+st.session_state.setdefault("page", "Negotiation")
+if "_goto_run" in st.session_state:
+    st.session_state["page"] = "Pixel replay"
+page = st.sidebar.radio("Page", ["Story", "Negotiation", "Pixel replay", "Metrics", "Benchmark"], key="page")
 all_logs = list_logs()
 has_real = any(not smp for _, smp in all_logs.values())
 show_samples = st.sidebar.checkbox("Show sample and toy runs", value=not has_real,
@@ -216,7 +235,13 @@ logs = {k: v[0] for k, v in all_logs.items() if show_samples or not v[1]}
 if not logs:
     st.error("No audit logs found. Run `python fixtures/make_sample_logs.py`.")
     st.stop()
-choice = st.sidebar.selectbox("Run to show", list(logs))
+_goto = st.session_state.pop("_goto_run", None)
+if _goto:
+    _match = next((k for k in logs if k.endswith(f", {_goto})")), None)
+    if _match:
+        st.session_state["run_choice"] = _match
+        st.session_state["_autoplay"] = _goto
+choice = st.sidebar.selectbox("Run to show", list(logs), key="run_choice")
 log = load(logs[choice])
 st.sidebar.caption(f"run_id `{log['run_id']}`")
 if log.get("sample"):
@@ -227,16 +252,14 @@ st.sidebar.subheader("New run")
 if st.sidebar.button("Run a random qualifying row"):
     new = try_pipeline_run("random")
     if new:
-        list_logs.clear()
-        st.sidebar.success(f"Done: {new.get('run_id')}. Pick it above.")
+        open_new_run(new)
 st.sidebar.caption("Run one flight from the 2015 data")
 flight_in = st.sidebar.text_input("Flight", placeholder="AA1344", key="flight_in")
 date_in = st.sidebar.text_input("Date", value="2015-01-01", placeholder="YYYY-MM-DD", key="date_in")
 if st.sidebar.button("Run this flight"):
     new = try_pipeline_run("search", flight_in.strip().upper(), date_in.strip())
     if new:
-        list_logs.clear()
-        st.sidebar.success(f"Done: {new.get('run_id')}. Pick it in the list above.")
+        open_new_run(new)
 
 H = log["scenario"]["historical"]
 SIM = log["scenario"].get("simulated", {})
@@ -422,7 +445,10 @@ elif page == "Pixel replay":
     if key in st.session_state:
         view["human_decision"] = {"approved": st.session_state[key]["approved"], "by": "duty manager",
                                   "note": st.session_state[key].get("note", "")}
-    components.html(replay_html(normalize_log(view)), height=1060, scrolling=True)
+    autoplay = st.session_state.get("_autoplay") == log["run_id"]
+    if autoplay:
+        st.session_state.pop("_autoplay")
+    components.html(replay_html(normalize_log(view), autoplay=autoplay), height=1060, scrolling=True)
 
 elif page == "Metrics":
     import altair as alt
