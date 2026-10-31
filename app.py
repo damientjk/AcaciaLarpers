@@ -137,6 +137,15 @@ def normalize_benchmark(raw):
     for k in ("total", "weather_only", "late_aircraft_only", "both"):
         b["scenarios"].setdefault(k, 0)
     b.setdefault("cost_vs_solver_gap_pct", 0)
+    # Show the gap as total cost across runs (as README and PITCH do), not benchmark.py's mean of per-run
+    # percentages, which one cheap-reference run can blow up (one run at +904% made the mean 114%).
+    paired = [(r["final_cost_usd"], r["reference_optimum"]["total_usd"]) for r in b.get("agent_runs") or []
+              if r.get("final_cost_usd") is not None and (r.get("reference_optimum") or {}).get("total_usd")]
+    if paired:
+        agent, solver = sum(x for x, _ in paired), sum(y for _, y in paired)
+        b["cost_vs_solver_gap_pct"] = round((agent - solver) / solver * 100, 1)
+        b["gap_label"] = f"Extra cost vs solver (total, {len(paired)} runs)"
+    b.setdefault("gap_label", "Cost gap vs solver")
     b["heuristic"] = dict(b.get("heuristic") or {}); b["heuristic"].setdefault("infeasible_rate_pct", 0)
     b["deterministic"] = dict(b.get("deterministic") or {})
     for k in ("runs", "fallback_feasible", "escalations"):
@@ -194,6 +203,10 @@ def try_pipeline_run(mode, flight=None, date=None):
     except ImportError:
         st.info("The pipeline isn't in the repo yet (no coordinator.py). Showing saved runs only.")
         return None
+    if KEY_STATUS == "rejected":  # live calls would all 401 and look like a real escalation
+        st.error("Your API key was rejected, so the agents can't answer. Paste a working key under "
+                 "**Set Claude API key** in the sidebar, or remove it to run with fake agents.")
+        return None
     fake = not os.environ.get("ANTHROPIC_API_KEY")
     with st.status("Starting the negotiation…", expanded=True) as status:
         def progress(msg):  # called by coordinator.negotiate at each stage
@@ -225,18 +238,6 @@ def open_new_run(res):
     st.rerun()
 
 
-# ---------- navigation and the run on screen ----------
-PAGES = ["Run a flight", "How it works", "Plan details", "Results"]
-st.sidebar.title("Sky Huddle")
-st.sidebar.markdown("You are **Mo, the duty manager**. Pick a delayed flight, let three AI agents agree a landing "
-                    "plan, then approve or reject it.")
-if st.session_state.get("page") not in PAGES:
-    st.session_state["page"] = PAGES[0]
-if "_goto_run" in st.session_state:
-    st.session_state["page"] = PAGES[0]
-page = st.sidebar.radio("Go to", PAGES, key="page")
-
-
 @st.cache_data(ttl=600, show_spinner=False)
 def check_key(key):
     """'ok', 'rejected' or an error string. Listing models is free and needs a valid key. Kept in memory only."""
@@ -250,76 +251,17 @@ def check_key(key):
         return f"could not check ({type(e).__name__})"
 
 
-# Claude API key. Set for this server process (agents._client reads the environment), never written to disk.
-with st.sidebar.container(border=True):
-    st.markdown("**Claude API key**")
-    current = os.environ.get("ANTHROPIC_API_KEY", "")
-    status = check_key(current) if current else None
-    if status == "ok":
-        st.success(f"Live agents on (key …{current[-4:]})", icon="✅")
-    elif status == "rejected":
-        st.error(f"Key …{current[-4:]} was rejected. Paste a new one.", icon="❌")
-    elif status:
-        st.warning(f"Key …{current[-4:]} set, {status}.", icon="⚠️")
-    else:
-        st.info("No key: runs use fake agents.", icon="ℹ️")
-    with st.form("api_key_form", clear_on_submit=True, border=False):
-        new_key = st.text_input("Paste a key", type="password", placeholder="sk-ant-...",
-                                help="From platform.claude.com > API keys. Stays on this server, not saved to disk.")
-        save, remove = st.columns(2)
-        if save.form_submit_button("Use key", width="stretch") and new_key.strip():
-            os.environ["ANTHROPIC_API_KEY"] = new_key.strip()
-            st.rerun()
-        if remove.form_submit_button("Remove", width="stretch", disabled=not current):
-            os.environ.pop("ANTHROPIC_API_KEY", None)
-            st.rerun()
-
-all_logs = list_logs()
-has_real = any(not smp for _, smp in all_logs.values())
-with st.sidebar.expander("Advanced"):
-    show_samples = st.checkbox("Show sample and toy runs", value=not has_real,
-                               help="Hidden automatically once real runs exist, so judges only see real ones.")
-logs = {k: v[0] for k, v in all_logs.items() if show_samples or not v[1]}
-if not logs:
-    st.error("No audit logs found. Run `python fixtures/make_sample_logs.py`.")
-    st.stop()
-
-# The run on screen lives in a plain session key so it survives switching pages.
-_goto = st.session_state.pop("_goto_run", None)
-if _goto:
-    _match = next((k for k in logs if k.endswith(f", {_goto})")), None)
-    if _match:
-        st.session_state["current_run"] = _match
-        st.session_state["_autoplay"] = _goto
-if st.session_state.get("current_run") not in logs:
-    st.session_state["current_run"] = next(iter(logs))
-log = load(logs[st.session_state["current_run"]])
-
-
-def run_picker(label):
-    names = list(logs)
-    pick = st.selectbox(label, names, index=names.index(st.session_state["current_run"]))
-    if pick != st.session_state["current_run"]:
-        st.session_state["current_run"] = pick
-        st.rerun()
-    if log.get("sample"):
-        st.warning("Sample log for UI development. Not a real agent run.")
-
-
-H = log["scenario"]["historical"]
-SIM = log["scenario"].get("simulated", {})
-out = log["outcome"]
-cands = {c["id"]: c for c in log.get("candidates", [])}
-costs = log.get("costs", {})
-r1 = next((r for r in log.get("rounds", []) if r["round"] == 1), None)
-r2 = next((r for r in log.get("rounds", []) if r["round"] == 2), None)
-cp = log.get("compromise")
-check_set = "before_concessions" if out["type"] == "fallback" else "after_concessions"
-
-
-
 
 # ---------- shared pieces ----------
+def run_picker(label):
+    names, key = list(logs), f"current_run_{MODE}"
+    pick = st.selectbox(label, names, index=names.index(st.session_state[key]))
+    if pick != st.session_state[key]:
+        st.session_state[key] = pick
+        st.rerun()
+
+
+
 def decision_buttons(fc):
     key = f"decision-{log['run_id']}"
     saved = DECISIONS / f"{log['run_id']}.json"
@@ -329,12 +271,11 @@ def decision_buttons(fc):
         dsn = st.session_state[key]
         (st.success if dsn["approved"] else st.error)(f"{'Approved' if dsn['approved'] else 'Rejected'} at {dsn['at']}. {dsn.get('note', '')}")
         return True
-    note = st.text_input("Note (optional)")
     x, y, _ = st.columns([1, 1, 4])
     for btn, ok in [(x, True), (y, False)]:
         if btn.button("Approve" if ok else "Reject", type="primary" if ok else "secondary", disabled=not fc and ok,
                       width="stretch"):
-            dsn = {"approved": ok, "at": datetime.now().strftime("%H:%M:%S"), "note": note,
+            dsn = {"approved": ok, "at": datetime.now().strftime("%H:%M:%S"), "note": "",
                    "run_id": log["run_id"], "plan": fc}
             st.session_state[key] = dsn
             DECISIONS.mkdir(parents=True, exist_ok=True)
@@ -359,6 +300,8 @@ def show_replay():
 # ---------- pages ----------
 def page_run():
     st.title("Run a flight")
+    st.badge("LIVE · Claude agents" if KEY_STATUS == "ok" else "FAKE AGENTS · no working key",
+             color="green" if KEY_STATUS == "ok" else "gray")
     st.markdown("A real delayed flight from 2015 needs a landing time, extra holding and a gate. Three AI agents "
                 "negotiate it: **Ava** in the tower, **Pip** the pilot and **Gus** on the ground. Plain code checks "
                 "every plan is safe. **You are Mo, the duty manager: you approve or reject the result.**")
@@ -369,8 +312,11 @@ def page_run():
                                 help="Airline code and number from the 2015 data, for example AA1344 or DL2681.")
     date_in = c[1].text_input("Date", value="2015-01-01", key="date_in", help="YYYY-MM-DD, in 2015.")
     go = c[2].button("Run this flight", type="primary", width="stretch")
-    rnd = c[3].button("Surprise me", width="stretch", help="Run a random delayed flight from the 2015 data.")
-    st.caption("Try AA1344 on 2015-01-01, DL2681 on 2015-02-10 or MQ2950 on 2015-01-06. A run takes about 10 seconds.")
+    rnd = c[3].button("Random flight", width="stretch", help="Run a random delayed flight from the 2015 data.")
+    st.caption("Try AA1344 on 2015-01-01, AA1090 on 2015-06-28 or MQ2950 on 2015-01-06. A run takes about 10 seconds.")
+    if KEY_STATUS != "ok":
+        st.info("No working API key, so runs use fake agents with random choices. Set a key under "
+                "**Claude API key** in the sidebar for live Claude agents.", icon=":material/key:")
     if go:
         if not flight_in.strip():
             st.warning("Type a flight number first, for example AA1344.")
@@ -383,7 +329,19 @@ def page_run():
         if new:
             open_new_run(new)
     run_picker("Or open a saved run")
+    show_run()
 
+
+def page_sample():
+    st.title("Watch a sample run")
+    st.badge("SAMPLE · not a live run", color="orange")
+    st.markdown("New here? This is a saved example, so it needs no API key. Read the plan in step 2, try "
+                "**Approve** or **Reject**, and watch the replay in step 3. When you are ready, go to **Run a flight**.")
+    run_picker("Sample run")
+    show_run()
+
+
+def show_run():
     st.subheader("2. Your decision")
     fc = out.get("final_candidate")
     st.markdown(f"**{H['carrier']} {H['flight']}** {H['origin']} → {H['destination']} on {H['date']}, "
@@ -396,8 +354,8 @@ def page_run():
     if errs:
         if any("401" in e or "authentication" in e.lower() for e in errs):
             made = log.get("created_at", "")[11:16]
-            fix = ("Your current key works, so click **Run this flight** again." if status == "ok"
-                   else "Paste a working key in the sidebar and run the flight again.")
+            fix = ("Your current key works, so click **Run this flight** again." if KEY_STATUS == "ok"
+                   else "Set a working key with **Claude API key** in the sidebar, then run the flight again.")
             st.error(f"This run (made at {made}) used an API key that was rejected (401), so the agents never "
                      f"answered. The outcome reflects the failed calls, not the flight. {fix}")
         else:
@@ -415,11 +373,15 @@ def page_run():
                     'nothing to approve. Reject to close this case and handle the flight by hand, or run another '
                     'flight.</div>', unsafe_allow_html=True)
     if decision_buttons(fc):
-        st.caption("Done. Run another flight above, or open **Plan details** in the sidebar to see every check.")
+        st.caption("Done. Run another flight above, or open **Every round and safety check** below.")
 
     st.subheader("3. See how the agents agreed")
-    st.caption("The replay plays by itself after a new run. Press Play to watch it again.")
-    show_replay()
+    replay_tab, audit_tab = st.tabs(["Replay", "Every round and safety check"])
+    with replay_tab:
+        st.caption("The replay plays by itself after a new run. Press Play to watch it again.")
+        show_replay()
+    with audit_tab:
+        audit()
 
 
 def page_story():
@@ -467,21 +429,17 @@ digraph G { rankdir=LR; node [shape=box, style="filled", fontname="Helvetica", f
         m[0].metric("Consensus in 2 rounds", f"{a['consensus']}/{a['completed']}")
         m[1].metric("Fallback", a["fallback"])
         m[2].metric("Accepted unsafe plans", a["accepted_violations"])
-        m[3].metric("Cost gap vs solver", f"{b['cost_vs_solver_gap_pct']}%")
+        m[3].metric(b["gap_label"], f"{b['cost_vs_solver_gap_pct']}%")
         m[4].metric("Simple heuristic infeasible", f"{b['heuristic']['infeasible_rate_pct']}%")
     st.caption("Real: the flight row from flights.csv. Simulated and labelled: gates, fuel, crew, slots. "
                "Checks are simplified and are not full FAA compliance.")
 
 
-def page_details():
-    run_picker("Run")
-    st.title(f"{H['carrier']} {H['flight']}  {H['origin']} → {H['destination']}")
+def audit():
     st.caption(f"run_id `{log['run_id']}`")
-    st.markdown(outcome_badge(out), unsafe_allow_html=True)
-    st.write("")
 
     # 2. Historical vs simulated
-    st.header("1. Scenario")
+    st.subheader("Scenario")
     a, b = st.columns(2)
     with a:
         st.markdown('<span class="real">REAL DATA · flights.csv</span>', unsafe_allow_html=True)
@@ -494,7 +452,7 @@ def page_details():
             st.json(v, expanded=False)
 
     # 3. Rounds
-    st.header("2. Round 1: offers and concessions")
+    st.subheader("Round 1: offers and concessions")
     if r1:
         cols = st.columns(3)
         for col, o in zip(cols, r1["offers"]):
@@ -518,7 +476,7 @@ Cites: {", ".join(o['constraints_cited'])}<br>Concession: <b>{conc}</b><br>
             st.success("Unlocked by: " + " + ".join(out["concessions_that_unlocked"]))
 
     if r2:
-        st.header("3. Round 2: final vote")
+        st.subheader("Round 2: final vote")
         cols = st.columns(3)
         for col, v in zip(cols, r2["votes"]):
             n, role = AGENTS[v["agent"]]
@@ -527,7 +485,7 @@ Cites: {", ".join(o['constraints_cited'])}<br>Concession: <b>{conc}</b><br>
                          unsafe_allow_html=True)
 
     # 4. Checks
-    st.header("4. Hard checks")
+    st.subheader("Hard checks")
     fc = out.get("final_candidate")
     if fc:
         st.caption(f"On the final plan {fc} ({'base state, no unconfirmed concessions' if out['type'] == 'fallback' else 'with agreed concessions'})")
@@ -547,7 +505,7 @@ Cites: {", ".join(o['constraints_cited'])}<br>Concession: <b>{conc}</b><br>
         st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
 
     # 5. Final
-    st.header("5. Final plan")
+    st.subheader("Final plan")
     if fc:
         c, k = cands[fc], costs[fc]
         m = st.columns(5)
@@ -564,8 +522,6 @@ Cites: {", ".join(o['constraints_cited'])}<br>Concession: <b>{conc}</b><br>
                        f"Simple heuristic ({h.get('plan', '')}): {'feasible' if h.get('feasible') else 'infeasible, fails ' + ', '.join(h.get('failed', []))}")
     st.markdown(f"**Why:** {out['reason']}")
 
-    st.subheader("Duty manager decision")
-    decision_buttons(fc)
     s = log.get("stats", {})
     st.caption(f"API calls {s.get('api_calls')} · retries {s.get('retries')} · total {s.get('total_latency_s')} s")
     with st.expander("Raw audit log JSON"):
@@ -702,7 +658,7 @@ def page_benchmark():
     m = st.columns(4)
     m[0].metric("Mean latency", f"{a['mean_latency_s']} s")
     m[1].metric("Mean API calls", a["mean_api_calls"])
-    m[2].metric("Cost gap vs solver", f"{b['cost_vs_solver_gap_pct']}%")
+    m[2].metric(b["gap_label"], f"{b['cost_vs_solver_gap_pct']}%")
     m[3].metric("Heuristic infeasible", f"{b['heuristic']['infeasible_rate_pct']}%")
     det = b["deterministic"]
     st.markdown(f"**Deterministic runs (all {det['runs']}):** rulebook found a feasible plan in {det['fallback_feasible']}, escalated {det['escalations']}.")
@@ -722,4 +678,68 @@ def page_results():
         page_metrics()
 
 
-{"Run a flight": page_run, "How it works": page_story, "Plan details": page_details, "Results": page_results}[page]()
+# ---------- navigation, sidebar and the run on screen ----------
+RUN = st.Page(page_run, title="Run a flight", icon=":material/flight_land:", url_path="run", default=True)
+pg = st.navigation({
+    "How to use": [st.Page(page_story, title="How it works", icon=":material/help:", url_path="how"),
+                   st.Page(page_sample, title="Watch a sample run", icon=":material/play_circle:", url_path="sample")],
+    "Live": [RUN, st.Page(page_results, title="Results", icon=":material/bar_chart:", url_path="results")],
+})
+MODE = "sample" if pg.url_path == "sample" else "live"
+
+# Claude API key: set for this server process (agents._client reads the environment), never written to disk.
+_key = os.environ.get("ANTHROPIC_API_KEY", "")
+KEY_STATUS = check_key(_key) if _key else None
+st.sidebar.markdown("**Claude API key**")
+if KEY_STATUS == "ok":
+    st.sidebar.badge(f"Live agents · key …{_key[-4:]}", icon=":material/check_circle:", color="green")
+elif KEY_STATUS == "rejected":
+    st.sidebar.badge(f"Key …{_key[-4:]} rejected", icon=":material/error:", color="red")
+elif KEY_STATUS:
+    st.sidebar.badge(f"Key …{_key[-4:]}: {KEY_STATUS}", icon=":material/warning:", color="orange")
+else:
+    st.sidebar.badge("No key: fake agents", icon=":material/key_off:", color="gray")
+with st.sidebar.popover("Set Claude API key", icon=":material/key:", width="stretch"):
+    with st.form("api_key_form", clear_on_submit=True, border=False):
+        new_key = st.text_input("Paste a key", type="password", placeholder="sk-ant-...",
+                                help="From platform.claude.com > API keys. Stays on this server, not saved to disk.")
+        save, remove = st.columns(2)
+        if save.form_submit_button("Use key", type="primary", width="stretch") and new_key.strip():
+            os.environ["ANTHROPIC_API_KEY"] = new_key.strip()
+            st.rerun()
+        if remove.form_submit_button("Remove", width="stretch", disabled=not _key):
+            os.environ.pop("ANTHROPIC_API_KEY", None)
+            st.rerun()
+st.sidebar.caption("Sample runs need no key.")
+st.sidebar.divider()
+st.sidebar.caption("**You are Mo**, the duty manager. Ava = tower · Pip = pilot · Gus = ground.  \n"
+                   "Real: 2015 flight rows. Simulated: gates, fuel, crew.")
+
+# Runs on screen: samples on the sample page, real runs everywhere else (samples only if no real run exists).
+all_logs = list_logs()
+real = {k: v[0] for k, v in all_logs.items() if not v[1]}
+samples = {k: v[0] for k, v in all_logs.items() if v[1]}
+logs = samples if MODE == "sample" else (real or samples)
+if not logs:
+    st.error("No audit logs found. Run `python fixtures/make_sample_logs.py`.")
+    st.stop()
+_goto = st.session_state.pop("_goto_run", None)
+if _goto:
+    _match = next((k for k in logs if k.endswith(f", {_goto})")), None)
+    if _match:
+        st.session_state["current_run_live"] = _match
+        st.session_state["_autoplay"] = _goto
+if st.session_state.get(f"current_run_{MODE}") not in logs:
+    st.session_state[f"current_run_{MODE}"] = next(iter(logs))
+log = load(logs[st.session_state[f"current_run_{MODE}"]])
+H = log["scenario"]["historical"]
+SIM = log["scenario"].get("simulated", {})
+out = log["outcome"]
+cands = {c["id"]: c for c in log.get("candidates", [])}
+costs = log.get("costs", {})
+r1 = next((r for r in log.get("rounds", []) if r["round"] == 1), None)
+r2 = next((r for r in log.get("rounds", []) if r["round"] == 2), None)
+cp = log.get("compromise")
+check_set = "before_concessions" if out["type"] == "fallback" else "after_concessions"
+
+pg.run()
