@@ -145,7 +145,11 @@ def list_logs():
                     log = normalize_log(log)
                     is_sample = bool(log.get("sample")) or d.name == "sample_logs"
                     tag = "SAMPLE · " if is_sample else ""
-                    found[f"{tag}{log.get('label') or log['run_id']}  ({p.parent.name})"] = (str(p), is_sample)
+                    h = log.get("scenario", {}).get("historical", {})
+                    auto = f"{h.get('carrier', '')}{h.get('flight', '')} {h.get('origin', '?')}→{h.get('destination', '?')} · {log['outcome']['type']}"
+                    if log.get("fake_agents"):
+                        auto += " · fake agents"
+                    found[f"{tag}{log.get('label') or auto}  ({p.parent.name}, {log['run_id']})"] = (str(p), is_sample)
     return found
 
 
