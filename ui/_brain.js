@@ -2,22 +2,32 @@
 /* makeBrain(canvas,{onFrame}) -> {set(state), play(ms)}
    state = {who, stages:[{t,v}] x5, rules:[{ok}], options:[{ok,u}]}  */
 function makeBrain(cv,opts={}){
- const LW=200,LH=104,off=document.createElement("canvas");off.width=LW;off.height=LH;const o=off.getContext("2d");
- const inside=(x,y)=>{const nx=(x-98)/86,ny=(y-46)/38;const main=nx*nx+ny*ny<1&&!(ny>.5&&nx>.05&&nx<.55);
-  const cb=((x-136)/26)**2+((y-80)/12)**2<1;const stem=x>112&&x<124&&y>72&&y<100;return main||cb||stem};
+ const LW=200,LH=150,off=document.createElement("canvas");off.width=LW;off.height=LH;const o=off.getContext("2d");
+ // side view: 1 cerebrum, 2 cerebellum, 3 brain stem
+ const part=(x,y)=>{
+  const cb=((x-140)/28)**2+((y-117)/15)**2<1;if(cb&&y>103)return 2;
+  const stem=x>108&&x<124&&y>104&&y<146&&(x-108)>(y-104)*.1;if(stem&&!cb)return 3;
+  const cer=((x-98)/86)**2+((y-62)/55)**2<1&&y<=94,tmp=((x-80)/54)**2+((y-92)/22)**2<1;return cer||tmp?1:cb?2:0};
+ const inside=(x,y)=>part(x,y)>0;
  const stageOf=x=>Math.max(0,Math.min(4,Math.floor((x-12)/172*5)));
+ const near=(x,y,x1,y1,x2,y2)=>{const dx=x2-x1,dy=y2-y1,t=Math.max(0,Math.min(1,((x-x1)*dx+(y-y1)*dy)/(dx*dx+dy*dy)));return Math.hypot(x-x1-t*dx,y-y1-t*dy)};
  let seed=11;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
  const nodes=[];let guard=0;
- while(nodes.length<58&&guard++<5000){const x=14+rnd()*170,y=10+rnd()*88;if(inside(x,y)&&nodes.every(n=>Math.hypot(n.x-x,n.y-y)>10.5))nodes.push({x:Math.round(x),y:Math.round(y),heat:0,stage:stageOf(x),col:null})}
+ while(nodes.length<84&&guard++<9000){const x=12+rnd()*176,y=8+rnd()*124,pt=part(x,y);if((pt===1||pt===2)&&nodes.every(n=>Math.hypot(n.x-x,n.y-y)>11))nodes.push({x:Math.round(x),y:Math.round(y),heat:0,stage:stageOf(x),col:null})}
  const edges=[];nodes.forEach((n,i)=>nodes.map((m,j)=>[j,Math.hypot(m.x-n.x,m.y-n.y)]).filter(([j])=>j!==i).sort((a,b)=>a[1]-b[1]).slice(0,3)
-  .forEach(([j,d])=>{if(d<30&&!edges.some(e=>(e.a===j&&e.b===i)||(e.a===i&&e.b===j)))edges.push({a:i,b:j,glow:0})}));
- // static brain images: none active, and each stage active
+  .forEach(([j,d])=>{if(d<28&&!edges.some(e=>(e.a===j&&e.b===i)||(e.a===i&&e.b===j)))edges.push({a:i,b:j,glow:0})}));
  const statics=[-1,0,1,2,3,4].map(act=>{const c=document.createElement("canvas");c.width=LW;c.height=LH;const g=c.getContext("2d");
-  for(let y=0;y<LH;y++)for(let x=0;x<LW;x++){if(!inside(x,y))continue;
-   const edge=[[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy])=>!inside(x+dx,y+dy));
-   const fold=Math.sin(x*.19+Math.sin(y*.16)*2.2)+Math.cos(y*.24+x*.03)>1.45;
-   let col=edge?"#5aa0ff":fold?"#1c4597":"#0f2a66";
-   if(!edge&&stageOf(x)===act)col=fold?"#2a63c9":"#173d8c";
+  for(let y=0;y<LH;y++)for(let x=0;x<LW;x++){const pt=part(x,y);if(!pt)continue;
+   const edge=[[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy])=>part(x+dx,y+dy)!==pt);
+   const shade=1-y/LH*.55,on=pt===1&&stageOf(x)===act;
+   let fold=false;
+   if(pt===1){const f=Math.sin(x*.17+2.4*Math.sin(y*.11))+Math.sin(y*.2+1.7*Math.sin(x*.07));
+    fold=Math.abs(f)<.2||near(x,y,56,84,130,70)<1||near(x,y,108,10,92,62)<1}
+   if(pt===2)fold=((y+Math.sin(x*.35)*1.6)%4.5)<1;
+   let col;
+   if(edge)col=pt===1?"#8fd0ff":"#6aa8f0";
+   else if(fold)col=on?"#1b4fa8":"#0a1c4d";
+   else{const base=pt===3?[20,50,120]:on?[44,112,230]:[24,72,170];col=`rgb(${base.map(v=>Math.round(v*shade+10)).join(",")})`}
    g.fillStyle=col;g.fillRect(x,y,1,1)}return c});
  let pulses=[],fired=0,state={stages:[],rules:[],options:[]},t0=0,dur=4200,playing=false,raf=0;
  function set(s){state=s;
@@ -41,13 +51,13 @@ function makeBrain(cv,opts={}){
   pulses.forEach(p=>{const a=nodes[p.from],b=nodes[p.to];o.fillStyle="#ffffff";o.fillRect(Math.round(a.x+(b.x-a.x)*p.p)-1,Math.round(a.y+(b.y-a.y)*p.p)-1,2,2)});
   nodes.forEach(n=>{const lit=n.col&&(n.stage<act||act===-1&&!playing&&prog>=1||n.stage===act);
    if(n.heat>.05){o.fillStyle=`rgba(111,243,255,${n.heat*.5})`;o.fillRect(n.x-3,n.y-3,7,7)}
-   o.fillStyle=lit?n.col:"#3b6fd6";o.fillRect(n.x-1,n.y-1,3,3);
+   o.fillStyle=lit?n.col:"#7fb2ff";o.fillRect(n.x-1,n.y-1,3,3);
    if(n.heat>.4){o.fillStyle="#fff";o.fillRect(n.x,n.y,1,1)}n.heat*=.93});
   // to screen
-  const W=cv.clientWidth||700,H=cv.clientHeight||280,dpr=window.devicePixelRatio||1;
+  const W=cv.clientWidth||700,H=cv.clientHeight||380,dpr=window.devicePixelRatio||1;
   if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr)}
   const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);c.fillStyle="#06122e";c.fillRect(0,0,W,H);
-  const s=Math.min((W-20)/LW,(H-70)/LH),bw=LW*s,bh=LH*s,bx=(W-bw)/2,by=34;
+  const s=Math.min((W-24)/LW,(H-88)/LH),bw=LW*s,bh=LH*s,bx=(W-bw)/2,by=28+((H-88)-bh)/2;
   c.imageSmoothingEnabled=false;c.drawImage(off,bx,by,bw,bh);
   c.save();c.globalCompositeOperation="lighter";c.globalAlpha=.35;c.filter="blur(7px)";c.drawImage(off,bx,by,bw,bh);c.restore();
   // HUD
@@ -55,9 +65,11 @@ function makeBrain(cv,opts={}){
   c.fillText(`${state.who?state.who+" · ":""}neurons fired ${fired}`,10,18);
   c.textAlign="right";c.fillStyle=playing?"#ffd447":"#8fb4ff";c.fillText(playing?`thinking: ${(state.stages[act]||{}).t||""}`:"idle",W-10,18);
   const segW=(W-20)/5;(state.stages||[]).forEach((st,i)=>{const x=10+i*segW,done=!playing||i<act,on=i===act;
-   c.fillStyle=on?"#ffd447":done?"#3fae54":"#1a2a5c";c.fillRect(x+2,H-30,segW-4,8);
-   c.textAlign="center";c.font="700 11px 'Pixelify Sans',monospace";c.fillStyle=on?"#ffd447":done?"#e6efff":"#5b6c9e";
-   c.fillText(`${st.t}${done||on?": "+st.v:""}`,x+segW/2,H-9)});
+   c.fillStyle=on?"#ffd447":done?"#3fae54":"#1a2a5c";c.fillRect(x+3,H-52,segW-6,8);
+   c.textAlign="center";c.font="700 12px 'Pixelify Sans',monospace";c.fillStyle=on?"#ffd447":done?"#e6efff":"#5b6c9e";
+   c.fillText(st.t,x+segW/2,H-30);
+   c.font="600 11px Poppins,sans-serif";c.fillStyle=on?"#ffe58a":done?"#9fc4ff":"#3d4c7a";
+   c.fillText(done||on?String(st.v):"…",x+segW/2,H-13)});
   if(opts.onFrame)opts.onFrame(prog,playing);
  }
  start();
