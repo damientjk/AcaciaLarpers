@@ -143,7 +143,9 @@ def list_logs():
                     continue
                 if isinstance(log, dict) and "run_id" in log and "scenario" in log:
                     log = normalize_log(log)
-                    found[f"{log.get('label') or log['run_id']}  ({p.parent.name})"] = str(p)
+                    is_sample = bool(log.get("sample")) or d.name == "sample_logs"
+                    tag = "SAMPLE · " if is_sample else ""
+                    found[f"{tag}{log.get('label') or log['run_id']}  ({p.parent.name})"] = (str(p), is_sample)
     return found
 
 
@@ -193,7 +195,11 @@ def try_pipeline_run(mode, flight=None, date=None):
 # ---------- sidebar ----------
 st.sidebar.title("Sky Huddle")
 page = st.sidebar.radio("Page", ["Story", "Negotiation", "Pixel replay", "Metrics", "Benchmark"], index=1)
-logs = list_logs()
+all_logs = list_logs()
+has_real = any(not smp for _, smp in all_logs.values())
+show_samples = st.sidebar.checkbox("Show sample and toy runs", value=not has_real,
+                                   help="Hidden automatically once real runs exist, so judges only see real ones.")
+logs = {k: v[0] for k, v in all_logs.items() if show_samples or not v[1]}
 if not logs:
     st.error("No audit logs found. Run `python fixtures/make_sample_logs.py`.")
     st.stop()
@@ -400,7 +406,7 @@ elif page == "Metrics":
     import altair as alt
 
     st.title("Metrics")
-    runs = [load(p) for p in list_logs().values()]
+    runs = [load(p) for p in logs.values()]
     n_sample = sum(1 for r in runs if r.get("sample"))
     st.caption(f"Computed live from {len(runs)} audit logs in the run picker.")
     if n_sample:
