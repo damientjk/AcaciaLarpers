@@ -36,7 +36,23 @@ function spriteGrid(kind,opt={}){
  for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(!g[y][x]&&[[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy])=>g[y+dy]&&g[y+dy][x+dx]&&g[y+dy][x+dx]!==OUT))o[y][x]=OUT;
  return o;
 }
+/* Yizhuo's character art (ui/assets/characters) for atc/pilot/ground: static idle PNGs, no blink frames.
+   Procedural sprites stay for mod/custom and as the fallback if an image fails to load. */
+const CHAR_IMG={};
+function charImage(kind){
+ const src=(typeof SKY_CHARACTER_PNGS!=="undefined")&&SKY_CHARACTER_PNGS[kind];
+ if(!src)return null;
+ if(!CHAR_IMG[kind]){const im=new Image();im.onerror=()=>{im.failed=true};im.src=src;CHAR_IMG[kind]=im}
+ return CHAR_IMG[kind].failed?null:CHAR_IMG[kind];
+}
 function drawSprite(cv,kind,opt={}){
+ const im=charImage(kind);
+ if(im){
+  cv.width=160;cv.height=216;  // same 40 x 54 aspect, 4x the pixels, so the seat layout is unchanged
+  const paint=()=>{const c=cv.getContext("2d");c.clearRect(0,0,cv.width,cv.height);c.drawImage(im,0,0,cv.width,cv.height)};
+  if(im.complete&&im.naturalWidth)paint();else im.addEventListener("load",paint,{once:true});
+  return;
+ }
  const g=spriteGrid(kind,opt),s=2;cv.width=20*s;cv.height=27*s;const c=cv.getContext("2d");c.clearRect(0,0,cv.width,cv.height);
  g.forEach((r,y)=>r.forEach((col,x)=>{if(col){c.fillStyle=col;c.fillRect(x*s,y*s,s,s)}}));
 }
