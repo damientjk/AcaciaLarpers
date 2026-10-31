@@ -192,7 +192,7 @@ def try_pipeline_run(mode, flight=None, date=None):
 
 # ---------- sidebar ----------
 st.sidebar.title("Sky Huddle")
-page = st.sidebar.radio("Page", ["Story", "Negotiation", "Pixel replay", "Benchmark"], index=1)
+page = st.sidebar.radio("Page", ["Story", "Negotiation", "Pixel replay", "Metrics", "Benchmark"], index=1)
 logs = list_logs()
 if not logs:
     st.error("No audit logs found. Run `python fixtures/make_sample_logs.py`.")
@@ -282,7 +282,7 @@ elif page == "Negotiation":
     a, b = st.columns(2)
     with a:
         st.markdown('<span class="real">REAL DATA · flights.csv</span>', unsafe_allow_html=True)
-        st.dataframe(pd.DataFrame(H.items(), columns=["field", "value"]).astype(str), hide_index=True, use_container_width=True)
+        st.dataframe(pd.DataFrame(H.items(), columns=["field", "value"]).astype(str), hide_index=True, width="stretch")
     with b:
         st.markdown('<span class="sim">SIMULATED · seeded by scenario ID</span>', unsafe_allow_html=True)
         for k, v in SIM.items():
@@ -341,7 +341,7 @@ Cites: {", ".join(o['constraints_cited'])}<br>Concession: <b>{conc}</b><br>
             row.update({r["rule_id"]: "✓" if r["passed"] else "✗" for r in rs})
             row["cost $"] = costs[cid]["total_usd"]
             rows.append(row)
-        st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
 
     # 5. Final
     st.header("5. Final plan")
@@ -396,6 +396,117 @@ elif page == "Pixel replay":
                                   "note": st.session_state[key].get("note", "")}
     components.html(replay_html(normalize_log(view)), height=1250, scrolling=True)
 
+elif page == "Metrics":
+    import altair as alt
+
+    st.title("Metrics")
+    runs = [load(p) for p in list_logs().values()]
+    n_sample = sum(1 for r in runs if r.get("sample"))
+    st.caption(f"Computed live from {len(runs)} audit logs in the run picker.")
+    if n_sample:
+        st.warning(f"{n_sample} of {len(runs)} logs are sample or toy runs. Numbers become real once the pipeline writes logs.")
+    INK, COLS = "#1b1f3b", {"consensus": "#3fae54", "fallback": "#e5484d", "escalation": "#7a1f1f"}
+
+    # 1. Outcome mix
+    st.subheader("1. How runs end")
+    oc = pd.DataFrame([{"outcome": r["outcome"]["type"]} for r in runs]).value_counts().reset_index(name="runs")
+    st.altair_chart(alt.Chart(oc).mark_bar(stroke=INK, strokeWidth=2).encode(
+        x=alt.X("runs:Q", title="Runs", axis=alt.Axis(tickMinStep=1)), y=alt.Y("outcome:N", title=None, sort="-x"),
+        color=alt.Color("outcome:N", scale=alt.Scale(domain=list(COLS), range=list(COLS.values())), legend=None),
+        tooltip=["outcome", "runs"]).properties(height=140), width="stretch")
+
+    # 2. Funnel for the selected run
+    st.subheader("2. How the negotiation narrows the options (selected run)")
+    cpx = log.get("compromise") or {}
+    fc = log["outcome"].get("final_candidate")
+    funnel = pd.DataFrame([
+        {"stage": "1 All candidates", "plans": len(log.get("candidates", []))},
+        {"stage": "2 Pass every check (no concessions)", "plans": len(cpx.get("feasible_before", []) or [])},
+        {"stage": "3 Pass after concessions", "plans": len(cpx.get("feasible_after", []) or [])},
+        {"stage": "4 Acceptable to all three agents", "plans": len(cpx.get("in_all_acceptable", []) or [])},
+        {"stage": "5 Final plan", "plans": 1 if fc else 0}])
+    st.altair_chart(alt.Chart(funnel).mark_bar(stroke=INK, strokeWidth=2, color="#4f8cff").encode(
+        x=alt.X("plans:Q", title="Plans", axis=alt.Axis(tickMinStep=1)), y=alt.Y("stage:N", title=None, sort=None),
+        tooltip=["stage", "plans"]).properties(height=200), width="stretch")
+    st.caption("If step 3 is bigger than step 2, the agents' concessions opened up plans the rulebook alone could not use.")
+
+    # 3. Cost: agreed plan vs rulebook without concessions
+    st.subheader("3. Cost of the agreed plan vs the rulebook alone")
+    rows = []
+    for r in runs:
+        c = r.get("costs", {})
+        cp_ = r.get("compromise") or {}
+        name = r.get("label") or r["run_id"]
+        fin = r["outcome"].get("final_candidate")
+        base = [i for i in (cp_.get("feasible_before") or []) if i in c]
+        if fin in c:
+            rows.append({"run": name, "plan": "Final plan", "usd": c[fin]["total_usd"]})
+        if base:
+            rows.append({"run": name, "plan": "Rulebook, no concessions", "usd": min(c[i]["total_usd"] for i in base)})
+    if rows:
+        cd = pd.DataFrame(rows)
+        st.altair_chart(alt.Chart(cd).mark_bar(stroke=INK, strokeWidth=2).encode(
+            y=alt.Y("run:N", title=None), x=alt.X("usd:Q", title="Simulated cost (USD)"),
+            yOffset="plan:N", color=alt.Color("plan:N", scale=alt.Scale(range=["#ffd447", "#9aa3c2"]), title=None),
+            tooltip=["run", "plan", alt.Tooltip("usd:Q", format="$,.0f")]).properties(height=60 * len(cd["run"].unique()) + 40),
+            width="stretch")
+    else:
+        st.info("No runs with costs yet.")
+
+    # 4. Which checks block plans
+    st.subheader("4. Which hard checks block plans")
+    chk = []
+    for r in runs:
+        for state in ("before_concessions", "after_concessions"):
+            for cid, rs in (r.get("checks", {}).get(state) or {}).items():
+                for x in rs:
+                    chk.append({"rule": x["rule_id"], "state": "before" if state.startswith("before") else "after",
+                                "failed": 0 if x["passed"] else 1})
+    if chk:
+        cf = pd.DataFrame(chk).groupby(["rule", "state"], as_index=False)["failed"].sum()
+        st.altair_chart(alt.Chart(cf).mark_bar(stroke=INK, strokeWidth=2).encode(
+            x=alt.X("rule:N", title="Check"), y=alt.Y("failed:Q", title="Plans blocked", axis=alt.Axis(tickMinStep=1)),
+            xOffset=alt.XOffset("state:N", sort=["before", "after"]),
+            color=alt.Color("state:N", sort=["before", "after"], scale=alt.Scale(range=["#e5484d", "#f2a51a"]), title="Concessions"),
+            tooltip=["rule", "state", "failed"]).properties(height=260), width="stretch")
+        st.caption("A drop from red to amber shows a concession unblocking that check.")
+
+    # 5. Agent response time
+    st.subheader("5. Agent response time per round")
+    lat = []
+    for r in runs:
+        for rd in r.get("rounds", []):
+            for m in rd.get("offers", []) + rd.get("votes", []):
+                if m.get("latency_s") is not None:
+                    lat.append({"agent": AGENTS.get(m["agent"], (m["agent"],))[0], "round": f"Round {rd['round']}",
+                                "seconds": float(m["latency_s"])})
+    if lat:
+        ld = pd.DataFrame(lat)
+        st.altair_chart(alt.Chart(ld).mark_circle(size=140, stroke=INK, strokeWidth=1.5, opacity=.85).encode(
+            x=alt.X("seconds:Q", title="Seconds"), y=alt.Y("agent:N", title=None), color=alt.Color("round:N", title=None,
+            scale=alt.Scale(range=["#4f8cff", "#ff8a3d"])), tooltip=["agent", "round", "seconds"]).properties(height=170),
+            width="stretch")
+        st.caption("The per-call timeout from config.yaml is the ceiling; anything at the ceiling became an abstention.")
+    else:
+        st.info("No agent timings yet (fake agents report none).")
+
+    # 6. Concessions
+    st.subheader("6. Concessions offered and the ones that unlocked agreement")
+    cc = []
+    for r in runs:
+        unlocked = set(r["outcome"].get("concessions_that_unlocked") or [])
+        for c in (r.get("compromise") or {}).get("concessions_applied", []) or []:
+            cc.append({"concession": c["id"], "unlocked": "Unlocked a deal" if c["id"] in unlocked else "Offered only"})
+    if cc:
+        ccd = pd.DataFrame(cc).value_counts().reset_index(name="count")
+        st.altair_chart(alt.Chart(ccd).mark_bar(stroke=INK, strokeWidth=2).encode(
+            x=alt.X("count:Q", title="Times", axis=alt.Axis(tickMinStep=1)), y=alt.Y("concession:N", title=None),
+            color=alt.Color("unlocked:N", scale=alt.Scale(domain=["Unlocked a deal", "Offered only"], range=["#3fae54", "#c5cbe0"]), title=None),
+            tooltip=["concession", "unlocked", "count"]).properties(height=160), width="stretch")
+    else:
+        st.info("No concessions in these runs.")
+
+
 else:
     st.title("Benchmark")
     b, bp = benchmark()
@@ -422,6 +533,6 @@ else:
     det = b["deterministic"]
     st.markdown(f"**Deterministic runs (all {det['runs']}):** rulebook found a feasible plan in {det['fallback_feasible']}, escalated {det['escalations']}.")
     st.subheader("Failure tests")
-    st.dataframe(pd.DataFrame(b["failure_tests"]), hide_index=True, use_container_width=True)
+    st.dataframe(pd.DataFrame(b["failure_tests"]), hide_index=True, width="stretch")
     st.caption("Agents are not expected to beat a central solver that knows every constraint. "
                "We measure how well they coordinate within bounds, and how traceable the agreement is.")

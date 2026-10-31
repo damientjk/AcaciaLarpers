@@ -13,7 +13,7 @@ HERE = Path(__file__).parent
 
 def replay_html(log: dict) -> str:
     template = (HERE / "replay_template.html").read_text()
-    sprites = (HERE / "_sprites.js").read_text()
+    sprites = (HERE / "_sprites.js").read_text() + "\n" + (HERE / "_brain.js").read_text()
     data = json.dumps(log).replace("</", "<\\/")  # keep the JSON from closing the script tag
     bd = HERE / "backdrop.png"
     backdrop = "data:image/png;base64," + base64.b64encode(bd.read_bytes()).decode() if bd.exists() else ""
