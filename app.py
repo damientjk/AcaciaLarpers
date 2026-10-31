@@ -6,6 +6,7 @@ The UI reads audit logs (one JSON per run). Real runs go in logs/. Until the
 pipeline exists it falls back to fixtures/sample_logs/. Log format: docs/LOG_FORMAT.md
 """
 import json
+import os
 from datetime import datetime
 from pathlib import Path
 
@@ -35,6 +36,12 @@ section[data-testid="stSidebar"] input {border: 2px solid #1b1f3b !important; bo
 section[data-testid="stSidebar"] .stButton button {font-family:'Pixelify Sans',monospace; font-weight:700; border:3px solid #1b1f3b; border-radius:4px; box-shadow:3px 3px 0 #1b1f3b; background:#fff; color:#1b1f3b;}
 section[data-testid="stSidebar"] .stButton button:hover {background:#ffd447; color:#1b1f3b;}
 section[data-testid="stSidebar"] .stButton button:active {transform:translate(2px,2px); box-shadow:1px 1px 0 #1b1f3b;}
+[data-testid="stMain"] .stButton button {font-family:'Pixelify Sans',monospace; font-weight:700; font-size:17px; border:3px solid #1b1f3b; border-radius:4px; box-shadow:3px 3px 0 #1b1f3b; background:#fff; color:#1b1f3b;}
+[data-testid="stMain"] .stButton button[data-testid="stBaseButton-primary"] {background:#ff8a3d;}
+[data-testid="stMain"] .stButton button:hover {background:#ffd447; color:#1b1f3b;}
+[data-testid="stMain"] .stButton button:disabled {background:#eef0f5; color:#9aa3c2; box-shadow:none;}
+[data-testid="stMain"] input {border: 2px solid #1b1f3b !important; border-radius: 3px !important; background: #fff !important;}
+.mo {border:3px solid #1b1f3b; background:#fff8e1; box-shadow:4px 4px 0 #1b1f3b; padding:12px 16px; margin:4px 0 12px;}
 [data-testid="stMetric"] {background:#f3f8fd; border:3px solid #1b1f3b; box-shadow:3px 3px 0 #1b1f3b; padding:8px 12px;}
 .badge {display:inline-block;padding:2px 10px;border:3px solid #1b1f3b;font-family:'Pixelify Sans',monospace;font-size:16px;box-shadow:3px 3px 0 #1b1f3b;}
 .b-consensus {background:#bff0c8;} .b-fallback {background:#ffc2c4;} .b-escalation {background:#e5484d;color:#fff;}
@@ -182,7 +189,6 @@ def outcome_badge(out):
 def try_pipeline_run(mode, flight=None, date=None):
     """Calls Damien's coordinator.run(random, flight, date, scenario_id, fake_agents).
     Without ANTHROPIC_API_KEY it runs with fake_agents=True (random agents, real checker)."""
-    import os
     try:
         import coordinator  # noqa: WPS433
     except ImportError:
@@ -209,57 +215,96 @@ def try_pipeline_run(mode, flight=None, date=None):
             return None
         status.update(label=f"Done: {res['run_id']} ({res['outcome']['type']}). Opening the replay…",
                       state="complete", expanded=False)
-    if fake:
-        st.sidebar.caption("No API key: ran with fake (random) agents.")
     return res
 
 
 def open_new_run(res):
-    """Jump to the new run's replay and autoplay it (applied at the top of the next script run)."""
+    """Open the new run on the Run a flight page and autoplay its replay (applied on the next script run)."""
     list_logs.clear()
     st.session_state["_goto_run"] = res["run_id"]
     st.rerun()
 
 
-# ---------- sidebar ----------
+# ---------- navigation and the run on screen ----------
+PAGES = ["Run a flight", "How it works", "Plan details", "Results"]
 st.sidebar.title("Sky Huddle")
-st.session_state.setdefault("page", "Negotiation")
+st.sidebar.markdown("You are **Mo, the duty manager**. Pick a delayed flight, let three AI agents agree a landing "
+                    "plan, then approve or reject it.")
+if st.session_state.get("page") not in PAGES:
+    st.session_state["page"] = PAGES[0]
 if "_goto_run" in st.session_state:
-    st.session_state["page"] = "Pixel replay"
-page = st.sidebar.radio("Page", ["Story", "Negotiation", "Pixel replay", "Metrics", "Benchmark"], key="page")
+    st.session_state["page"] = PAGES[0]
+page = st.sidebar.radio("Go to", PAGES, key="page")
+
+
+@st.cache_data(ttl=600, show_spinner=False)
+def check_key(key):
+    """'ok', 'rejected' or an error string. Listing models is free and needs a valid key. Kept in memory only."""
+    import anthropic
+    try:
+        anthropic.Anthropic(api_key=key, max_retries=0, timeout=10).models.list(limit=1)
+        return "ok"
+    except anthropic.AuthenticationError:
+        return "rejected"
+    except Exception as e:  # network trouble etc.: say so rather than blame the key
+        return f"could not check ({type(e).__name__})"
+
+
+# Claude API key. Set for this server process (agents._client reads the environment), never written to disk.
+with st.sidebar.container(border=True):
+    st.markdown("**Claude API key**")
+    current = os.environ.get("ANTHROPIC_API_KEY", "")
+    status = check_key(current) if current else None
+    if status == "ok":
+        st.success(f"Live agents on (key …{current[-4:]})", icon="✅")
+    elif status == "rejected":
+        st.error(f"Key …{current[-4:]} was rejected. Paste a new one.", icon="❌")
+    elif status:
+        st.warning(f"Key …{current[-4:]} set, {status}.", icon="⚠️")
+    else:
+        st.info("No key: runs use fake agents.", icon="ℹ️")
+    with st.form("api_key_form", clear_on_submit=True, border=False):
+        new_key = st.text_input("Paste a key", type="password", placeholder="sk-ant-...",
+                                help="From platform.claude.com > API keys. Stays on this server, not saved to disk.")
+        save, remove = st.columns(2)
+        if save.form_submit_button("Use key", width="stretch") and new_key.strip():
+            os.environ["ANTHROPIC_API_KEY"] = new_key.strip()
+            st.rerun()
+        if remove.form_submit_button("Remove", width="stretch", disabled=not current):
+            os.environ.pop("ANTHROPIC_API_KEY", None)
+            st.rerun()
+
 all_logs = list_logs()
 has_real = any(not smp for _, smp in all_logs.values())
-show_samples = st.sidebar.checkbox("Show sample and toy runs", value=not has_real,
-                                   help="Hidden automatically once real runs exist, so judges only see real ones.")
+with st.sidebar.expander("Advanced"):
+    show_samples = st.checkbox("Show sample and toy runs", value=not has_real,
+                               help="Hidden automatically once real runs exist, so judges only see real ones.")
 logs = {k: v[0] for k, v in all_logs.items() if show_samples or not v[1]}
 if not logs:
     st.error("No audit logs found. Run `python fixtures/make_sample_logs.py`.")
     st.stop()
+
+# The run on screen lives in a plain session key so it survives switching pages.
 _goto = st.session_state.pop("_goto_run", None)
 if _goto:
     _match = next((k for k in logs if k.endswith(f", {_goto})")), None)
     if _match:
-        st.session_state["run_choice"] = _match
+        st.session_state["current_run"] = _match
         st.session_state["_autoplay"] = _goto
-choice = st.sidebar.selectbox("Run to show", list(logs), key="run_choice")
-log = load(logs[choice])
-st.sidebar.caption(f"run_id `{log['run_id']}`")
-if log.get("sample"):
-    st.sidebar.warning("Sample log for UI development. Not a real agent run.")
+if st.session_state.get("current_run") not in logs:
+    st.session_state["current_run"] = next(iter(logs))
+log = load(logs[st.session_state["current_run"]])
 
-st.sidebar.divider()
-st.sidebar.subheader("New run")
-if st.sidebar.button("Run a random qualifying row"):
-    new = try_pipeline_run("random")
-    if new:
-        open_new_run(new)
-st.sidebar.caption("Run one flight from the 2015 data")
-flight_in = st.sidebar.text_input("Flight", placeholder="AA1344", key="flight_in")
-date_in = st.sidebar.text_input("Date", value="2015-01-01", placeholder="YYYY-MM-DD", key="date_in")
-if st.sidebar.button("Run this flight"):
-    new = try_pipeline_run("search", flight_in.strip().upper(), date_in.strip())
-    if new:
-        open_new_run(new)
+
+def run_picker(label):
+    names = list(logs)
+    pick = st.selectbox(label, names, index=names.index(st.session_state["current_run"]))
+    if pick != st.session_state["current_run"]:
+        st.session_state["current_run"] = pick
+        st.rerun()
+    if log.get("sample"):
+        st.warning("Sample log for UI development. Not a real agent run.")
+
 
 H = log["scenario"]["historical"]
 SIM = log["scenario"].get("simulated", {})
@@ -272,8 +317,112 @@ cp = log.get("compromise")
 check_set = "before_concessions" if out["type"] == "fallback" else "after_concessions"
 
 
+
+
+# ---------- shared pieces ----------
+def decision_buttons(fc):
+    key = f"decision-{log['run_id']}"
+    saved = DECISIONS / f"{log['run_id']}.json"
+    if saved.exists() and key not in st.session_state:
+        st.session_state[key] = json.loads(saved.read_text())
+    if key in st.session_state:
+        dsn = st.session_state[key]
+        (st.success if dsn["approved"] else st.error)(f"{'Approved' if dsn['approved'] else 'Rejected'} at {dsn['at']}. {dsn.get('note', '')}")
+        return True
+    note = st.text_input("Note (optional)")
+    x, y, _ = st.columns([1, 1, 4])
+    for btn, ok in [(x, True), (y, False)]:
+        if btn.button("Approve" if ok else "Reject", type="primary" if ok else "secondary", disabled=not fc and ok,
+                      width="stretch"):
+            dsn = {"approved": ok, "at": datetime.now().strftime("%H:%M:%S"), "note": note,
+                   "run_id": log["run_id"], "plan": fc}
+            st.session_state[key] = dsn
+            DECISIONS.mkdir(parents=True, exist_ok=True)
+            saved.write_text(json.dumps(dsn, indent=2))
+            st.rerun()
+    st.caption("Rejecting ends this run. A rerun gets a new run ID.")
+    return False
+
+
+def show_replay():
+    view = dict(log)
+    key = f"decision-{log['run_id']}"
+    if key in st.session_state:
+        view["human_decision"] = {"approved": st.session_state[key]["approved"], "by": "duty manager",
+                                  "note": st.session_state[key].get("note", "")}
+    autoplay = st.session_state.get("_autoplay") == log["run_id"]
+    if autoplay:
+        st.session_state.pop("_autoplay")
+    components.html(replay_html(normalize_log(view), autoplay=autoplay), height=1060, scrolling=True)
+
+
 # ---------- pages ----------
-if page == "Story":
+def page_run():
+    st.title("Run a flight")
+    st.markdown("A real delayed flight from 2015 needs a landing time, extra holding and a gate. Three AI agents "
+                "negotiate it: **Ava** in the tower, **Pip** the pilot and **Gus** on the ground. Plain code checks "
+                "every plan is safe. **You are Mo, the duty manager: you approve or reject the result.**")
+
+    st.subheader("1. Pick a flight")
+    c = st.columns([2, 2, 1.5, 1.5], vertical_alignment="bottom")
+    flight_in = c[0].text_input("Flight number", value="AA1344", key="flight_in",
+                                help="Airline code and number from the 2015 data, for example AA1344 or DL2681.")
+    date_in = c[1].text_input("Date", value="2015-01-01", key="date_in", help="YYYY-MM-DD, in 2015.")
+    go = c[2].button("Run this flight", type="primary", width="stretch")
+    rnd = c[3].button("Surprise me", width="stretch", help="Run a random delayed flight from the 2015 data.")
+    st.caption("Try AA1344 on 2015-01-01, DL2681 on 2015-02-10 or MQ2950 on 2015-01-06. A run takes about 10 seconds.")
+    if go:
+        if not flight_in.strip():
+            st.warning("Type a flight number first, for example AA1344.")
+        else:
+            new = try_pipeline_run("search", flight_in.strip().upper(), date_in.strip())
+            if new:
+                open_new_run(new)
+    if rnd:
+        new = try_pipeline_run("random")
+        if new:
+            open_new_run(new)
+    run_picker("Or open a saved run")
+
+    st.subheader("2. Your decision")
+    fc = out.get("final_candidate")
+    st.markdown(f"**{H['carrier']} {H['flight']}** {H['origin']} → {H['destination']} on {H['date']}, "
+                f"{H.get('arrival_delay_min', '?')} min late in real life &nbsp; " + outcome_badge(out),
+                unsafe_allow_html=True)
+    if log.get("fake_agents"):
+        st.caption("This run used fake agents (no API key set), so the agents' choices are random. "
+                   "The safety checks are real.")
+    errs = [m["error"] for r in log.get("rounds", []) for m in r.get("offers", []) + r.get("votes", []) if m.get("error")]
+    if errs:
+        if any("401" in e or "authentication" in e.lower() for e in errs):
+            made = log.get("created_at", "")[11:16]
+            fix = ("Your current key works, so click **Run this flight** again." if status == "ok"
+                   else "Paste a working key in the sidebar and run the flight again.")
+            st.error(f"This run (made at {made}) used an API key that was rejected (401), so the agents never "
+                     f"answered. The outcome reflects the failed calls, not the flight. {fix}")
+        else:
+            st.warning(f"{len(errs)} agent call(s) failed ({errs[0][:80]}). The outcome below reflects that.")
+    if fc:
+        cd, k = cands[fc], costs[fc]
+        lead = {"consensus": "Ava, Pip and Gus all agreed on this plan, and every safety check passed.",
+                "fallback": "The agents did not agree, so the rulebook picked the cheapest plan that passes every "
+                            "safety check."}.get(out["type"], "")
+        st.markdown(f'<div class="mo"><b>Proposed plan {fc}:</b> land at <b>{cd["landing"]}</b>, gate '
+                    f'<b>{cd["gate"]}</b>, <b>{cd["extra_holding_min"]} min</b> extra holding. Simulated cost '
+                    f'<b>${k["total_usd"]:,.2f}</b>.<br>{lead}</div>', unsafe_allow_html=True)
+    else:
+        st.markdown('<div class="mo"><b>No safe plan.</b> None of the options passes every safety check, so there is '
+                    'nothing to approve. Reject to close this case and handle the flight by hand, or run another '
+                    'flight.</div>', unsafe_allow_html=True)
+    if decision_buttons(fc):
+        st.caption("Done. Run another flight above, or open **Plan details** in the sidebar to see every check.")
+
+    st.subheader("3. See how the agents agreed")
+    st.caption("The replay plays by itself after a new run. Press Play to watch it again.")
+    show_replay()
+
+
+def page_story():
     st.title("Sky Huddle")
     st.subheader("Three AI agents settle a flight disruption in two rounds. Code keeps it safe.")
     c1, c2 = st.columns([3, 2])
@@ -323,8 +472,11 @@ digraph G { rankdir=LR; node [shape=box, style="filled", fontname="Helvetica", f
     st.caption("Real: the flight row from flights.csv. Simulated and labelled: gates, fuel, crew, slots. "
                "Checks are simplified and are not full FAA compliance.")
 
-elif page == "Negotiation":
+
+def page_details():
+    run_picker("Run")
     st.title(f"{H['carrier']} {H['flight']}  {H['origin']} → {H['destination']}")
+    st.caption(f"run_id `{log['run_id']}`")
     st.markdown(outcome_badge(out), unsafe_allow_html=True)
     st.write("")
 
@@ -413,47 +565,16 @@ Cites: {", ".join(o['constraints_cited'])}<br>Concession: <b>{conc}</b><br>
     st.markdown(f"**Why:** {out['reason']}")
 
     st.subheader("Duty manager decision")
-    key = f"decision-{log['run_id']}"
-    saved = DECISIONS / f"{log['run_id']}.json"
-    if saved.exists() and key not in st.session_state:
-        st.session_state[key] = json.loads(saved.read_text())
-    if key in st.session_state:
-        dsn = st.session_state[key]
-        (st.success if dsn["approved"] else st.error)(f"{'Approved' if dsn['approved'] else 'Rejected'} at {dsn['at']}. {dsn.get('note', '')}")
-    else:
-        note = st.text_input("Note (optional)")
-        x, y, _ = st.columns([1, 1, 4])
-        for btn, ok in [(x, True), (y, False)]:
-            if btn.button("Approve" if ok else "Reject", type="primary" if ok else "secondary", disabled=not fc and ok):
-                dsn = {"approved": ok, "at": datetime.now().strftime("%H:%M:%S"), "note": note,
-                       "run_id": log["run_id"], "plan": fc}
-                st.session_state[key] = dsn
-                DECISIONS.mkdir(parents=True, exist_ok=True)
-                saved.write_text(json.dumps(dsn, indent=2))
-                st.rerun()
-        st.caption("Rejecting ends this run. A rerun gets a new run ID.")
+    decision_buttons(fc)
     s = log.get("stats", {})
     st.caption(f"API calls {s.get('api_calls')} · retries {s.get('retries')} · total {s.get('total_latency_s')} s")
     with st.expander("Raw audit log JSON"):
         st.json(log)
 
-elif page == "Pixel replay":
-    st.title("Pixel replay")
-    st.caption("Same audit log, played back as the agents talking. Press Play inside the panel.")
-    view = dict(log)
-    key = f"decision-{log['run_id']}"
-    if key in st.session_state:
-        view["human_decision"] = {"approved": st.session_state[key]["approved"], "by": "duty manager",
-                                  "note": st.session_state[key].get("note", "")}
-    autoplay = st.session_state.get("_autoplay") == log["run_id"]
-    if autoplay:
-        st.session_state.pop("_autoplay")
-    components.html(replay_html(normalize_log(view), autoplay=autoplay), height=1060, scrolling=True)
 
-elif page == "Metrics":
+def page_metrics():
     import altair as alt
 
-    st.title("Metrics")
     runs = [load(p) for p in logs.values()]
     n_sample = sum(1 for r in runs if r.get("sample"))
     st.caption(f"Computed live from {len(runs)} audit logs in the run picker.")
@@ -561,12 +682,11 @@ elif page == "Metrics":
         st.info("No concessions in these runs.")
 
 
-else:
-    st.title("Benchmark")
+def page_benchmark():
     b, bp = benchmark()
     if not b:
         st.info("No benchmark yet. benchmark.py should write logs/benchmark.json.")
-        st.stop()
+        return
     if b.get("sample"):
         st.warning(b.get("note"))
     st.caption(f"Source: {bp.relative_to(ROOT)}")
@@ -590,3 +710,16 @@ else:
     st.dataframe(pd.DataFrame(b["failure_tests"]), hide_index=True, width="stretch")
     st.caption("Agents are not expected to beat a central solver that knows every constraint. "
                "We measure how well they coordinate within bounds, and how traceable the agreement is.")
+
+
+def page_results():
+    st.title("Results")
+    st.caption("Measured inside the simulation. Costs are USD-equivalent scores, not measured savings.")
+    t1, t2 = st.tabs(["Benchmark: 51 scenarios and 10 live runs", "Charts across the saved runs"])
+    with t1:
+        page_benchmark()
+    with t2:
+        page_metrics()
+
+
+{"Run a flight": page_run, "How it works": page_story, "Plan details": page_details, "Results": page_results}[page]()
