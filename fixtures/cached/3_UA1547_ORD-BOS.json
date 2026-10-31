@@ -1,7 +1,7 @@
 {
-  "run_id": "r-f43363",
+  "run_id": "r-def19f",
   "label": null,
-  "created_at": "2026-10-31T13:11:04+08:00",
+  "created_at": "2026-10-31T13:57:06+08:00",
   "sample": false,
   "fake_agents": false,
   "scenario": {
@@ -249,19 +249,19 @@
             "max_class": "narrowbody",
             "taxi_route": [
               "C",
-              "F"
+              "A"
             ],
             "taxi_in_min": 8,
             "occupancy": []
           },
           {
             "gate_id": "B9",
-            "max_class": "narrowbody",
+            "max_class": "widebody",
             "taxi_route": [
               "D",
-              "E"
+              "C"
             ],
-            "taxi_in_min": 8,
+            "taxi_in_min": 7,
             "occupancy": []
           }
         ],
@@ -277,20 +277,20 @@
             "crew_id": "CRW-B7",
             "assigned_gate": "B7",
             "shift_start": "2015-01-07T07:49",
-            "shift_end": "2015-01-07T15:19",
+            "shift_end": "2015-01-07T15:36",
             "reassignable": false
           },
           {
             "crew_id": "CRW-B9",
             "assigned_gate": "B9",
             "shift_start": "2015-01-07T07:49",
-            "shift_end": "2015-01-07T15:51",
-            "reassignable": false
+            "shift_end": "2015-01-07T15:22",
+            "reassignable": true
           }
         ],
         "turnaround_min": 35,
         "gate_buffer_min": 10,
-        "next_departure": "2015-01-07T14:26"
+        "next_departure": "2015-01-07T14:33"
       }
     }
   },
@@ -325,8 +325,8 @@
       "extra_holding_min": 3,
       "gate": "B9",
       "concession": "ATC_EARLIER_SLOT",
-      "gate_arrival": "14:23",
-      "gate_release": "14:58"
+      "gate_arrival": "14:22",
+      "gate_release": "14:57"
     },
     {
       "id": "C4",
@@ -352,8 +352,8 @@
       "extra_holding_min": 12,
       "gate": "B9",
       "concession": "PILOT_EXTRA_HOLDING",
-      "gate_arrival": "14:32",
-      "gate_release": "15:07"
+      "gate_arrival": "14:31",
+      "gate_release": "15:06"
     },
     {
       "id": "C7",
@@ -623,7 +623,7 @@
             "gate": "B7",
             "route": [
               "C",
-              "F"
+              "A"
             ],
             "closed_taxiways": [
               "E"
@@ -755,17 +755,15 @@
             "gate": "B9",
             "route": [
               "D",
-              "E"
+              "C"
             ],
             "closed_taxiways": [
               "E"
             ],
-            "blocked_segments": [
-              "E"
-            ]
+            "blocked_segments": []
           },
-          "passed": false,
-          "explanation": "Route uses closed taxiway(s) ['E']."
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
         },
         {
           "rule_id": "G-1",
@@ -773,7 +771,7 @@
           "inputs": {
             "gate": "B9",
             "aircraft_class": "narrowbody",
-            "gate_max_class": "narrowbody",
+            "gate_max_class": "widebody",
             "class_order": [
               "regional",
               "narrowbody",
@@ -781,7 +779,7 @@
             ]
           },
           "passed": true,
-          "explanation": "Gate B9 (max narrowbody) accepts a narrowbody."
+          "explanation": "Gate B9 (max widebody) accepts a narrowbody."
         },
         {
           "rule_id": "G-2",
@@ -789,14 +787,14 @@
           "inputs": {
             "gate": "B9",
             "occupancy": [
-              "14:23",
-              "15:08"
+              "14:22",
+              "15:07"
             ],
             "buffer_min": 10,
             "conflicts": []
           },
           "passed": true,
-          "explanation": "Gate B9 free for [14:23, 15:08) including 10 min buffer."
+          "explanation": "Gate B9 free for [14:22, 15:07) including 10 min buffer."
         },
         {
           "rule_id": "G-3",
@@ -805,9 +803,9 @@
             "base_eta": "14:12",
             "landing": "14:15",
             "extra_holding_min": 3,
-            "gate_arrival": "14:23",
-            "gate_release": "14:58",
-            "taxi_in_min": 8,
+            "gate_arrival": "14:22",
+            "gate_release": "14:57",
+            "taxi_in_min": 7,
             "service_min": 35.0,
             "turnaround_min": 35
           },
@@ -819,7 +817,7 @@
           "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
           "inputs": {
             "gate": "B9",
-            "gate_arrival": "14:23",
+            "gate_arrival": "14:22",
             "eligible_crews": [
               "CRW-B9"
             ],
@@ -1021,7 +1019,7 @@
             "gate": "B7",
             "route": [
               "C",
-              "F"
+              "A"
             ],
             "closed_taxiways": [
               "E"
@@ -1153,17 +1151,15 @@
             "gate": "B9",
             "route": [
               "D",
-              "E"
+              "C"
             ],
             "closed_taxiways": [
               "E"
             ],
-            "blocked_segments": [
-              "E"
-            ]
+            "blocked_segments": []
           },
-          "passed": false,
-          "explanation": "Route uses closed taxiway(s) ['E']."
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
         },
         {
           "rule_id": "G-1",
@@ -1171,7 +1167,7 @@
           "inputs": {
             "gate": "B9",
             "aircraft_class": "narrowbody",
-            "gate_max_class": "narrowbody",
+            "gate_max_class": "widebody",
             "class_order": [
               "regional",
               "narrowbody",
@@ -1179,7 +1175,7 @@
             ]
           },
           "passed": true,
-          "explanation": "Gate B9 (max narrowbody) accepts a narrowbody."
+          "explanation": "Gate B9 (max widebody) accepts a narrowbody."
         },
         {
           "rule_id": "G-2",
@@ -1187,14 +1183,14 @@
           "inputs": {
             "gate": "B9",
             "occupancy": [
-              "14:32",
-              "15:17"
+              "14:31",
+              "15:16"
             ],
             "buffer_min": 10,
             "conflicts": []
           },
           "passed": true,
-          "explanation": "Gate B9 free for [14:32, 15:17) including 10 min buffer."
+          "explanation": "Gate B9 free for [14:31, 15:16) including 10 min buffer."
         },
         {
           "rule_id": "G-3",
@@ -1203,9 +1199,9 @@
             "base_eta": "14:12",
             "landing": "14:24",
             "extra_holding_min": 12,
-            "gate_arrival": "14:32",
-            "gate_release": "15:07",
-            "taxi_in_min": 8,
+            "gate_arrival": "14:31",
+            "gate_release": "15:06",
+            "taxi_in_min": 7,
             "service_min": 35.0,
             "turnaround_min": 35
           },
@@ -1217,7 +1213,7 @@
           "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
           "inputs": {
             "gate": "B9",
-            "gate_arrival": "14:32",
+            "gate_arrival": "14:31",
             "eligible_crews": [
               "CRW-B9"
             ],
@@ -1419,7 +1415,7 @@
             "gate": "B7",
             "route": [
               "C",
-              "F"
+              "A"
             ],
             "closed_taxiways": [
               "E"
@@ -1685,7 +1681,7 @@
             "gate": "B7",
             "route": [
               "C",
-              "F"
+              "A"
             ],
             "closed_taxiways": [
               "E"
@@ -1817,17 +1813,15 @@
             "gate": "B9",
             "route": [
               "D",
-              "E"
+              "C"
             ],
             "closed_taxiways": [
               "E"
             ],
-            "blocked_segments": [
-              "E"
-            ]
+            "blocked_segments": []
           },
-          "passed": false,
-          "explanation": "Route uses closed taxiway(s) ['E']."
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
         },
         {
           "rule_id": "G-1",
@@ -1835,7 +1829,7 @@
           "inputs": {
             "gate": "B9",
             "aircraft_class": "narrowbody",
-            "gate_max_class": "narrowbody",
+            "gate_max_class": "widebody",
             "class_order": [
               "regional",
               "narrowbody",
@@ -1843,7 +1837,7 @@
             ]
           },
           "passed": true,
-          "explanation": "Gate B9 (max narrowbody) accepts a narrowbody."
+          "explanation": "Gate B9 (max widebody) accepts a narrowbody."
         },
         {
           "rule_id": "G-2",
@@ -1851,14 +1845,14 @@
           "inputs": {
             "gate": "B9",
             "occupancy": [
-              "14:23",
-              "15:08"
+              "14:22",
+              "15:07"
             ],
             "buffer_min": 10,
             "conflicts": []
           },
           "passed": true,
-          "explanation": "Gate B9 free for [14:23, 15:08) including 10 min buffer."
+          "explanation": "Gate B9 free for [14:22, 15:07) including 10 min buffer."
         },
         {
           "rule_id": "G-3",
@@ -1867,9 +1861,9 @@
             "base_eta": "14:12",
             "landing": "14:15",
             "extra_holding_min": 3,
-            "gate_arrival": "14:23",
-            "gate_release": "14:58",
-            "taxi_in_min": 8,
+            "gate_arrival": "14:22",
+            "gate_release": "14:57",
+            "taxi_in_min": 7,
             "service_min": 35.0,
             "turnaround_min": 35
           },
@@ -1881,7 +1875,7 @@
           "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
           "inputs": {
             "gate": "B9",
-            "gate_arrival": "14:23",
+            "gate_arrival": "14:22",
             "eligible_crews": [
               "CRW-B9"
             ],
@@ -2083,7 +2077,7 @@
             "gate": "B7",
             "route": [
               "C",
-              "F"
+              "A"
             ],
             "closed_taxiways": [
               "E"
@@ -2215,17 +2209,15 @@
             "gate": "B9",
             "route": [
               "D",
-              "E"
+              "C"
             ],
             "closed_taxiways": [
               "E"
             ],
-            "blocked_segments": [
-              "E"
-            ]
+            "blocked_segments": []
           },
-          "passed": false,
-          "explanation": "Route uses closed taxiway(s) ['E']."
+          "passed": true,
+          "explanation": "Route avoids every closed taxiway."
         },
         {
           "rule_id": "G-1",
@@ -2233,7 +2225,7 @@
           "inputs": {
             "gate": "B9",
             "aircraft_class": "narrowbody",
-            "gate_max_class": "narrowbody",
+            "gate_max_class": "widebody",
             "class_order": [
               "regional",
               "narrowbody",
@@ -2241,7 +2233,7 @@
             ]
           },
           "passed": true,
-          "explanation": "Gate B9 (max narrowbody) accepts a narrowbody."
+          "explanation": "Gate B9 (max widebody) accepts a narrowbody."
         },
         {
           "rule_id": "G-2",
@@ -2249,14 +2241,14 @@
           "inputs": {
             "gate": "B9",
             "occupancy": [
-              "14:32",
-              "15:17"
+              "14:31",
+              "15:16"
             ],
             "buffer_min": 10,
             "conflicts": []
           },
           "passed": true,
-          "explanation": "Gate B9 free for [14:32, 15:17) including 10 min buffer."
+          "explanation": "Gate B9 free for [14:31, 15:16) including 10 min buffer."
         },
         {
           "rule_id": "G-3",
@@ -2265,9 +2257,9 @@
             "base_eta": "14:12",
             "landing": "14:24",
             "extra_holding_min": 12,
-            "gate_arrival": "14:32",
-            "gate_release": "15:07",
-            "taxi_in_min": 8,
+            "gate_arrival": "14:31",
+            "gate_release": "15:06",
+            "taxi_in_min": 7,
             "service_min": 35.0,
             "turnaround_min": 35
           },
@@ -2279,7 +2271,7 @@
           "basis": "Simulated crew roster: a crew assigned to the gate must be on shift when the aircraft reaches it. Work past the shift end is costed as overtime, not forbidden.",
           "inputs": {
             "gate": "B9",
-            "gate_arrival": "14:32",
+            "gate_arrival": "14:31",
             "eligible_crews": [
               "CRW-B9"
             ],
@@ -2481,7 +2473,7 @@
             "gate": "B7",
             "route": [
               "C",
-              "F"
+              "A"
             ],
             "closed_taxiways": [
               "E"
@@ -2564,19 +2556,22 @@
       "offers": [
         {
           "agent": "atc",
-          "run_id": "r-f43363",
+          "run_id": "r-def19f",
           "round": 1,
           "state_version": 1,
           "preferred": "C1",
           "acceptable": [
             "C1",
+            "C2",
+            "C3",
             "C4",
-            "C5"
+            "C5",
+            "C6"
           ],
           "constraints_cited": [
             "R-1",
-            "T-1",
-            "W-1"
+            "W-1",
+            "T-1"
           ],
           "concessions": [
             {
@@ -2584,62 +2579,53 @@
               "target": "C1"
             }
           ],
-          "rationale": "C1 has the lowest total cost ($404.28) and least holding (120 kg, 3 min) of the candidates, and it passes W-1 and T-1 once ATC_EARLIER_SLOT resequences SL-1415 to clear R-1. C4 and C5 are fully safe fallbacks but cost $1617.12 each with 480 kg holding.",
-          "latency_s": 4.75,
+          "rationale": "C1 fails R-1 because SL-1415 is occupied by flexible B61287, so offering ATC_EARLIER_SLOT to resequence it is needed; C1 costs $404.28 with 3 min extra holding versus $1617.12 with 12 min for C4-C6. C2 and C3 have the same cost and are also acceptable once the concession is confirmed.",
+          "latency_s": 3.31,
           "valid": true
         },
         {
           "agent": "pilot",
-          "run_id": "r-f43363",
+          "run_id": "r-def19f",
           "round": 1,
           "state_version": 1,
-          "preferred": "C4",
+          "preferred": "C1",
           "acceptable": [
-            "C4",
-            "C5"
+            "C1",
+            "C2",
+            "C3"
           ],
           "constraints_cited": [
             "F-1",
-            "W-1",
-            "R-1",
-            "T-1",
+            "R-1"
+          ],
+          "concessions": [],
+          "rationale": "C1, C2 and C3 each cost 404.28 USD with 3 min extra holding (120 kg), and F-1 passes at 2200 kg against the 1800 kg reserve, which is well below my 13 min fuel-safe limit. They are safe only once ATC_EARLIER_SLOT is confirmed (R-1 currently fails), and they are cheaper and less holding than C4 to C6 (1617.12 USD, 12 min), so I offer no concession.",
+          "latency_s": 5.64,
+          "valid": true
+        },
+        {
+          "agent": "ground",
+          "run_id": "r-def19f",
+          "round": 1,
+          "state_version": 1,
+          "preferred": "C1",
+          "acceptable": [
+            "C1",
+            "C2",
+            "C3",
+            "C4",
+            "C5",
+            "C6"
+          ],
+          "constraints_cited": [
             "G-1",
             "G-2",
             "G-3",
             "C-1"
           ],
-          "concessions": [
-            {
-              "id": "PILOT_EXTRA_HOLDING",
-              "target": "C4"
-            }
-          ],
-          "rationale": "C4 passes every check, including F-1 at 12 min holding (1840 kg against the 1800 kg reserve) within the 13 min fuel-safe limit, at total_usd 1617.12 with zero missed connections. C5 has the same cost but releases the gate 5 minutes later, while C6, C7 and C8 fail T-1 or F-1 even with my concession.",
-          "latency_s": 4.37,
-          "valid": true
-        },
-        {
-          "agent": "ground",
-          "run_id": "r-f43363",
-          "round": 1,
-          "state_version": 1,
-          "preferred": "C4",
-          "acceptable": [
-            "C4",
-            "C5",
-            "C1",
-            "C2"
-          ],
-          "constraints_cited": [
-            "G-1",
-            "G-2",
-            "G-3",
-            "C-1",
-            "R-1"
-          ],
           "concessions": [],
-          "rationale": "C4 is fully safe with all checks passing, keeps the planned gate B4, and has zero missed connections and zero overtime at 1617.12 USD (G-2 free to 15:12, C-1 CRW-B4 on shift until 16:05). C1 and C2 are cheaper at 404.28 USD and also clear G-2 and C-1, so I accept them only if ATC_EARLIER_SLOT is confirmed; I offer no concession because no candidate needs GROUND_REASSIGN_CREW.",
-          "latency_s": 5.89,
+          "rationale": "C1 passes G-1, G-2, G-3 and C-1 on gate B4 with CRW-B4 on shift, with 0 overtime and 0 missed connections, and it has the lowest total cost at $404.28 with 120 kg holding fuel. C4 to C6 are safe outright at $1617.12 each, so I accept them as fallbacks, but C1 to C3 are only usable if ATC_EARLIER_SLOT is confirmed.",
+          "latency_s": 6.24,
           "valid": true
         }
       ]
@@ -2649,30 +2635,30 @@
       "votes": [
         {
           "agent": "atc",
-          "run_id": "r-f43363",
+          "run_id": "r-def19f",
           "round": 2,
           "proposal_version": 2,
           "vote": "accept",
-          "rationale": "The frozen proposal C4 passes R-1 (slot SL-1424 within capacity 20), W-1 (180 s behind WN1599 meets the 120 s large-large requirement) and T-1 (route avoids closed taxiway E). Its cost of 1617.12 USD with zero missed connections is tolerable given the disruption.",
-          "latency_s": 1.95
+          "rationale": "C1 passes my checks R-1, W-1 and T-1, with W-1 met at 180 s behind DL1769 and R-1 satisfied at 15 arrivals against capacity 20 after the confirmed ATC_EARLIER_SLOT resequencing. Its cost of $404.28 with 3 min extra holding is well below the $1617.12 and 12 min of C4 to C6, so it is tolerable.",
+          "latency_s": 1.72
         },
         {
           "agent": "pilot",
-          "run_id": "r-f43363",
+          "run_id": "r-def19f",
           "round": 2,
           "proposal_version": 2,
           "vote": "accept",
-          "rationale": "The frozen proposal C4 passes every check, including F-1 at 12 min holding (1840 kg against the 1800 kg reserve), which is within my 13 min fuel-safe limit. Its total cost is 1617.12 USD with zero missed connections and zero overtime, so I accept it.",
-          "latency_s": 1.1
+          "rationale": "The frozen proposal C1 passes F-1 (2200 kg at landing against the 1800 kg reserve after 3 min holding, 120 kg burn) and every other check, including R-1 now that ATC_EARLIER_SLOT was applied, and costs $404.28 with 3 min delay, well below the $1617.12 alternatives.",
+          "latency_s": 2.02
         },
         {
           "agent": "ground",
-          "run_id": "r-f43363",
+          "run_id": "r-def19f",
           "round": 2,
           "proposal_version": 2,
           "vote": "accept",
-          "rationale": "C4 passes every check, including G-1, G-2 (B4 free to 15:12 including buffer), G-3 and C-1 (CRW-B4 on shift until 16:05), with zero missed connections and zero overtime. Its total cost of 1617.12 USD is tolerable, and it is the frozen proposal I rated as fully safe.",
-          "latency_s": 1.86
+          "rationale": "The frozen proposal C1 passes G-1, G-2, G-3 and C-1 on gate B4 with CRW-B4 on shift, with 0 overtime and 0 missed connections at the lowest total cost of $404.28. Since all checks I own pass and the cost is tolerable, I accept.",
+          "latency_s": 1.26
         }
       ]
     }
@@ -2685,39 +2671,38 @@
         "target": "C1",
         "note": "moved B61287 from SL-1415 to SL-1445",
         "applied": true
-      },
-      {
-        "agent": "pilot",
-        "id": "PILOT_EXTRA_HOLDING",
-        "target": "C4",
-        "note": "accepted holding limit 6 -> 13 min (fuel-safe limit 13 min)",
-        "applied": true
       }
     ],
     "feasible_before": [
       "C4",
-      "C5"
+      "C5",
+      "C6"
     ],
     "feasible_after": [
       "C1",
       "C2",
+      "C3",
       "C4",
-      "C5"
+      "C5",
+      "C6"
     ],
     "in_all_acceptable": [
-      "C4",
-      "C5"
+      "C1",
+      "C2",
+      "C3"
     ],
     "rule": "Lowest cost among feasible candidates in all three acceptable sets",
     "proposal": {
       "version": 2,
-      "candidate": "C4"
+      "candidate": "C1"
     }
   },
   "outcome": {
     "type": "consensus",
-    "final_candidate": "C4",
-    "concessions_that_unlocked": [],
+    "final_candidate": "C1",
+    "concessions_that_unlocked": [
+      "ATC_EARLIER_SLOT"
+    ],
     "reason": "All three accepted proposal v2 and the final recheck passed.",
     "final_recheck": {
       "state_version": 2,
@@ -2891,14 +2876,14 @@
   "stats": {
     "api_calls": 6,
     "retries": 0,
-    "total_latency_s": 7.92,
+    "total_latency_s": 8.34,
     "model": "claude-haiku-5-5",
     "thinking": {
       "type": "adaptive",
       "effort": "medium"
     },
-    "input_tokens": 44623,
-    "output_tokens": 3657,
-    "est_cost_usd": 0.00629
+    "input_tokens": 44043,
+    "output_tokens": 3563,
+    "est_cost_usd": 0.00619
   }
 }
