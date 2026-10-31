@@ -39,7 +39,9 @@ st.set_page_config(page_title="Sky Huddle", page_icon="✈️", layout="wide", i
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Jersey+15&family=Poppins:wght@400;500;600;700&display=swap');
-html, body, [class*="css"], .stMarkdown, p, li, label {font-family: 'Poppins', sans-serif;}
+html, body, [class*="css"], .stMarkdown, p, li, label {font-family: 'Poppins', sans-serif; font-weight: 500;}
+label, [data-testid="stWidgetLabel"] p, .stMarkdown strong, b {font-weight: 700 !important;}
+[data-testid="stCaptionContainer"] p {font-weight: 500; color: #3b4366;}
 h1, h2, h3, h4 {font-family: 'Jersey 15', monospace !important; font-weight:400 !important; letter-spacing:.02em; line-height:1.15 !important;}
 h1 {font-size:2.7rem !important;} h2 {font-size:2.1rem !important;} h3 {font-size:1.7rem !important;}
 .stApp {background: linear-gradient(180deg, #b5e1fa 0%, #dcf0fc 30%, #eef7fd 60%) fixed;}
@@ -78,7 +80,11 @@ section[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"] {dis
 .tk-body {display:flex;align-items:center;gap:12px;padding:4px 14px}
 .tk-port small,.tk-port span {display:block;font-size:11px;color:#3b4366;line-height:1.15}
 .tk-port b {display:block;font-family:'Jersey 15',monospace;font-size:34px;line-height:1}
-.tk-fly {display:flex;flex-direction:column;align-items:center;font-size:11px;color:#3b4366;min-width:84px}
+.tk-fly {display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:#3b4366;min-width:130px}
+.tk-route {display:flex;align-items:center;width:100%;gap:5px}
+.tk-route i {flex:1;border-top:3px dashed #1b1f3b}
+.tk-route b {font-size:20px;line-height:1;color:#1b1f3b}
+.tk-route s {width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:11px solid #1b1f3b;text-decoration:none}
 .tk-stub {border-left:3px dashed #1b1f3b;padding:4px 14px;background:#ffd447;display:grid;align-content:center;font-size:11px;line-height:1.3;border-radius:0 3px 3px 0}
 .tk-stub b {font-family:'Jersey 15',monospace;font-size:24px;line-height:1.1}
 /* agent pages */
@@ -352,12 +358,10 @@ def frame(ticket=True):
         key_box()
     if not ticket:
         return
-    plane = ('<svg viewBox="0 0 16 10" width="34" height="22" shape-rendering="crispEdges" aria-hidden="true">'
-             '<path fill="#1b1f3b" d="M0 3h2v1h4V1h2v3h5l2 1v1l-2 1H8v2H6V6H2v1H0z"/></svg>')
     st.html(f"""<div class="incident"><span class="tag">Disruption</span>
 <span class="ticket"><span class="tk-body">
  <span class="tk-port"><small>From</small><b>{H['origin']}</b><span>{CITY.get(H['origin'], '')}</span></span>
- <span class="tk-fly">{plane}{H.get('distance_mi', '?')} mi</span>
+ <span class="tk-fly"><span class="tk-route"><i></i><b>✈</b><i></i><s></s></span>{H.get('distance_mi', '?')} mi</span>
  <span class="tk-port"><small>To</small><b>{H['destination']}</b><span>{CITY.get(H['destination'], '')}</span></span>
 </span><span class="tk-stub"><span>Flight</span><b>{H['carrier']} {H['flight']}</b><span>Sched {H['scheduled_arrival']} · {H['date']}</span></span></span>
 <div class="facts"><span class="chip">Arrived <b>{H.get('arrival_delay_min', '?')} min</b> late</span>
@@ -397,7 +401,6 @@ def decision_buttons(fc, costly=None):
             DECISIONS.mkdir(parents=True, exist_ok=True)
             saved.write_text(json.dumps(dsn, indent=2))
             st.rerun()
-    st.caption("Rejecting ends this run. A rerun gets a new run ID.")
     return False
 
 
@@ -445,7 +448,6 @@ def escalation_panel(a):
         for s in a.get("suggestions", []):
             tag = "never relaxed" if not s["relaxable"] else "your decision"
             st.markdown(f"**{s['rule_id']} · {s['title']}** ({tag})  \n" + "  \n".join(f"- {x}" for x in s["actions"]))
-    st.caption(a.get("note", ""))
     return opt
 
 
@@ -494,8 +496,7 @@ def decision_panel():
                     'the closest plans and searched costlier fixes; nothing is applied unless you approve it.</div>',
                     unsafe_allow_html=True)
         costly = escalation_panel(assist_for(log))
-    if decision_buttons(fc, costly):
-        st.caption("Done. Run another flight, or open **Huddle** for every message and safety check.")
+    decision_buttons(fc, costly)
 
 
 
@@ -506,22 +507,17 @@ def page_airport():
     names = list(logs)
     c = st.columns([3.2, 1.6, 1.4, 1.4], vertical_alignment="bottom")
     pick = c[0].selectbox("Flight", names, index=names.index(st.session_state["current_run"]),
-                          accept_new_options=True, placeholder="Type a flight number, e.g. AA1090",
-                          help="Open a saved run from the list, or type a new flight number (e.g. AA1090) "
-                               "and press Enter, then Run.")
+                          accept_new_options=True, placeholder="Type a flight number, e.g. AA1090")
     saved = pick in logs
     if saved and pick != st.session_state["current_run"]:
         st.session_state["current_run"] = pick
         st.rerun()
     flight_in = f"{H['carrier']}{H['flight']}" if saved else (pick or "").strip().upper()
-    date_in = c[1].text_input("Date", value=H["date"] if saved else "2015-01-01", key=f"date_in_{pick}",
-                              help="YYYY-MM-DD, in 2015.")
-    go = c[2].button("Run this flight", type="primary", width="stretch",
-                     help="Run the flight in the box on this date" + (" again" if saved else ""))
-    rnd = c[3].button("Random flight", width="stretch", help="Run a random delayed flight from the 2015 data.")
-    st.caption("Click the box to open a saved run, or type a new flight number such as AA1090 (2015-06-28) or "
-               "MQ2950 (2015-01-06). A run takes about 10 s. "
-               + ("" if KEY_STATUS == "ok" else "No working key, so new runs use fake agents."))
+    date_in = c[1].text_input("Date", value=H["date"] if saved else "2015-01-01", key=f"date_in_{pick}")
+    go = c[2].button("Run this flight", type="primary", width="stretch")
+    rnd = c[3].button("Random flight", width="stretch")
+    if KEY_STATUS != "ok":
+        st.caption("No working key on the server: new runs use fake agents.")
     scene, desk = st.columns([1.75, 1])
     with scene:
         st.subheader("The huddle")
@@ -591,8 +587,7 @@ def agent_page(aid):
                              f'+{c["extra_holding_min"]} min hold · ${costs.get(cid, {}).get("total_usd", 0):,.0f}<br>'
                              f'<small>{why}</small></div>')
             st.html('<div class="inv">' + "".join(cells) + "</div>")
-            st.caption(f"Green: {name} accepts it. Yellow: passes {name}'s checks but not chosen. Dark: breaks a check "
-                       f"{name} owns (before concessions). Gold outline: {name}'s first choice. FINAL: the plan on your desk.")
+            st.caption("Green: accepts · Yellow: passes, not chosen · Dark: breaks a check · FINAL: on your desk")
         with right.container(border=True):
             st.subheader("Thought stream")
             steps = [("READ", f"{len(cands)} candidate plans for {H['carrier']}{H['flight']}, each checked in code.")]
@@ -608,7 +603,7 @@ def agent_page(aid):
             if v:
                 steps.append(("VOTE", f"{v['vote'].upper()}: {v['rationale']}"))
             st.html("".join(f'<div class="thought"><span class="k">{k}</span><span>{t}</span></div>' for k, t in steps))
-            st.caption("Outbox: the exact messages this agent sent")
+            st.markdown("**Outbox**")
             st.json({"round_1": o, "round_2": v}, expanded=False)
         with st.expander(f"{name}'s skill file: the prompt it runs on ({log.get('stats', {}).get('model') or 'model from config.yaml'})"):
             st.code(A.COMMON.format(role=A.ROLES[aid]) + "\n\n" + A.ROUND1 + "\n\n" + A.ROUND2, language="markdown")
@@ -772,7 +767,6 @@ def page_metrics():
     st.altair_chart(alt.Chart(funnel).mark_bar(stroke=INK, strokeWidth=2, color="#4f8cff").encode(
         x=alt.X("plans:Q", title="Plans", axis=alt.Axis(tickMinStep=1)), y=alt.Y("stage:N", title=None, sort=None),
         tooltip=["stage", "plans"]).properties(height=200), width="stretch")
-    st.caption("If step 3 is bigger than step 2, the agents' concessions opened up plans the rulebook alone could not use.")
 
     # 3. Cost: agreed plan vs rulebook without concessions
     st.subheader("3. Cost of the agreed plan vs the rulebook alone")
@@ -813,7 +807,6 @@ def page_metrics():
             xOffset=alt.XOffset("state:N", sort=["before", "after"]),
             color=alt.Color("state:N", sort=["before", "after"], scale=alt.Scale(range=["#e5484d", "#f2a51a"]), title="Concessions"),
             tooltip=["rule", "state", "failed"]).properties(height=260), width="stretch")
-        st.caption("A drop from red to amber shows a concession unblocking that check.")
 
     # 5. Agent response time
     st.subheader("5. Agent response time per round")
@@ -830,7 +823,6 @@ def page_metrics():
             x=alt.X("seconds:Q", title="Seconds"), y=alt.Y("agent:N", title=None), color=alt.Color("round:N", title=None,
             scale=alt.Scale(range=["#4f8cff", "#ff8a3d"])), tooltip=["agent", "round", "seconds"]).properties(height=170),
             width="stretch")
-        st.caption("The per-call timeout from config.yaml is the ceiling; anything at the ceiling became an abstention.")
     else:
         st.info("No agent timings yet (fake agents report none).")
 

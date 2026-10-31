@@ -16,7 +16,8 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;overflow:hidden}
-body{background:transparent;color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.5}
+body{background:transparent;color:var(--ink);font-family:var(--body);font-size:14px;font-weight:500;line-height:1.5}
+b,strong{font-weight:700}
 h3{font-family:var(--display);font-weight:400;margin:0;font-size:20px;letter-spacing:.02em}
 button{font-family:var(--display);cursor:pointer}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
@@ -148,7 +149,7 @@ canvas.px{image-rendering:pixelated;display:block}
   <div class="cands blk">
     <h3>Candidate plans</h3>
     <div class="cstrip" id="cstrip"></div>
-    <p class="note" id="cnote">Green passes every hard check. Red breaks at least one. Gold is the plan on the table. Click a character to see what they know.</p>
+    <p class="note" id="cnote">Green: passes every check · Red: breaks one · Gold: on the table</p>
     <div class="legend">
       <span><i style="background:var(--propose)"></i>offer or proposal</span>
       <span><i style="background:var(--accept)"></i>accept</span>
@@ -361,7 +362,7 @@ function showAgent(id){
 /* player */
 let i=0,timer=null;
 function restart(){clearTimeout(timer);i=0;quiet(false);stage.querySelectorAll(".stamp").forEach(n=>n.remove());document.getElementById("plancard").textContent="No plan yet";document.getElementById("log").dataset.fresh="1";document.getElementById("log").innerHTML='<p class="note">Press Play. Every message appears here with its JSON.</p>';
- setRound(0);spotlight(null);think(["atc","pilot","ground","mod"],false);strip(null);locks([]);status("Ready: press Play",false);const o=document.getElementById("outcome");o.className="outcome pending";o.textContent="Ready"}
+ setRound(0);spotlight(null);think(["atc","pilot","ground","mod"],false);strip(null);locks([]);status("Ready",false);const o=document.getElementById("outcome");o.className="outcome pending";o.textContent="Ready"}
 function step(){if(i>=steps.length)return false;steps[i++]();return i<steps.length}
 document.getElementById("play").addEventListener("click",()=>{restart();quiet(true);const tick=()=>{if(step())timer=setTimeout(tick,reduce?60:1500)};tick()});
 document.getElementById("step").addEventListener("click",()=>{clearTimeout(timer);if(i>=steps.length)restart();quiet(true);step()});
