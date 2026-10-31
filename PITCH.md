@@ -48,7 +48,7 @@ reasons." (Point at the option funnel on Metrics, then the failure tests on Benc
 
 | Question | Owner | Short answer |
 |---|---|---|
-| Where does it fail, and how would the user know? | Yizhuo | Timeout, bad output or no deal goes to the rulebook, labelled fallback. Nothing safe escalates to the human with reasons. |
+| Where does it fail, and how would the user know? | Yizhuo | Timeout, bad output or no deal goes to the rulebook, labelled fallback. If nothing is safe, it escalates to the human with reasons. |
 | How do you stop unsafe plans? | Yizhuo | Agents never decide safety. Eight coded checks run on every plan, and the final plan is rechecked before the human sees it. 0 unsafe plans accepted. |
 | What do the agents add over a solver? | Damien | Concessions. The solver only knows the base state. The agents reveal what they can give up, which made 8 more scenarios solvable. On the same options, 6 of 7 live consensus runs matched the solver's cost; one picked a dearer safe plan (mean gap 42.9%). |
 | Why do 22 of 51 escalate? | Ashvin | We model up to 8 plans per flight with tight simulated gates, crew and fuel. When none is safe, refusing is correct. Busy gates, crew and fuel reserve block most. |
