@@ -1,0 +1,18 @@
+# Challenge brief and internal planning (not for the repo)
+brief/
+challenge2_plan*.md
+.claude/
+CLAUDE.md
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+.pytest_cache/
+
+# Run outputs
+logs/*.json
+logs/decisions/
+!logs/.gitkeep
+ui/replay_demo.html
