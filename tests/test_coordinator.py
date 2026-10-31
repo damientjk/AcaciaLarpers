@@ -1,9 +1,10 @@
+import json
 import time
 from types import SimpleNamespace
 
 import agents
 import coordinator
-from agents import AgentResult, OfferReply
+from agents import AgentResult, OfferReply, VoteReply
 from models import Vote
 from tests.toy_world import ToyWorld, scenario
 
@@ -100,3 +101,45 @@ def test_offer_validation_rejects_foreign_concession_and_unknown_ids():
 def test_log_saves_as_json(tmp_path):
     path = coordinator.save(run(fake_agents=True), str(tmp_path))
     assert path.exists() and path.stat().st_size > 1000
+
+
+class GoodClient:
+    """Well-formed replies with usage, to exercise the real agent path without the API."""
+    messages = property(lambda self: self)
+
+    def parse(self, **kw):
+        brief = json.loads(kw["messages"][0]["content"])
+        if kw["output_format"] is OfferReply:
+            parsed = OfferReply(preferred="C5", acceptable=["C3", "C5"], constraints_cited=[],
+                                concessions=[{"id": brief["your_concession"], "target": None}], rationale="ok")
+        else:
+            parsed = VoteReply(vote="accept", rationale="ok")
+        return SimpleNamespace(stop_reason="end_turn", parsed_output=parsed,
+                               usage=SimpleNamespace(input_tokens=1000, output_tokens=200))
+
+
+def test_real_agent_path_and_usage(monkeypatch):
+    monkeypatch.setattr(agents, "_client", lambda: GoodClient())
+    log = run(fake_agents=False)
+    assert log["outcome"]["type"] == "consensus" and log["outcome"]["final_candidate"] == "C5"
+    st = log["stats"]
+    assert (st["api_calls"], st["retries"], st["input_tokens"], st["output_tokens"]) == (6, 0, 6000, 1200)
+    assert st["est_cost_usd"] == agents.cost_usd(6000, 1200) > 0
+    assert "C5" in coordinator.summary(log)
+
+
+def test_rejected_concession_is_logged_and_unlocks_nothing(monkeypatch):
+    world = ToyWorld()
+    plain = world.apply
+
+    def atc_rejected(s, offered):
+        ok = [c for c in offered if c["id"] != "ATC_EARLIER_SLOT"]
+        bad = [{**c, "applied": False, "reason": "no free slot"} for c in offered if c["id"] == "ATC_EARLIER_SLOT"]
+        return plain(s, ok), [{**c, "applied": True} for c in ok] + bad
+
+    world.apply = atc_rejected
+    log = coordinator.negotiate(world, scenario(), W, fake_agents=True)
+    applied = {c["id"]: c["applied"] for c in log["compromise"]["concessions_applied"]}
+    assert applied == {"ATC_EARLIER_SLOT": False, "GROUND_REASSIGN_CREW": True}
+    assert log["outcome"]["final_candidate"] == "C3"      # C5 still needs the rejected slot
+    assert log["outcome"]["concessions_that_unlocked"] == []

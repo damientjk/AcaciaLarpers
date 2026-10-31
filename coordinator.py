@@ -53,7 +53,14 @@ class ModuleWorld:
         return self.m["costs"].cost(c, s, self.weights)
 
     def apply(self, s, concessions):
-        return self.m["scenario"].apply_concessions(s, concessions)
+        """scenario.apply_concessions records outcomes in each agent's state; return them as results."""
+        new = self.m["scenario"].apply_concessions(s, concessions)
+        results = []
+        for a, st in new.simulated.items():
+            old = s.simulated.get(a, {})
+            for key, ok in (("applied_concessions", True), ("rejected_concessions", False)):
+                results += [{**c, "applied": ok} for c in st.get(key, [])[len(old.get(key, [])):]]
+        return new, results
 
     def view(self, s, agent):
         return self.m["scenario"].private_view(s, agent)
@@ -107,10 +114,12 @@ def negotiate(world: World, scenario: Scenario, weights: dict, fake_agents: bool
     offers = {a: r.message for a, r in r1.items()}
 
     # Between rounds: apply concessions from valid offers, recheck, freeze one proposal.
-    applied = [{"agent": a, **c.model_dump()} for a in AGENTS if offers[a] for c in offers[a].concessions]
-    state_version = 2 if applied else 1
-    after_scenario = world.apply(scenario, applied) if applied else scenario
-    after = {c.id: world.check(c, after_scenario) for c in cands} if applied else before
+    offered = [{"agent": a, **c.model_dump()} for a in AGENTS if offers[a] for c in offers[a].concessions]
+    after_scenario, applied = scenario, []
+    if offered:
+        after_scenario, applied = _apply(world, scenario, offered)
+    state_version = 2 if any(c["applied"] for c in applied) else 1
+    after = {c.id: world.check(c, after_scenario) for c in cands} if state_version == 2 else before
     feasible_after = _feasible(after)
 
     rounds = [{"round": 1, "offers": [_offer_entry(r1[a]) for a in AGENTS]}]
@@ -130,7 +139,8 @@ def negotiate(world: World, scenario: Scenario, weights: dict, fake_agents: bool
                                           vote="abstain", rationale=f"No valid vote: {r2[a].error}")
                  for a in AGENTS}
         rounds.append({"round": 2, "votes": [{**votes[a].model_dump(), "latency_s": r2[a].latency_s,
-                                              **({"error": r2[a].error} if r2[a].error else {})} for a in AGENTS]})
+                                              **({"error": r2[a].error} if r2[a].error else {}),
+                                              **_retried(r2[a])} for a in AGENTS]})
 
     # Outcome.
     final_recheck, fb = None, None
@@ -140,7 +150,7 @@ def negotiate(world: World, scenario: Scenario, weights: dict, fake_agents: bool
     if final_recheck and final_recheck["passed"]:
         unlocked = []
         if pick not in feasible_before:
-            unlocked = [c["id"] for c in applied if c["id"] in (by_id[pick].concession or "")]
+            unlocked = [c["id"] for c in applied if c["applied"] and c["id"] in agents.needs(by_id[pick])]
         outcome = {"type": "consensus", "final_candidate": pick, "concessions_that_unlocked": unlocked,
                    "reason": f"All three accepted proposal v{state_version} and the final recheck passed.",
                    "final_recheck": final_recheck}
@@ -162,6 +172,8 @@ def negotiate(world: World, scenario: Scenario, weights: dict, fake_agents: bool
     solver_pick = world.solve(cands, after, costs)
     results = list(r1.values()) + (list(r2.values()) if r2 else [])
     calls = sum(r.attempts for r in results)
+    tokens_in = sum(r.input_tokens for r in results)
+    tokens_out = sum(r.output_tokens for r in results)
     log = {
         "run_id": run_id,
         "label": label,
@@ -183,7 +195,10 @@ def negotiate(world: World, scenario: Scenario, weights: dict, fake_agents: bool
                       "heuristic": world.heuristic(scenario)},
         "human_decision": None,
         "stats": {"api_calls": calls, "retries": sum(max(r.attempts - 1, 0) for r in results),
-                  "total_latency_s": round(time.monotonic() - t0, 2)},
+                  "total_latency_s": round(time.monotonic() - t0, 2),
+                  "model": None if fake_agents else agents.config()["llm"]["model"],
+                  "input_tokens": tokens_in, "output_tokens": tokens_out,
+                  "est_cost_usd": agents.cost_usd(tokens_in, tokens_out)},
     }
     return log
 
@@ -193,7 +208,20 @@ def _offer_entry(r: AgentResult) -> dict:
         return {"agent": r.agent, "preferred": None, "acceptable": [], "constraints_cited": [], "concessions": [],
                 "rationale": f"No valid offer: {r.error}", "latency_s": r.latency_s, "valid": False,
                 "error": r.error}
-    return {**r.message.model_dump(), "latency_s": r.latency_s, "valid": True}
+    return {**r.message.model_dump(), "latency_s": r.latency_s, "valid": True, **_retried(r)}
+
+
+def _retried(r: AgentResult) -> dict:
+    return {"retry_reasons": r.retry_reasons} if r.retry_reasons else {}
+
+
+def _apply(world: World, s: Scenario, offered: list[dict]) -> tuple[Scenario, list[dict]]:
+    """Apply round 1 concessions. world.apply may return the new Scenario, or (Scenario, results) where each
+    result is the offered concession plus "applied": bool and an optional "reason" when it was rejected."""
+    res = world.apply(s, offered)
+    if isinstance(res, tuple):
+        return res[0], [dict(r) for r in res[1]]
+    return res, [{**c, "applied": True} for c in offered]
 
 
 def _why_not_consensus(cp, r2, final_recheck) -> str:
@@ -221,22 +249,52 @@ def save(log: dict, logs_dir: str | None = None) -> Path:
 
 def run(random: bool = False, flight: str | None = None, date: str | None = None,
         scenario_id: str | None = None, fake_agents: bool = False) -> dict:
+    """Scenario IDs come from scenario.py: "demo-001" for the demo, "S<row>" for a flights.csv row."""
     import scenario as sc
     cfg = agents.config()
-    seed = cfg["evaluation"]["seed"]
-    df = sc.load_flights(cfg["data_dir"])
-    if flight:
-        rows = df[(df["AIRLINE"] == flight[:2].upper()) & (df["FLIGHT_NUMBER"].astype(str) == flight[2:])]
-        if date:
-            y, m, d = (int(x) for x in date.split("-"))
-            rows = rows[(rows["YEAR"] == y) & (rows["MONTH"] == m) & (rows["DAY"] == d)]
-        if rows.empty:
-            raise ValueError(f"No qualifying row for {flight} on {date}")
-        row = rows.iloc[0]
+    if scenario_id:
+        s = sc.get_scenario(scenario_id)
+    elif flight:
+        s = sc.find_scenario(flight, date)
+        if s is None:
+            raise ValueError(f"No qualifying flight {flight} on {date}")
+    elif random:
+        s = sc.random_scenario()
     else:
-        row = df.sample(1, random_state=None if random else seed).iloc[0]
-    sid = scenario_id or f"{row['AIRLINE']}{row['FLIGHT_NUMBER']}-{row['YEAR']}{row['MONTH']:02d}{row['DAY']:02d}"
-    s = sc.build_scenario(row, sid, seed)
+        s = sc.get_scenario("demo-001")
     log = negotiate(ModuleWorld(cfg["costs"]), s, cfg["costs"], fake_agents=fake_agents)
     save(log, cfg["logs_dir"])
     return log
+
+
+def summary(log: dict) -> str:
+    out, st = log["outcome"], log["stats"]
+    lines = [f"{log['run_id']}: {out['type'].upper()} -> {out['final_candidate']}", f"  {out['reason']}"]
+    for r in log["rounds"]:
+        for m in r.get("offers", []):
+            lines.append(f"  R1 {m['agent']:6} prefers {m['preferred']} accepts {m['acceptable']} "
+                         f"concedes {[c['id'] for c in m['concessions']]}{'' if m['valid'] else ' INVALID'}")
+            lines.append(f"     {m['rationale']}")
+        for v in r.get("votes", []):
+            lines.append(f"  R2 {v['agent']:6} {v['vote']}: {v['rationale']}")
+    lines.append(f"  {st['api_calls']} calls, {st['retries']} retries, {st['total_latency_s']}s, "
+                 f"{st['input_tokens']} in / {st['output_tokens']} out tokens, ~${st['est_cost_usd']}")
+    return "\n".join(lines)
+
+
+if __name__ == "__main__":
+    import argparse
+
+    p = argparse.ArgumentParser(description="Run one negotiation, save its audit log and print a summary.")
+    p.add_argument("--toy", action="store_true", help="hand-built demo world (tests/toy_world.py)")
+    p.add_argument("--fake", action="store_true", help="fake agents, no API calls")
+    p.add_argument("--flight", help="e.g. AA1344")
+    p.add_argument("--date", help="YYYY-MM-DD")
+    a = p.parse_args()
+    if a.toy:
+        from tests.toy_world import ToyWorld, scenario
+        log = negotiate(ToyWorld(), scenario(), agents.config()["costs"], fake_agents=a.fake, label="Toy demo")
+        save(log)
+    else:
+        log = run(random=not a.flight, flight=a.flight, date=a.date, fake_agents=a.fake)
+    print(summary(log))
