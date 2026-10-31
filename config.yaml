@@ -24,8 +24,33 @@ costs:
 simulation:
   fuel_reserve_min: 45         # inspired by 14 CFR 121.639; verify before quoting
   gate_buffer_min: 10
-  turnaround_min: 35
+  turnaround_min: 35           # narrowbody
+  turnaround_min_widebody: 75
   gates_per_scenario: [2, 3]
+  # --- scenario.py (Ashvin). Every value here is SIMULATED / an assumption.
+  widebody_min_distance_mi: 2000   # inferred aircraft class: distance >= this -> widebody (heavy wake)
+  runway_capacity_per_hour: {normal: 30, weather: 20}   # 2-min / 3-min arrival slots
+  slot_horizon_min: 60             # slots generated from base ETA up to base ETA + this
+  slot_occupancy_prob: {normal: 0.6, weather: 0.75}
+  occupant_flexible_prob: 0.4      # neighbour ATC can move later (ATC_EARLIER_SLOT)
+  neighbour_wake_probs: {heavy: 0.2, large: 0.75, small: 0.05}
+  taxiways: [A, B, C, D, E, F]
+  taxiway_closure_prob: {weather: 0.6, late_aircraft: 0.2}
+  issue_lead_min: [20, 35]         # issue time = base ETA minus this
+  holding_burn_kg_per_min: {narrowbody: 40, widebody: 110}
+  cruise_burn_kg_per_min: {narrowbody: 45, widebody: 120}
+  extra_holding_fuel_min: [8, 40]  # fuel-safe holding above the reserve
+  comfortable_fraction: 0.5        # pilot's comfortable holding = this x fuel-safe holding
+  connections_count: [0, 3]
+  connection_depart_after_eta_min: [45, 150]
+  connection_passengers: [5, 40]
+  connection_min_connect_min: [35, 45]
+  gate_ids: [B4, B7, B9]
+  next_departure_slack_min: [10, 40]
+  taxi_in_jitter_min: [-2, 4]
+  crew_shift_end_after_eta_min: [20, 120]
+  gate_crewed_prob: 0.6            # non-planned gates
+  crew_reassignable_prob: 0.5
 
 evaluation:
   seed: 2026
