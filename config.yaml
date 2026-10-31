@@ -60,6 +60,7 @@ simulation:
   next_departure_slack_min: [10, 40]
   taxi_in_jitter_min: [-2, 4]
   crew_shift_end_after_eta_min: [20, 120]
+  alt_gate_conflict_prob: 0.2      # alternative gate also occupied across the arrival
   gate_crewed_prob: 0.6            # non-planned gates
   crew_reassignable_prob: 0.5
 
