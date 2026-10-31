@@ -78,7 +78,11 @@ section[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"] {dis
 .tk-body {display:flex;align-items:center;gap:12px;padding:4px 14px}
 .tk-port small,.tk-port span {display:block;font-size:11px;color:#3b4366;line-height:1.15}
 .tk-port b {display:block;font-family:'Jersey 15',monospace;font-size:34px;line-height:1}
-.tk-fly {display:flex;flex-direction:column;align-items:center;font-size:11px;color:#3b4366;min-width:84px}
+.tk-fly {display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:#3b4366;min-width:130px}
+.tk-route {display:flex;align-items:center;width:100%;gap:5px}
+.tk-route i {flex:1;border-top:3px dashed #1b1f3b}
+.tk-route b {font-size:20px;line-height:1;color:#1b1f3b}
+.tk-route s {width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:11px solid #1b1f3b;text-decoration:none}
 .tk-stub {border-left:3px dashed #1b1f3b;padding:4px 14px;background:#ffd447;display:grid;align-content:center;font-size:11px;line-height:1.3;border-radius:0 3px 3px 0}
 .tk-stub b {font-family:'Jersey 15',monospace;font-size:24px;line-height:1.1}
 /* agent pages */
@@ -352,12 +356,10 @@ def frame(ticket=True):
         key_box()
     if not ticket:
         return
-    plane = ('<svg viewBox="0 0 16 10" width="34" height="22" shape-rendering="crispEdges" aria-hidden="true">'
-             '<path fill="#1b1f3b" d="M0 3h2v1h4V1h2v3h5l2 1v1l-2 1H8v2H6V6H2v1H0z"/></svg>')
     st.html(f"""<div class="incident"><span class="tag">Disruption</span>
 <span class="ticket"><span class="tk-body">
  <span class="tk-port"><small>From</small><b>{H['origin']}</b><span>{CITY.get(H['origin'], '')}</span></span>
- <span class="tk-fly">{plane}{H.get('distance_mi', '?')} mi</span>
+ <span class="tk-fly"><span class="tk-route"><i></i><b>✈</b><i></i><s></s></span>{H.get('distance_mi', '?')} mi</span>
  <span class="tk-port"><small>To</small><b>{H['destination']}</b><span>{CITY.get(H['destination'], '')}</span></span>
 </span><span class="tk-stub"><span>Flight</span><b>{H['carrier']} {H['flight']}</b><span>Sched {H['scheduled_arrival']} · {H['date']}</span></span></span>
 <div class="facts"><span class="chip">Arrived <b>{H.get('arrival_delay_min', '?')} min</b> late</span>
