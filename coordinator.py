@@ -201,6 +201,8 @@ def negotiate(world: World, scenario: Scenario, weights: dict, fake_agents: bool
                                  "total_usd": costs[solver_pick].total_usd if solver_pick else None},
                       "heuristic": world.heuristic(scenario)},
         "human_decision": None,
+        # Escalation assist (escalation.py): closest plans, blockers, human actions, safe-but-costly option.
+        "escalation_assist": _escalation_assist(after_scenario, cands, after, costs) if outcome["type"] == "escalation" else None,
         "stats": {"api_calls": calls, "retries": sum(max(r.attempts - 1, 0) for r in results),
                   "total_latency_s": round(time.monotonic() - t0, 2),
                   "model": None if fake_agents else agents.config()["llm"]["model"],
@@ -210,6 +212,14 @@ def negotiate(world: World, scenario: Scenario, weights: dict, fake_agents: bool
                   "est_cost_usd": agents.cost_usd(tokens_in, tokens_out)},
     }
     return log
+
+
+def _escalation_assist(scenario, cands, checks, costs) -> dict:
+    try:
+        import escalation
+        return escalation.assist(scenario, cands, checks, costs)
+    except Exception as e:  # the assist must never break a run
+        return {"error": f"{type(e).__name__}: {e}"}
 
 
 def _offer_entry(r: AgentResult) -> dict:

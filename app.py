@@ -162,6 +162,7 @@ def normalize_log(raw):
     log.setdefault("fallback", None)
     log.setdefault("baselines", {})
     log.setdefault("human_decision", None)
+    log.setdefault("escalation_assist", None)
     log.setdefault("stats", {})
     return log
 
@@ -374,7 +375,7 @@ def run_picker(label):
         st.rerun()
 
 
-def decision_buttons(fc):
+def decision_buttons(fc, costly=None):
     key = f"decision-{log['run_id']}"
     saved = DECISIONS / f"{log['run_id']}.json"
     if saved.exists() and key not in st.session_state:
@@ -385,16 +386,67 @@ def decision_buttons(fc):
         return True
     x, y = st.columns(2)
     for btn, ok in [(x, True), (y, False)]:
-        if btn.button("Approve" if ok else "Reject", type="primary" if ok else "secondary", disabled=not fc and ok,
+        label = ("Approve costly plan" if costly else "Approve") if ok else "Reject"
+        if btn.button(label, type="primary" if ok else "secondary", disabled=ok and not (fc or costly),
                       width="stretch"):
-            dsn = {"approved": ok, "at": datetime.now().strftime("%H:%M:%S"), "note": "",
-                   "run_id": log["run_id"], "plan": fc}
+            plan = fc or (f"{costly['candidate']} + {' + '.join(costly['fixes'])}" if costly and ok else None)
+            dsn = {"approved": ok, "at": datetime.now().strftime("%H:%M:%S"),
+                   "note": "Safe-but-costly plan, outside the modelled options." if costly and ok and not fc else "",
+                   "run_id": log["run_id"], "plan": plan, "costly": bool(costly and ok and not fc)}
             st.session_state[key] = dsn
             DECISIONS.mkdir(parents=True, exist_ok=True)
             saved.write_text(json.dumps(dsn, indent=2))
             st.rerun()
     st.caption("Rejecting ends this run. A rerun gets a new run ID.")
     return False
+
+
+@st.cache_data(show_spinner=False)
+def _assist_for(run_id, raw_json):
+    import escalation
+    try:
+        return escalation.assist_from_log(json.loads(raw_json))
+    except Exception as e:  # never break the page over the assist
+        return {"error": f"{type(e).__name__}: {e}"}
+
+
+def assist_for(lg):
+    if (lg.get("outcome") or {}).get("type") != "escalation":
+        return None
+    return lg.get("escalation_assist") or _assist_for(lg["run_id"], json.dumps(lg, default=str))
+
+
+def escalation_panel(a):
+    """No normal plan is safe: the safe-but-costly option, the main blocker, the closest plans, what you could do."""
+    if not a or a.get("error"):
+        if a:
+            st.caption(f"Escalation assist unavailable: {a['error']}")
+        return None
+    opt = a.get("costly_option")
+    if opt:
+        p = opt["plan"]
+        st.markdown(f'<div class="mo" style="background:#e9f9ec"><b>Safe but costly: +${opt["extra_vs_cheapest_normal_usd"]:,.2f}</b> '
+                    f'vs the cheapest normal plan.<br>Plan {opt["candidate"]} with <b>{" + ".join(opt["fix_labels"]).lower()}</b>: '
+                    f'land {p["landing"]}, gate {p["gate"]}, {p["extra_holding_min"]} min extra holding. '
+                    f'Total ${opt["total_usd"]:,.2f} (fees ${sum(opt["fees_usd"].values()):,.0f}, rough assumptions). '
+                    f'All {len(opt["checks"])} safety checks pass.<br><small>{opt["label"]}</small></div>',
+                    unsafe_allow_html=True)
+    mb = a.get("main_blocker")
+    if mb:
+        st.markdown(f"**Main blocker:** {mb['rule_id']} {mb['title'].lower()} (fails in {mb['plans']} of {mb['of']} plans; "
+                    f"{a['one_rule_away']} plan(s) are one rule away).")
+    with st.expander("Closest plans and what blocks them"):
+        st.dataframe(pd.DataFrame([{"plan": r["candidate"], "fails": ", ".join(r["failed_rules"]),
+                                    "short by": "; ".join((f"{s['amount']} {s['unit']}: " if s["amount"] is not None else "")
+                                                          + s["explanation"] for s in r["shortfalls"]),
+                                    "cost $": r["total_usd"]} for r in a["closest"]]),
+                     hide_index=True, width="stretch")
+    with st.expander("What you could do (outside the modelled options)"):
+        for s in a.get("suggestions", []):
+            tag = "never relaxed" if not s["relaxable"] else "your decision"
+            st.markdown(f"**{s['rule_id']} · {s['title']}** ({tag})  \n" + "  \n".join(f"- {x}" for x in s["actions"]))
+    st.caption(a.get("note", ""))
+    return opt
 
 
 def show_replay(view):
@@ -406,6 +458,7 @@ def show_replay(view):
     autoplay = st.session_state.get("_autoplay") == log["run_id"]
     if autoplay:
         st.session_state.pop("_autoplay")
+    v["escalation_assist"] = assist_for(log)
     st.iframe(replay_html(normalize_log(v), autoplay=autoplay, view=view))
 
 
@@ -435,11 +488,13 @@ def decision_panel():
         st.markdown(f'<div class="mo"><b>Proposed plan {fc}:</b> land at <b>{cd["landing"]}</b>, gate '
                     f'<b>{cd["gate"]}</b>, <b>{cd["extra_holding_min"]} min</b> extra holding. Simulated cost '
                     f'<b>${k["total_usd"]:,.2f}</b>.<br>{lead}</div>', unsafe_allow_html=True)
-    else:
-        st.markdown('<div class="mo"><b>No safe plan.</b> None of the options passes every safety check, so there is '
-                    'nothing to approve. Reject to close this case and handle the flight by hand, or run another '
-                    'flight.</div>', unsafe_allow_html=True)
-    if decision_buttons(fc):
+    costly = None
+    if not fc:
+        st.markdown('<div class="mo"><b>No safe plan within the modelled options.</b> Escalated to you. Coco ranked '
+                    'the closest plans and searched costlier fixes; nothing is applied unless you approve it.</div>',
+                    unsafe_allow_html=True)
+        costly = escalation_panel(assist_for(log))
+    if decision_buttons(fc, costly):
         st.caption("Done. Run another flight, or open **Huddle** for every message and safety check.")
 
 
