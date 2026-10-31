@@ -13,6 +13,7 @@ protocol:
 llm:
   model: claude-haiku-5-5      # fast model for the three agents
   max_tokens: 4096
+  thinking: adaptive           # the model decides how much to think; it cannot be turned off
   effort: medium               # low was inconsistent in tuning; no temperature: non-default sampling values are rejected on this model
   usd_per_mtok: {input: 0.10, output: 0.50}   # update together with model
 

@@ -143,3 +143,11 @@ def test_rejected_concession_is_logged_and_unlocks_nothing(monkeypatch):
     assert applied == {"ATC_EARLIER_SLOT": False, "GROUND_REASSIGN_CREW": True}
     assert log["outcome"]["final_candidate"] == "C3"      # C5 still needs the rejected slot
     assert log["outcome"]["concessions_that_unlocked"] == []
+
+
+def test_stats_name_model_and_thinking_only_for_real_agents(monkeypatch):
+    assert run(fake_agents=True)["stats"]["thinking"] is None
+    monkeypatch.setattr(agents, "_client", lambda: GoodClient())
+    st = run(fake_agents=False)["stats"]
+    assert st["model"] == agents.config()["llm"]["model"]
+    assert st["thinking"] == {"type": "adaptive", "effort": agents.config()["llm"]["effort"]}

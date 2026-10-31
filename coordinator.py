@@ -197,6 +197,8 @@ def negotiate(world: World, scenario: Scenario, weights: dict, fake_agents: bool
         "stats": {"api_calls": calls, "retries": sum(max(r.attempts - 1, 0) for r in results),
                   "total_latency_s": round(time.monotonic() - t0, 2),
                   "model": None if fake_agents else agents.config()["llm"]["model"],
+                  "thinking": None if fake_agents else {"type": agents.config()["llm"]["thinking"],
+                                                        "effort": agents.config()["llm"]["effort"]},
                   "input_tokens": tokens_in, "output_tokens": tokens_out,
                   "est_cost_usd": agents.cost_usd(tokens_in, tokens_out)},
     }

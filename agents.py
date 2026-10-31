@@ -191,6 +191,7 @@ def _ask(agent: AgentName, system: str, payload: dict, schema, check) -> AgentRe
                 system=system,
                 messages=[{"role": "user", "content": user}],
                 output_format=schema,
+                thinking={"type": cfg["llm"]["thinking"]},
                 output_config={"effort": cfg["llm"]["effort"]},
                 timeout=timeout,
             )
