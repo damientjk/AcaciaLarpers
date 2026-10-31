@@ -89,7 +89,8 @@ def compromise(offers: dict, feasible: list[str], costs: dict) -> tuple[str, str
 
 
 def negotiate(world: World, scenario: Scenario, weights: dict, fake_agents: bool = False,
-              label: str | None = None, run_id: str | None = None) -> dict:
+              label: str | None = None, run_id: str | None = None, progress=None) -> dict:
+    note = progress or (lambda msg: None)  # optional UI hook: called with a plain-language status line
     cfg = agents.config()["protocol"]
     t0 = time.monotonic()
     run_id = run_id or f"r-{uuid.uuid4().hex[:6]}"
@@ -99,11 +100,14 @@ def negotiate(world: World, scenario: Scenario, weights: dict, fake_agents: bool
         return cfg["run_timeout_s"] - (time.monotonic() - t0)
 
     # State v1: candidates, costs and checks on the base scenario.
+    note("Building candidate plans and running the safety checks")
     cands = world.candidates(scenario)[: cfg["max_candidates"]]
     by_id = {c.id: c for c in cands}
     costs = {c.id: world.cost(c, scenario) for c in cands}
     before = {c.id: world.check(c, scenario) for c in cands}
     feasible_before = _feasible(before)
+    note(f"{len(cands)} candidate plans, {len(feasible_before)} safe before any concession. "
+         "Round 1: Ava, Pip and Gus each propose (Claude calls)")
 
     # Round 1: offers.
     def brief(agent, s, checks):
@@ -114,6 +118,7 @@ def negotiate(world: World, scenario: Scenario, weights: dict, fake_agents: bool
     offers = {a: r.message for a, r in r1.items()}
 
     # Between rounds: apply concessions from valid offers, recheck, freeze one proposal.
+    note("Round 1 done. Coordinator (plain code) applies concessions and rechecks every plan")
     offered = [{"agent": a, **c.model_dump()} for a in AGENTS if offers[a] for c in offers[a].concessions]
     after_scenario, applied = scenario, []
     if offered:
@@ -131,6 +136,7 @@ def negotiate(world: World, scenario: Scenario, weights: dict, fake_agents: bool
               "in_all_acceptable": in_all, "rule": rule, "proposal": proposal.model_dump()}
 
         # Round 2: votes on exactly that proposal.
+        note(f"Plan {pick} is safe and acceptable to all. Round 2: Ava, Pip and Gus vote (Claude calls)")
         round1 = [o for o in offers.values() if o is not None]
         r2 = agents.in_parallel(
             lambda a: agents.vote(a, brief(a, after_scenario, after), proposal, round1, run_id, fake_agents),
@@ -143,6 +149,7 @@ def negotiate(world: World, scenario: Scenario, weights: dict, fake_agents: bool
                                               **_retried(r2[a])} for a in AGENTS]})
 
     # Outcome.
+    note("Final recheck and outcome")
     final_recheck, fb = None, None
     if cp and all(v.vote == "accept" for v in votes.values()):
         recheck = world.check(by_id[pick], after_scenario)
@@ -250,7 +257,7 @@ def save(log: dict, logs_dir: str | None = None) -> Path:
 
 
 def run(random: bool = False, flight: str | None = None, date: str | None = None,
-        scenario_id: str | None = None, fake_agents: bool = False) -> dict:
+        scenario_id: str | None = None, fake_agents: bool = False, progress=None) -> dict:
     """Scenario IDs come from scenario.py: "demo-001" for the demo, "S<row>" for a flights.csv row."""
     import scenario as sc
     cfg = agents.config()
@@ -264,7 +271,7 @@ def run(random: bool = False, flight: str | None = None, date: str | None = None
         s = sc.random_scenario()
     else:
         s = sc.get_scenario("demo-001")
-    log = negotiate(ModuleWorld(cfg["costs"]), s, cfg["costs"], fake_agents=fake_agents)
+    log = negotiate(ModuleWorld(cfg["costs"]), s, cfg["costs"], fake_agents=fake_agents, progress=progress)
     save(log, cfg["logs_dir"])
     return log
 
