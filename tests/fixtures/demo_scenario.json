@@ -1,0 +1,82 @@
+{
+  "_note": "Person B deterministic fixture. 'historical' is the real AA1344 DEN-DFW row of 2015-01-01. Everything under 'simulated' is SIMULATED and labelled so; it exists to exercise checks, costs and fallback before Person A's scenario.py and options.py land.",
+  "seed": 1344,
+  "category": "both",
+  "scenario": {
+    "scenario_id": "demo-001",
+    "issue_time": "2015-01-01T19:55",
+    "historical": {
+      "carrier": "AA", "carrier_name": "American Airlines Inc.", "flight": "1344", "tail": "N200AA",
+      "origin": "DEN", "destination": "DFW", "date": "2015-01-01",
+      "scheduled_arrival": "20:30", "actual_arrival": "22:29", "arrival_delay_min": 119,
+      "weather_delay_min": 35, "late_aircraft_delay_min": 40, "distance_mi": 641
+    },
+    "simulated": {
+      "atc": {
+        "baseline_eta": "20:40",
+        "runway": {"id": "17C", "capacity_per_interval": 3, "interval_min": 10},
+        "slots": ["20:40", "20:52", "21:05"],
+        "resequence_options": [{"slot": "20:32", "moves": [{"callsign": "SKW3391", "to": "20:42"}]}],
+        "wake_category": "M",
+        "wake_separation_s": {"H-H": 240, "H-M": 180, "H-L": 240, "M-M": 90, "M-L": 120, "M-H": 90, "L-L": 90, "L-M": 90, "L-H": 90},
+        "other_arrivals": [
+          {"callsign": "AAL2213", "time": "20:30", "wake_category": "M"},
+          {"callsign": "SKW3391", "time": "20:34", "wake_category": "M"},
+          {"callsign": "UAL455", "time": "20:36", "wake_category": "H"},
+          {"callsign": "DAL1176", "time": "20:50", "wake_category": "M"},
+          {"callsign": "SWA123", "time": "21:00", "wake_category": "M"}
+        ],
+        "closed_taxiways": ["L"],
+        "taxi_routes": {"B4": ["K", "B"], "B7": ["K", "B", "B7"], "C3": ["K", "C"], "C5": ["L", "C"]},
+        "taxi_in_min": 8
+      },
+      "pilot": {
+        "aircraft_type": "A321",
+        "fuel_at_baseline_eta_kg": 2600,
+        "holding_burn_kg_per_min": 40,
+        "reserve_kg": 2100,
+        "max_extra_holding_min": 10
+      },
+      "ground": {
+        "aircraft_class": "narrowbody",
+        "planned_gate": "B4",
+        "own_booking_id": "BK-B4-OWN",
+        "gate_buffer_min": 10,
+        "turnaround_min": 45,
+        "gates": {
+          "B4": {"classes": ["narrowbody", "regional"],
+                 "bookings": [{"id": "BK-B4-1", "flight": "AA2460", "start": "19:30", "end": "20:55"},
+                              {"id": "BK-B4-OWN", "flight": "AA1344", "start": "20:38", "end": "21:30"}]},
+          "B7": {"classes": ["narrowbody"], "bookings": []},
+          "C3": {"classes": ["narrowbody", "widebody"], "bookings": []},
+          "C5": {"classes": ["regional"], "bookings": []}
+        },
+        "crews": [
+          {"id": "CR1", "gates": ["B4", "C3"], "shift_start": "14:00", "shift_end": "22:00", "regular_end": "21:00",
+           "assignments": [], "can_reassign_to": []},
+          {"id": "CR2", "gates": ["B9"], "shift_start": "14:00", "shift_end": "22:30", "regular_end": "22:30",
+           "assignments": [{"id": "J-B9-1", "gate": "B9", "start": "19:40", "end": "20:25"}], "can_reassign_to": ["B7"]}
+        ],
+        "connections": [
+          {"flight": "AA2311", "departure": "21:20", "min_connect_min": 30, "pax": 6},
+          {"flight": "AA1795", "departure": "21:40", "min_connect_min": 30, "pax": 3}
+        ]
+      }
+    }
+  },
+  "candidates": [
+    {"id": "C1", "landing": "20:40", "extra_holding_min": 0,  "gate": "B4", "concession": null, "gate_arrival": "20:48", "gate_release": "21:33"},
+    {"id": "C2", "landing": "20:40", "extra_holding_min": 0,  "gate": "B7", "concession": "GROUND_REASSIGN_CREW", "gate_arrival": "20:48", "gate_release": "21:33"},
+    {"id": "C3", "landing": "20:52", "extra_holding_min": 12, "gate": "C3", "concession": "PILOT_EXTRA_HOLDING", "gate_arrival": "21:00", "gate_release": "21:45"},
+    {"id": "C4", "landing": "21:05", "extra_holding_min": 25, "gate": "B4", "concession": null, "gate_arrival": "21:13", "gate_release": "21:58"},
+    {"id": "C5", "landing": "20:32", "extra_holding_min": 0,  "gate": "B7", "concession": "ATC_EARLIER_SLOT + GROUND_REASSIGN_CREW", "gate_arrival": "20:40", "gate_release": "21:25"},
+    {"id": "C6", "landing": "20:32", "extra_holding_min": 0,  "gate": "B4", "concession": "ATC_EARLIER_SLOT", "gate_arrival": "20:40", "gate_release": "21:25"},
+    {"id": "C7", "landing": "20:52", "extra_holding_min": 12, "gate": "B7", "concession": "GROUND_REASSIGN_CREW", "gate_arrival": "21:00", "gate_release": "21:45"},
+    {"id": "C8", "landing": "20:40", "extra_holding_min": 0,  "gate": "C5", "concession": null, "gate_arrival": "20:48", "gate_release": "21:33"}
+  ],
+  "concessions": [
+    {"agent": "atc", "id": "ATC_EARLIER_SLOT", "target": "20:32"},
+    {"agent": "pilot", "id": "PILOT_EXTRA_HOLDING", "target": "12"},
+    {"agent": "ground", "id": "GROUND_REASSIGN_CREW", "target": "B7"}
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "_note": "Person B fixture: nothing feasible, must escalate. 'historical' is the real AA8 HNL-DFW row of 2015-01-01. 'simulated' is SIMULATED.",
+  "seed": 8,
+  "category": "late_aircraft_only",
+  "scenario": {
+    "scenario_id": "esc-001",
+    "issue_time": "2015-01-01T04:30",
+    "historical": {
+      "carrier": "AA", "carrier_name": "American Airlines Inc.", "flight": "8", "tail": "N368AA",
+      "origin": "HNL", "destination": "DFW", "date": "2015-01-01",
+      "scheduled_arrival": "05:10", "actual_arrival": "06:59", "arrival_delay_min": 109,
+      "weather_delay_min": 0, "late_aircraft_delay_min": 108, "distance_mi": 3784
+    },
+    "simulated": {
+      "atc": {
+        "baseline_eta": "05:20",
+        "runway": {"id": "18R", "capacity_per_interval": 2, "interval_min": 10},
+        "slots": ["05:20", "05:30", "05:45"],
+        "resequence_options": [],
+        "wake_category": "H",
+        "wake_separation_s": {"H-H": 240, "M-H": 90, "L-H": 90, "H-M": 180, "M-M": 90},
+        "other_arrivals": [{"callsign": "AAL1180", "time": "05:18", "wake_category": "M"}],
+        "closed_taxiways": [],
+        "taxi_routes": {"D2": ["A", "D"], "D4": ["A", "D"]},
+        "taxi_in_min": 9
+      },
+      "pilot": {"aircraft_type": "B777", "fuel_at_baseline_eta_kg": 6200, "holding_burn_kg_per_min": 110, "reserve_kg": 5500, "max_extra_holding_min": 6},
+      "ground": {
+        "aircraft_class": "widebody",
+        "planned_gate": "D2",
+        "gate_buffer_min": 10,
+        "turnaround_min": 60,
+        "gates": {
+          "D2": {"classes": ["widebody"], "bookings": [{"id": "BK-D2-1", "flight": "AA172", "start": "04:00", "end": "06:30"}]},
+          "D4": {"classes": ["narrowbody"], "bookings": []}
+        },
+        "crews": [{"id": "CR1", "gates": ["D2", "D4"], "shift_start": "04:00", "shift_end": "12:00", "regular_end": "12:00", "assignments": [], "can_reassign_to": []}],
+        "connections": []
+      }
+    }
+  },
+  "candidates": [
+    {"id": "C1", "landing": "05:20", "extra_holding_min": 0,  "gate": "D2", "concession": null, "gate_arrival": "05:29", "gate_release": "06:29"},
+    {"id": "C2", "landing": "05:30", "extra_holding_min": 10, "gate": "D4", "concession": null, "gate_arrival": "05:39", "gate_release": "06:39"},
+    {"id": "C3", "landing": "05:45", "extra_holding_min": 25, "gate": "D2", "concession": null, "gate_arrival": "05:54", "gate_release": "06:54"}
+  ],
+  "concessions": []
+}

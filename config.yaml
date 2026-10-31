@@ -19,9 +19,12 @@ llm:
 
 costs:
   delay_usd_per_min: 100.76    # A4A 2024 block-minute cost, see README sources
-  holding_fuel_usd_per_kg: 0.0 # TODO: sourced figure
-  overtime_usd_per_min: 0.0    # TODO
-  missed_connection_usd: 0.0   # TODO
+  holding_fuel_usd_per_kg: 0.85 # PLACEHOLDER, not sourced: team to agree (Person B)
+  overtime_usd_per_min: 1.5     # PLACEHOLDER, not sourced: team to agree (Person B)
+  missed_connection_usd: 250    # PLACEHOLDER, not sourced: team to agree (Person B)
+  # total_usd = delay_min*delay_usd_per_min + holding_fuel_kg*holding_fuel_usd_per_kg
+  #           + overtime_min*overtime_usd_per_min + missed_connections*missed_connection_usd
+  # Units: a USD-equivalent score inside the simulation, not a measured saving.
 
 simulation:
   fuel_reserve_min: 45         # inspired by 14 CFR 121.639; verify before quoting

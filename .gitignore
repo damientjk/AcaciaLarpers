@@ -16,3 +16,10 @@ logs/*.json
 logs/decisions/
 !logs/.gitkeep
 ui/replay_demo.html
+
+# From the local pre-checkout .gitignore
+.env.*
+!.env.example
+*.py[cod]
+.pytest_cache/
+.DS_Store
