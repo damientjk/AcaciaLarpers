@@ -331,11 +331,16 @@ steps.push(()=>{spotlight(null);const fc=out.final_candidate;
  status(out.type==="consensus"?"Deal reached":out.type==="fallback"?"Rulebook decided":"Escalated to you",false);
  if(out.type==="consensus"){fireworks();addLog(null,"CONSENSUS","Coordinator","",`${out.reason} Unlocked by: ${(out.concessions_that_unlocked||[]).join(" + ")||"no concession"}.`,out)}
  else if(out.type==="fallback"){shield("coord");addLog(null,"FALLBACK","Rulebook","",`${out.reason} Rulebook picks ${fc}.`,LOG.fallback)}
- else{shield("coord");addLog(null,"ESCALATE","Rulebook","you",out.reason,out)}
+ else{shield("coord");addLog(null,"ESCALATE","Rulebook","you",out.reason,out);
+  const EA=LOG.escalation_assist;
+  if(EA&&EA.main_blocker){const mb=EA.main_blocker,s0=(EA.suggestions||[])[0],o=EA.costly_option;
+   addLog(null,"CHECK","Coco","you",`Main blocker: ${mb.rule_id} ${mb.title.toLowerCase()} (${mb.plans} of ${mb.of} plans).`+(s0?` You could: ${s0.actions[0].toLowerCase()}.`:"")
+    +(o?` Safe but costly: plan ${o.candidate} with ${o.fix_labels.join(" + ").toLowerCase()}, +$${Math.round(o.extra_vs_cheapest_normal_usd).toLocaleString()}. Your decision.`:" No costly fix passes every check either."),EA)}}
  const o=document.getElementById("outcome");o.className="outcome "+out.type;o.textContent=out.type==="consensus"?"Consensus":out.type==="fallback"?"Fallback, not consensus":"Escalated"});
 steps.push(()=>{spotlight(["mod"]);
  const hd=LOG.human_decision;
- say("mod",hd?(hd.approved?"You approved it":"You rejected it"):"Over to you: approve or reject",4000);
+ const EA=LOG.escalation_assist,o=EA&&EA.costly_option;
+ say("mod",hd?(hd.approved?"You approved it":"You rejected it"):out.type==="escalation"&&EA&&EA.main_blocker?`Blocked by ${EA.main_blocker.rule_id}.`+(o?` Safe but costly: +$${Math.round(o.extra_vs_cheapest_normal_usd).toLocaleString()}. Your call.`:" Over to you."):"Over to you: approve or reject",5000);
  status(hd?(hd.approved?"You approved":"You rejected"):"Your call: approve or reject",false);
  addLog(null,hd?(hd.approved?"APPROVED":"REJECT"):"REVIEW","You (duty manager)","",hd?`${hd.approved?"Approved":"Rejected"} by ${hd.by||"duty manager"}.`:"Evidence sent to the duty manager. Approve or reject below the replay.",hd)});
 }

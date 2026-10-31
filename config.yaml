@@ -26,6 +26,15 @@ costs:
   #           + overtime_min*overtime_usd_per_min + missed_connections*missed_connection_usd
   # Units: a USD-equivalent score inside the simulation, not a measured saving.
 
+escalation:
+  # Escalation assist (escalation.py): deterministic help when no plan passes every check. No AI, no API calls.
+  top_n: 3                       # closest plans shown to the duty manager
+  costly_fixes: [remote_stand, extra_crew]   # ladder steps tried alone and in pairs; later steps not built yet
+  remote_stand_taxi_in_min: 20   # SIMULATED taxi-in to a remote stand. Rough assumption
+  remote_stand_usd: 900          # stand fee + towing + buses for one arrival. Rough assumption, not sourced
+  crew_callout_usd: 450          # call-out fee for an extra ground crew. Rough assumption, not sourced
+  # These fees only price the safe-but-costly option; they never change the cost of normal plans.
+
 simulation:
   fuel_reserve_min: 45         # inspired by 14 CFR 121.639; verify before quoting
   gate_buffer_min: 10
