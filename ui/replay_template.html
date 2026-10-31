@@ -196,7 +196,7 @@ if(POS.mod){seats.mod.style.width="9%"}
 const brain=makeBrain(document.getElementById("brain"));
 const costRank=id=>{const all=cands.map(c=>LOG.costs[c.id].total_usd).sort((a,b)=>a-b);const v=LOG.costs[id].total_usd;return Math.round(100-all.indexOf(v)/Math.max(1,all.length-1)*70)};
 function brainFor(set,who,stages,dur){const ch=checks[set]||{};brain.set({who,stages,rules:Object.values(ch).flat().map(r=>({ok:r.passed})),options:cands.map(c=>({ok:feas(set,c.id),u:costRank(c.id)}))});brain.play(dur)}
-const ST=LOG.stats||{};document.getElementById("modelchip").textContent=`Model: ${ST.model||"see config.yaml"}${ST.thinking?" · extended thinking on":""}`;
+const ST=LOG.stats||{};document.getElementById("modelchip").textContent=`Model: ${ST.model||(LOG.fake_agents?"fake agents (no API)":"see config.yaml")}${ST.thinking?" · extended thinking on":""}`;
 function splash(a,b){const el=document.getElementById("splash");el.innerHTML=`${esc(a)}<small>${esc(b||"")}</small>`;el.classList.remove("go");void el.offsetWidth;el.classList.add("go")}
 function plancard(t){const pc=document.getElementById("plancard");pc.textContent=t;pc.classList.remove("flip");void pc.offsetWidth;pc.classList.add("flip")}
 function stamp(type){const s=document.createElement("div");s.className="stamp";const c=type==="consensus"?"var(--good)":"var(--bad)";s.style.borderColor=c;s.style.color=c;s.textContent=type==="consensus"?"Deal!":type==="fallback"?"Rulebook":"Human call";stage.appendChild(s)}
