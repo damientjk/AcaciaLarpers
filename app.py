@@ -240,8 +240,8 @@ def try_pipeline_run(mode, flight=None, date=None, slot=None):
     """Run one negotiation. While it runs, the airport scene in `slot` shows who is thinking (live mode).
     Without a working key it runs with fake agents (random choices, real checker)."""
     if KEY_STATUS == "rejected":  # live calls would all 401 and look like a real escalation
-        st.error("Your API key was rejected, so the agents can't answer. Fix it under **Claude API key** at the "
-                 "top, or remove it to run with fake agents.")
+        st.error("The server's API key was rejected, so the agents can't answer. Fix ANTHROPIC_API_KEY in the "
+                 "server's .env and restart it, or remove it to run with fake agents.")
         return None
     try:
         import coordinator  # noqa: WPS433
@@ -328,28 +328,16 @@ def logo_b64(height=120):
 
 
 def key_box():
-    """Claude API key: set for this server process (agents._client reads the environment), never written to disk."""
+    """Read-only key status. The key comes from ANTHROPIC_API_KEY in the server's .env; the page cannot change it."""
     k = os.environ.get("ANTHROPIC_API_KEY", "")
     if KEY_STATUS == "ok":
         st.badge(f"Live Claude agents · key …{k[-4:]}", icon=":material/check_circle:", color="green")
     elif KEY_STATUS == "rejected":
-        st.badge(f"Key …{k[-4:]} rejected", icon=":material/error:", color="red")
+        st.badge(f"Key …{k[-4:]} rejected: fix .env on the server", icon=":material/error:", color="red")
     elif KEY_STATUS:
         st.badge(f"Key …{k[-4:]}: {KEY_STATUS}", icon=":material/warning:", color="orange")
     else:
-        st.badge("No key: fake agents", icon=":material/key_off:", color="gray")
-    with st.popover("Claude API key", icon=":material/key:"):
-        with st.form("api_key_form", clear_on_submit=True, border=False):
-            new_key = st.text_input("Paste a key", type="password", placeholder="sk-ant-...",
-                                    help="From platform.claude.com > API keys. Kept on this server only, not on disk.")
-            a, b = st.columns(2)
-            if a.form_submit_button("Use key", type="primary", width="stretch") and new_key.strip():
-                os.environ["ANTHROPIC_API_KEY"] = new_key.strip()
-                st.rerun()
-            if b.form_submit_button("Remove", width="stretch", disabled=not k):
-                os.environ.pop("ANTHROPIC_API_KEY", None)
-                st.rerun()
-        st.caption("Without a key the agents are fake (random). Saved runs need no key.")
+        st.badge("No key in .env: fake agents", icon=":material/key_off:", color="gray")
 
 
 def frame(ticket=True):
@@ -434,7 +422,7 @@ def decision_panel():
         if any("401" in e or "authentication" in e.lower() for e in errs):
             made = log.get("created_at", "")[11:16]
             fix = ("Your current key works, so click **Run this flight** again." if KEY_STATUS == "ok"
-                   else "Set a working key under **Claude API key** at the top, then run the flight again.")
+                   else "Fix ANTHROPIC_API_KEY in the server's .env, restart it, then run the flight again.")
             st.error(f"This run (made at {made}) used an API key that was rejected (401), so the agents never "
                      f"answered. The outcome reflects the failed calls, not the flight. {fix}")
         else:
