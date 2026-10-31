@@ -18,6 +18,7 @@ adds extra holding on top of it. Every simulated dict carries "simulated": True.
 """
 from __future__ import annotations
 
+import copy
 import hashlib
 import random as _random
 from datetime import datetime, timedelta
@@ -201,7 +202,8 @@ def build_scenario(row, scenario_id: str, seed: int) -> Scenario:
         distance_mi=int(row.DISTANCE),
     )
 
-    rng = _random.Random(seed)
+    # mix the scenario ID in, so callers passing one global seed still get distinct scenarios
+    rng = _random.Random(f"{seed}-{scenario_id}")
     sim = _simulate(row, t, dtype, rng)
     if scenario_id == DEMO_ID:
         _force_demo(sim)
@@ -379,8 +381,102 @@ def apply_concessions(scenario: Scenario, concessions: list[dict]) -> Scenario:
 
     Each concession is {"agent", "id", "target"}, e.g. GROUND_REASSIGN_CREW with target "B7" makes a crew
     available at B7. Candidate IDs must not change: coordinator.py rechecks the same candidates on the result.
+
+    Only the owning agent may apply its concession, and only within the simulated bounds. Anything else is
+    recorded under "rejected_concessions" in that agent's state and has no effect. Applied ones are recorded
+    under "applied_concessions".
     """
-    raise NotImplementedError
+    sim = copy.deepcopy(scenario.simulated)
+    for a in ("atc", "pilot", "ground"):
+        sim[a].setdefault("applied_concessions", [])
+        sim[a].setdefault("rejected_concessions", [])
+    for c in concessions:
+        cid, agent, target = c.get("id"), c.get("agent"), c.get("target")
+        owner = CONCESSION_OWNER.get(cid)
+        if owner is None or (agent is not None and agent != owner):
+            sim[owner or "atc"]["rejected_concessions"].append({**c, "reason": f"{cid} is not {agent}'s concession"})
+            continue
+        ok, note = _APPLY[cid](scenario, sim, target)
+        sim[owner]["applied_concessions" if ok else "rejected_concessions"].append(
+            {**c, ("note" if ok else "reason"): note})
+    return scenario.model_copy(update={"simulated": sim})
+
+
+CONCESSION_OWNER = {"ATC_EARLIER_SLOT": "atc", "PILOT_EXTRA_HOLDING": "pilot", "GROUND_REASSIGN_CREW": "ground"}
+
+
+def _candidate_detail(scenario: Scenario, target) -> dict | None:
+    if isinstance(target, str) and target.upper().startswith("C") and target[1:].isdigit():
+        import options
+        try:
+            return options.timeline(target.upper(), scenario)
+        except KeyError:
+            return None
+    return None
+
+
+def _apply_atc(scenario: Scenario, sim: dict, target) -> tuple[bool, str]:
+    atc = sim["atc"]
+    base_eta = from_iso(atc["base_eta"])
+    det = _candidate_detail(scenario, target)
+    key = det["slot_id"] if det else str(target or "").strip()
+    matches = [s for s in atc["slots"] if key in (s["slot_id"], s["time"][11:16])]
+    if not key:
+        matches = [s for s in atc["slots"] if s["occupant_flexible"] and from_iso(s["time"]) >= base_eta]
+    if not matches:
+        return False, f"no arrival slot matches {target!r}"
+    slot = min(matches, key=lambda s: abs((from_iso(s["time"]) - base_eta).total_seconds()))
+    if slot["occupant"] is None:
+        return True, f"{slot['slot_id']} already free"
+    if not slot["occupant_flexible"]:
+        return False, f"{slot['occupant']} in {slot['slot_id']} cannot be resequenced"
+    import options
+    used = {s["slot_id"] for s in options._pick_slots(scenario.simulated["atc"], scenario.simulated["pilot"],
+                                                       base_eta)}
+    later = [s for s in atc["slots"] if s["time"] > slot["time"] and s["occupant"] is None]
+    dest = next((s for s in later if s["slot_id"] not in used), later[0] if later else None)
+    if dest is None:
+        return False, "no free later slot within runway capacity to move the neighbour into"
+    dest.update(occupant=slot["occupant"], occupant_wake=slot["occupant_wake"], occupant_flexible=False,
+                resequenced_from=slot["slot_id"])
+    moved = slot["occupant"]
+    slot.update(occupant=None, occupant_wake=None, occupant_flexible=False, released_by_atc=True)
+    return True, f"moved {moved} from {slot['slot_id']} to {dest['slot_id']}"
+
+
+def _apply_pilot(scenario: Scenario, sim: dict, target) -> tuple[bool, str]:
+    p = sim["pilot"]
+    try:
+        wanted = int(str(target).split()[0])
+    except (TypeError, ValueError, IndexError):
+        wanted = p["fuel_safe_holding_min"]
+    new = min(p["fuel_safe_holding_min"], max(p["comfortable_holding_min"], wanted))
+    old, p["comfortable_holding_min"] = p["comfortable_holding_min"], new
+    return True, f"accepted holding limit {old} -> {new} min (fuel-safe limit {p['fuel_safe_holding_min']} min)"
+
+
+def _apply_ground(scenario: Scenario, sim: dict, target) -> tuple[bool, str]:
+    g = sim["ground"]
+    det = _candidate_detail(scenario, target)
+    gate_id = det["gate"] if det else str(target or "").strip().upper()
+    gate_ids = [x["gate_id"] for x in g["gates"]]
+    if not gate_id:
+        staffed = {c["assigned_gate"] for c in g["crews"]}
+        gate_id = next((x for x in gate_ids if x not in staffed), "")
+    if gate_id not in gate_ids:
+        return False, f"unknown gate {target!r}"
+    if any(c["assigned_gate"] == gate_id for c in g["crews"]):
+        return True, f"{gate_id} already has a crew"
+    donor = next((c for c in g["crews"] if c["reassignable"]), None)
+    if donor is None:
+        return False, "no reassignable crew available"
+    donor["reassigned_from"], donor["assigned_gate"] = donor["assigned_gate"], gate_id
+    donor["reassignable"] = False
+    return True, f"moved {donor['crew_id']} from {donor['reassigned_from']} to {gate_id}"
+
+
+_APPLY = {"ATC_EARLIER_SLOT": _apply_atc, "PILOT_EXTRA_HOLDING": _apply_pilot,
+          "GROUND_REASSIGN_CREW": _apply_ground}
 
 
 def private_view(scenario: Scenario, agent: str) -> dict:
